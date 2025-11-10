@@ -17,6 +17,9 @@ Tout doit être gratuit (aucun modèle payant ou API externe).
 
 Priorité : rapidité et précision des réponses tout en gardant la solution simple.
 
+surtout organise bien les dossiers et fichier comme un pro, et fait l'interface vraiment de maniere professionnelle stylé et sympa avec une vibe de ios/apple et Revolut. surtout essaie de te faire une todo list ou etape a faire pour la fin. de plus ce chatbot sera a la fin le chatbot du site internet CoolLibri, donc choisi un nom stylé au chatbot.
+tu trouvera la FAQ à la racine
+
 2️⃣ Architecture générale
 [PDF documents] 
       ↓
