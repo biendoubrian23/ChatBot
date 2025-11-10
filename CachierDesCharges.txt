@@ -1,0 +1,166 @@
+Cahier des charges – Chatbot RAG
+1️⃣ Objectif du projet
+
+Développer un chatbot RAG qui :
+
+Répond à des questions en langage naturel.
+
+Utilise les PDF fournis comme base de connaissance.
+
+Fonctionne localement pour tests, puis sur le serveur de l’entreprise.
+
+Interface front-end : simple, minimaliste et stylée, réalisée avec Next.js / Vite / Node.js.
+
+Back-end RAG : Python, qui gère les modèles, vectorisation et génération de réponses.
+
+Tout doit être gratuit (aucun modèle payant ou API externe).
+
+Priorité : rapidité et précision des réponses tout en gardant la solution simple.
+
+2️⃣ Architecture générale
+[PDF documents] 
+      ↓
+[Extraction texte (Python)]
+      ↓
+[Chunking texte en morceaux]
+      ↓
+[Vectorisation → Embeddings]
+      ↓
+[Vector DB locale (Chroma)]
+      ↓
+[LLM gratuit local (Mistral 7B / Llama 3 via Ollama)]
+      ↓
+[Pipeline RAG (LangChain)]
+      ↓
+[API Python (FastAPI)]
+      ↓
+[Front-end Next.js / Vite – Chatbot stylé]
+      ↓
+[Utilisateur]
+
+
+Notes importantes :
+
+La vectorisation se fait une seule fois par document et est stockée dans la Vector DB.
+
+L’interface web se contente d’envoyer la question à l’API Python et d’afficher la réponse.
+
+Le LLM est pré-entraîné, donc pas besoin de l’entraîner soi-même.
+
+3️⃣ Technologies à utiliser
+Côté	Technologie	Rôle
+Front-end	Next.js + Vite	Interface chatbot stylée et minimaliste
+API / Back-end	Python + FastAPI	Orchestration pipeline RAG et accès aux modèles
+Extraction PDF	PyPDF2 ou pdfplumber	Extraire le texte brut des PDF
+Chunking texte	LangChain TextSplitter	Découper en morceaux ~500-1000 tokens, overlap 50
+Vectorisation	SentenceTransformers “all-MiniLM-L6-v2”	Convertir texte en vecteurs
+Vector DB	Chroma	Stockage local des vecteurs et recherches rapides
+Reranker (optionnel)	Cross-encoder “ms-marco-MiniLM-L-6-v2”	Améliorer précision en filtrant top passages
+LLM	Mistral 7B ou Llama 3 via Ollama	Générer réponses en langage naturel
+4️⃣ Étapes de développement
+4.1 Préparation des documents PDF
+
+Tous les PDF sont dans un dossier ./docs/.
+
+Extraction texte avec Python (PyPDF2 ou pdfplumber).
+
+Nettoyage simple : retirer caractères inutiles et entêtes/pieds de page.
+
+4.2 Chunking
+
+Diviser les textes en morceaux de 500-1000 tokens.
+
+Overlap 50 tokens pour maintenir le contexte.
+
+4.3 Vectorisation / Indexation
+
+Chaque chunk → embeddings avec all-MiniLM-L6-v2.
+
+Stockage des embeddings dans ChromaDB.
+
+Phase clé : c’est ici que le RAG “apprend” la connaissance des documents.
+
+Si des nouveaux PDF sont ajoutés : vectoriser seulement les nouveaux chunks.
+
+4.4 Pipeline RAG
+
+FastAPI reçoit la question de l’utilisateur via endpoint /chat.
+
+Pipeline Python :
+
+Question → embeddings.
+
+Vector DB → top-k passages les plus pertinents.
+
+(Optionnel) Reranker → top 3-5 passages seulement.
+
+LLM → génère la réponse en langage naturel.
+
+Retour JSON à l’API.
+
+4.5 Front-end (chatbot minimaliste)
+
+Envoyer la question via fetch / axios à /chat.
+
+Afficher la réponse du RAG sous forme de chat simple.
+
+Style minimaliste mais moderne et lisible.
+
+Ajouter effets simples : bulles de chat, scroll automatique, responsive.
+
+5️⃣ Optimisations pour performance et précision
+
+Vector DB optimisée : Chroma suffisant pour petite/moyenne base.
+
+Chunking + overlap : meilleure précision et contexte pour le LLM.
+
+Reranker léger : top passages seulement → LLM plus précis et rapide.
+
+LLM local quantifié (4-bit si CPU) → rapidité même sans GPU.
+
+Cache simple : stocker réponses fréquentes pour réduire temps d’inférence.
+
+Async / multi-thread dans FastAPI pour gérer plusieurs utilisateurs simultanément.
+
+6️⃣ Déploiement
+6.1 Local
+
+Installer Python + dépendances, ChromaDB et Ollama.
+
+Tester le pipeline complet : PDF → RAG → réponse → interface web.
+
+6.2 Serveur / site entreprise
+
+Installer Python + dépendances + ChromaDB ou Qdrant sur le serveur.
+
+Déployer FastAPI pour gérer l’API /chat.
+
+Déployer Front-end Next.js sur le site.
+
+Ajouter authentification (optionnel) et logs si nécessaire.
+
+7️⃣ Instructions pour Claude (développeur)
+
+Front-end : Next.js + Vite → interface chatbot stylée et minimaliste.
+
+Back-end : Python + FastAPI → pipeline RAG.
+
+PDF : extraction + nettoyage + chunking + vectorisation.
+
+Vector DB : ChromaDB locale → stockage embeddings.
+
+LLM : Mistral 7B / Llama 3 via Ollama → génération réponses.
+
+Performance : embeddings ANN, top-k passages, reranker optionnel, LLM quantifié.
+
+Déploiement : d’abord local pour test, ensuite serveur entreprise avec API et Front-end connecté.
+
+✅ Résultat attendu :
+
+Chatbot minimaliste et stylé sur le site web.
+
+Réponses rapides et précises basées sur les PDFs fournis.
+
+Système simple à comprendre, maintenir et mettre à jour.
+
+Tout gratuit et auto-hébergé.
