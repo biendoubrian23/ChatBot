@@ -1,0 +1,616 @@
+======================================================================
+LIBRIASSIST - ALL CHUNKS EXPORT
+======================================================================
+
+
+======================================================================
+CHUNK #1
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 0
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+Quels sont les formats proposés sur Coollibri ? Voilà la liste des formats proposés sur le site, pour chaque format, nous fournissons un gabarit vierge. Pour un livre avec une reliure en Rembordé (couverture cartonnée type BD), nos formats techniquement possibles sont uniquement A4 portrait, A4 paysage et 21x21 cm. Pour les autres reliures (dos carré collé, spirale, agrafé), si vous ne trouvez pas le format souhaité, vous pouvez nous consulter pour une demande de devis spécifique. 11 X 17 cm Ce format est adapté pour un livre de poche. 16 X 24 cm Ce format est adapté au roman. 21 X 21 cm Ce format est souvent utilisé pour un livre photo. A4 PORTRAIT 21 X 29,7 cm Ce format est utilisé pour un magazine, ou pour un beau livre
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #2
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 1
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. A4 PORTRAIT 21 X 29,7 cm Ce format est utilisé pour un magazine, ou pour un beau livre. A4 PAYSAGE 29,7 X 21 cm Ce format atypique est souvent utilisé pour un livre photo. A5 PORTRAIT 14,8 X 21 cm Ce format est souvent utilisé pour un roman, ou pour un guide de poche. A5 PAYSAGE 21 X 14,8 cm Ce format atypique est souvent utilisé pour livre photo. Comment est-ce que je peux préparer lintérieur de mon ouvrage ? Vous devez créer le fichier avec vos propres outils. Vous pouvez par exemple utiliser Word qui est le logiciel le plus facile daccès. Nous proposons des gabarits pour créer les fichiers directement au bon format dans la rubrique Avec Word, vous pourrez créer des chapitres, des paragraphes, des notes, un sommaire, vous pourrez également ajouter des images dans votre mise en page
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #3
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 2
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. Par ailleurs, si vous utilisez un logiciel professionnel, vous devrez le paramétrer avec 3mm de fonds perdus tout autour du fichier et 2cm de marges, ne pas mettre de traits de coupe et dans lidéal fournir un fichier CMJN. Le logiciel le plus utilisé pour réaliser des mises en page est Adobe InDesign. Quel fichier est-ce que je dois fournir pour lintérieur de mon livre ? Nous acceptons les fichiers word et PDF mais lidéal est le PDF car la conversion en PDF permet de figer votre mise en page.La taille maximale acceptée pour les fichiers est de 700 Mo Le fichier fourni doit être finalisé et prêt à reproduire. Nous allons limprimer tel quel, nous ne rajoutons pas les numéros de page, nous ne faisons pas de relecture orthographique, nous ne faisons pas de contrôle de centrage
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #4
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 3
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. Comment régler le format de mon livre dans word ? Dans word, il vous faut paramétrer le format définitif choisi pour votre livre en allant dans  mise en page  taille , et choisir  taille personnalisée  ou  autre taille  et écrire le format de votre choix. Si vous ne redimensionnez pas votre fichier, la mise au format de la commande sera faite de manière automatique par nos logiciels. Lors de la mise au format le logiciel réduit la taille de chaque page proportionnellement et ajoute les marges blanches nécessaires. La mise en page nest pas modifiée. Attention : Si la différence de format entre le livre et le fichier est trop importante il est possible que ce redimensionnement entraine une lecture difficile du livre. Vous devez vérifier
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #5
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 4
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. Vous devez vérifier. Quelles marges dois-je laisser dans mon document word ? Vous devez laisser 2 cm de marges tout autour du document. Aucun élément important ne doit se trouver dans cette zone de sécurité sous peine dêtre dans la reliure ou coupée lors du façonnage. Est-ce que vous fournissez des modèles pour bâtir les fichiers ? Nous fournissons des gabarits vierges pour tous les formats proposés sur la page  Jimprime mon livre . Ce ne sont pas des modèles mais des gabarits vierges. Est-ce que la mise en page de mon ouvrage va être vérifiée ? Nous ne vérifions pas la mise en page des ouvrages, que ce soit le centrage, la taille des polices, les marges
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #6
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 5
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. Une analyse automatique des fichiers est faite par un logiciel pour vérifier les principaux points techniques, des indications vous sont alors données sur le nombre de pages, les marges, la taille du texte notamment. Nous vous invitons à lire attentivement ces indications et à corriger votre fichier en fonction. Jai plusieurs fichiers word ou PDF pour lintérieur de mon ouvrage, puis-je vous les envoyer séparément ? Il nest pas possible de nous envoyer plusieurs fichiers pour lintérieur, vous devez les réunir en un seul fichier qui contient toutes les pages de lintérieur dans lordre dimpression
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #7
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 6
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. Comment réunir en un seul PDF plusieurs PDF qui constituent lintérieur de mon ouvrage ? Il existe des logiciels ou des sites qui permettent de réunir plusieurs PDF en une seul, par exemple le site www.ilovepdf.com/fr Est-ce que vous rajoutez des éléments sur mon fichier ? Nous rajoutons une seule chose : lachevé dimprimer, cest une mention obligatoire. Si votre dernière page est vide, nous rajoutons lachevé dimprimer sur cette page. Sinon, nous rajoutons des pages à votre fichier. Est-ce que vous allez ajouter les numéros de page (folios) à mon fichier ? Non, nous ne rajouterons pas les numéros de page sur le fichier de votre intérieur. Nous imprimerons les fichiers tels quils sont fournis et validés sur le livre virtuel
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #8
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 7
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. Nous imprimerons les fichiers tels quils sont fournis et validés sur le livre virtuel. Est-ce que vous allez faire une relecture orthographique de mon livre ? Non, nous ne relisons pas les ouvrages. Nous listons sur notre site des correcteurs qui se sont spontanément présentés à nous. Nous donnons leurs coordonnées pour information. CoolLibri se désengage des prestations qui peuvent être réalisées avec les prestataires listés et ne peut en être tenu responsable. https://www.coollibri.com/blog/correcteur-relecteur/ Un formulaire de contact sur cette page permet de contacter les relecteurs. Est-ce que mes commentaires écrits dans word vont être imprimés ? Les commentaires dans un document Word ne sont pas une donnée imprimable, ils ne seront pas imprimés
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #9
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 8
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. Vous devez les intégrer en texte brut sur votre fichier. Est-ce que je peux placer une image sur deux pages en vis-à-vis ? Avec une reliure en dos carré collé ou en Rembordé, le livre ne pourra jamais être ouvert complètement à plat, il y aura toujours une partie de la page qui sera prise dans la reliure. Et si vous forcez sur la reliure elle en sera fragilisée. Comment est-ce que je peux préparer la couverture de mon ouvrage ? Vous pouvez soit : - la préparer par vos propres outils, - soit utiliser un de nos modèles personnalisables grâce à notre outil gratuit de personnalisation disponible en ligne. De nombreux modèles gratuits sont à votre disposition, vous pouvez les personnaliser avec vos textes et photos
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #10
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 9
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. Pour cela, rendez-vous sur la page  Créer votre couverture  Quel fichier dois-je fournir pour la couverture si je la prépare moi-même ? Il y a plusieurs possibilités pour nous fournir la couverture que vous avez préparée. CAS n1 Vous avez un fichier qui contient les pages de couverture et les pages de lintérieur de votre ouvrage (un fichier combiné), vous devez alors le monter ainsi :  La page 1 de votre fichier est la couverture (cest la première de couverture)  La page 2 de votre fichier doit être totalement vierge.  La page 3 de votre fichier correspond à la première page de lintérieur de votre ouvrage
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #11
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 10
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+.  La page 3 de votre fichier correspond à la première page de lintérieur de votre ouvrage.  Les pages suivantes sont toutes les pages de lintérieur les unes à la suite des autres  Lavant-dernière page de votre fichier doit être totalement vierge  La dernière page de votre fichier est la 4ème de votre couverture. CAS n2 Votre couverture est dans un fichier à part, il y a alors 2 possibilités : - Cest un seul document PDF qui contient 2 pages : une page pour la 1re de couverture et une page pour la 4e de couverture. Notre outil de mise en page en ligne placera ces 2 pages sur une maquette et vous aurez la possibilité de personnaliser le dos. - Cest un PDF dune page avec la couverture à plat, déjà maquettée
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #12
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 11
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. - Cest un PDF dune page avec la couverture à plat, déjà maquettée . A gauche se trouve la 4e de couverture, au centre se trouve le dos, et à droite la première de couverture. Cette maquette est à préparer dans un logiciel professionnel type InDesign. Il faut prévoir 3 mm de fonds perdus tournant. Notre logiciel vous indique lépaisseur du dos à prévoir et la taille de la couverture attendue. Dans tous les cas, pensez à ne pas mettre déléments importants (visages, textes) trop proches du bord de la couverture. Est-ce que le verso de ma couverture est imprimé ? Les verso des couvertures ne sont pas imprimés. Dans le cas dune brochure agrafée nous pouvons imprimer lintérieur des couvertures sur demande
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #13
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 12
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. Dans le cas dune brochure agrafée nous pouvons imprimer lintérieur des couvertures sur demande. Quelles sont les reliures possibles pour mon ouvrage ? Nous proposons 4 types de reliure, qui sont à choisir en fonction du résultat souhaité et du nombre de pages de votre ouvrage. - Reliure en Dos carré collé : vous obtiendrez un livre type roman. La couverture est plus épaisse que le papier de lintérieur du livre mais reste souple. Nombre de pages mini : 60 ou 80 pages suivant le papier choisi Nombre de pages maxi : entre 500 et 700 pages suivant le papier choisi -Reliure en Rembordé : vous obtiendrez un livre type BD. La couverture est rigide et cartonnée
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #14
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 13
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. La couverture est rigide et cartonnée. Nombre de pages mini : 24 pages Nombre de pages maxi : 100 ou 150 pages suivant le papier choisi Formats possibles du livre sur nos machines : A4 portrait, A4 paysage ou 21x21 cm. Nous ne pouvons pas proposer de formats différents ou de pagination supérieure sur ce produit. - Reliure en Agrafé : Lagrafé ou le piqué à cheval (PAC) est une reliure utilisée pour les magazines. En choisissant ce type de reliure, vous aurez un rendu identique aux magazines que vous achetez en kiosque. La couverture du livre est souple. Limpression de la couverture peut être en recto/verso, limpression de lintérieur est en recto/verso. Nombre de pages mini : 8 pages mini Nombre de pages maxi : 60 pages maxi -Reliure en Spirale : Une spirale en métal relie les feuilles
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #15
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 14
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. La couverture du livre est souple. Limpression de la couverture est en recto, limpression de lintérieur est en recto/verso. Le livre peut être ouvert complètement à plat, les feuilles ne peuvent pas être détachées et le livre ne comporte pas de dos. Nombre de pages mini : 1 Nombre de pages maxi : 290 à 500 pages suivant le papier choisi Quels sont les papiers possibles et leurs caractéristiques ? STANDARD 80G BLANC : Le papier Standard 80 g blanc a pour caractéristique dêtre équivalent au papier dimprimante A4. Choisissez ce papier si vous souhaitez imprimer un roman, ou un livre de poche. BOUFFANT 90G BLANC : (doux) Le papier Bouffant 90 g blanc a pour caractéristique dêtre légèrement cotonneux. Choisissez ce papier si vous souhaitez imprimer un roman, ou un livre de poche
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #16
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 15
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. Choisissez ce papier si vous souhaitez imprimer un roman, ou un livre de poche. Il nest pas adapté lorsquil y a des photos en couleur. Au toucher, vous aurez une sensation de douceur. BOUFFANT 90G CRÈME : Le papier Bouffant 90 g crème a pour caractéristique dêtre légèrement cotonneux et davoir une couleur donnant un rendu ancien. Choisissez ce papier si vous souhaitez imprimer un roman, ou un livre de poche. Il nest pas adapté lorsquil y a des photos en couleur. Au toucher, vous aurez une sensation de douceur. COUCHÉ SATIN 115G BLANC : Le papier couché satin 115g blanc a pour caractéristique davoir un toucher lisse. Choisissez ce papier si vous souhaitez imprimer un livre photo, une bande dessinée, un roman ou un livre de poche. Il saura mettre en valeur vos photos en couleur
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #17
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 16
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. Il saura mettre en valeur vos photos en couleur. Nous pouvons proposer des papiers différents (du 135g couché satin par exemple) en passant par un devis sur mesure. Est-ce que je vais avoir un BAT, une épreuve de contrôle pour mon livre ? Nous ne fournissons pas dépreuve papier de contrôle. Avant la validation de votre commande, nous vous permettons de feuilleter votre livre via un livre virtuel. Prenez bien le temps de regarder toutes les pages de ce livre virtuel : vérifiez que les pages senchaînent comme vous le souhaitez, que tout est bien en place. Il faut garder une zone de sécurité tout autour du texte ou des éléments importants de 2 cm, sinon le texte risque dêtre coupé ou dêtre pris dans la reliure
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #18
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 17
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. Les livres dans la réalité ne peuvent pas être ouverts complétement à plat comme sur le livre virtuel. Comment demander un devis personnalisé ? Si vous souhaitez un format, un papier, une quantité différents de ceux proposés automatiquement sur notre site, nous pouvons vous faire un devis sur mesure, avec toutes les caractéristiques souhaitées de votre livre. Sachez que nous appliquons un coût fixe supplémentaire pour le traitement de cette commande spéciale
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #19
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 18
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. Voici les informations dont nous avons besoin pour vous donner un prix : Type de reliure souhaitée : Format du livre : Couverture : choix du papier et du pelliculage Brillant/Mat ou soft touch ? Impression couverture : recto couleur Papier Intérieur : Type dimpression intérieur : couleur ou noir et blanc ? Nombre de pages intérieur : Livraison 1 point en France incluse Quantité : Vous pouvez nous écrire un mail à contactcoollibri.com avec tous ces champs renseignés et nous pourrons ensuite vous faire part de notre proposition de prix. Quest-ce quun ISBN ? LISBN (International Standard Book Number) est un numéro unique à 13 caractères qui permet didentifier de manière non équivoque un ouvrage
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #20
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 19
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. Ce numéro est utilisé par tous les acteurs de la chaîne du livre (librairies, les éditeurs, les distributeurs, bibliothèques). LISBN permet également de protéger le contenu du livre. Est-ce que je dois mettre un ISBN sur mon livre ? LISBN est obligatoire si vous envisagez de vendre votre livre. LISBN permet de protéger le contenu de louvrage, cest la première étape avant le dépôt légal du livre. Comment obtenir un ISBN ? Nous fournissons gratuitement un numéro ISBN si vous répondez  oui  à la question  Souhaitez- vous vendre votre livre ?  posée à létape du devis. Nous vous fournissons une image comportant le code-barres de lISBN, il vous faudra positionner cette image vous-même sur le verso de votre couverture
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #21
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 20
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. Est-ce que je dois payer pour avoir un ISBN ? Sur notre site, nous fournissons gratuitement le numéro ISBN. Jai déjà un ISBN, que dois-je faire ? Si vous avez déjà un ISBN, vous navez pas besoin dutiliser le nôtre. Noubliez pas de lapposer au verso de votre couverture avec son code-barres, nécessaire pour la vente. Est-ce que je dois mettre un nouvel ISBN pour un retirage de mon livre ? Un retirage sans modification ne requiert pas de nouvel ISBN, vous pouvez corriger quelques coquilles orthographiques et garder le même ISBN. Par contre, si vous rajoutez un chapitre ou des illustrations, si vous changez le visuel de la couverture, vous devez changer de numéro ISBN
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #22
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 21
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. Quest-ce que le dépôt légal de mon livre ? Le dépôt légal fait par lAuteur permet de protéger le contenu intellectuel du livre. Le livre est enregistré dans une base de données propre à la BNF (Bibliothèque Nationale de France) et est conservé physiquement par celle-ci. Le dépôt légal ne signifie pas un référencement dans le réseau de libraires et de bibliothèques. Pour apparaître sur ces bases, il faut passer par des prestataires payants, comme DILICOM par exemple
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #23
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 22
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. Comment faire le dépôt légal de mon livre ? Les formalités sont à accomplir auprès de la BNF (Bibliothèque Nationale de France) en suivant leurs instructions et en remplissant ce formulaire : https://www.bnf.fr/sites/default/files/2018-11/DLE_editeur-livres2018.pdf Est-ce quen imprimant sur COOLLIBRI, je conserve la propriété du contenu de mon livre ? Oui, lAuteur conserve la propriété du contenu de son livre en imprimant son livre sur Coollibri. Nous sommes uniquement imprimeur, nous ne sommes pas éditeur. Est-ce quen ayant un numéro ISBN, mon livre sera automatiquement référencé en librairie et en bibliothèque ? Le fait davoir un ISBN ne signifie pas que votre livre est référencé dans les bases de données des librairies et des bibliothèques
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #24
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 23
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. LISBN est un numéro unique, qui permet une intégration dans les bases de données normalisées, mais pour y apparaître, il faut passer par des prestataires payants, comme DILICOM par exemple. Qui va soccuper de la vente de mon livre ? Cest à vous Auteur de faire la promotion de votre ouvrage. Les réseaux sociaux par exemple peuvent être un bon moyen de faire connaître votre livre. En complément, Coollibri vous propose une bibliothèque en ligne pour référencer ou vendre votre ouvrage. Nous vous invitons à consulter les rubriques dédiées ci-dessous. Est-ce quavec un ISBN mon livre va être référencé en librairie ? Non, lISBN est seulement une condition préalable pour le référencement dans les bases des libraires. Le référencement dans ces bases constitue un autre service
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #25
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 24
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. Le référencement dans ces bases constitue un autre service. Mais vous pouvez vous présenter directement auprès dun libraire pour lui présenter votre ouvrage et lui proposer de le présenter dans sa librairie par exemple. LISBN est un numéro unique, qui permet une intégration dans les bases de données normalisées, mais pour y apparaître, il faut passer par des prestataires payants, comme DILICOM par exemple. Quelle est la TVA sur la vente du livre ? Le livre bénéficie du taux de TVA réduit, soit de 5.5 pour une vente en France. En quoi consiste la bibliothèque en ligne de Coollibri ? Notre bibliothèque en ligne vous permet de référencer en ligne votre livre, que vous layez imprimé chez nous ou non
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #26
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 25
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. Vous pouvez renseigner le titre, le nom de lauteur (ou votre pseudo), le prix de vente, les pages à feuilleter, le texte de présentation et des mots clés. Comment modifier le fichier de mon livre dans la bibliothèque Coollibri ? Si lAuteur souhaite modifier le fichier de son ouvrage figurant sur la Bibliothèque, il doit : 1. Créer un nouveau projet de référencement avec le nouveau fichier ; (il faudra activer loption  Publier mon livre ) 2. Désactiver de la Bibliothèque lancien projet. (il faudra aller dans  Mes Projets  et cliquer sur  Modifier les informations du livre dans la bibliothèque  et décocher la case dans laquelle vous acceptiez de mettre le livre dans la bibliothèque)
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #27
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 26
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. Comment modifier les informations de mon livre figurant sur la Bibliothèque ? Pour modifier les informations du livre figurant dans la bibliothèque vous avez 2 possibilités : - Dans Mes Projets Terminés, en cliquant sur Modifier les informations du livre dans la bibliothèque - Dans Mon Compte, Suivi des ventes, Mes livres, en cliquant sur le crayon. Vous pourrez modifier le type de référencement ainsi que les informations visibles sur la bibliothèque. Comment est-ce que je peux obtenir un EBOOK de mon livre ? Si vous avez passé une commande en impression papier d'un ouvrage, et que vous souhaitez avoir l'ePub en plus, il vous sera facturé 15. Si vous souhaitez uniquement l'ePub, il vous sera facturé 50. Le format du livre eBook est un ePub 3
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #28
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 27
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. Le format du livre eBook est un ePub 3. Votre mise en page sera fixe et le nombre de pages de votre ouvrage sera respecté. Quels sont les avantages dun EBOOK ? En ce qui concerne les intérêts de l'ePub les voici: - Le prix à la revente: LeBook est un livre édité et diffusé au format numérique. Son coût est donc inférieur par rapport à louvrage physique. En général un eBook est vendu 30 à 50 moins cher que sa version papier. - Le stockage: Le stockage du eBook est plus simple quun livre papier. Une liseuse peut contenir plus de 1000 livres. Autant dire que vous avez de bonnes heures de lecture devant vous. À quel prix vendre mon livre ? Cest à vous Auteur de définir le prix de vente de votre livre. Plusieurs facteurs peuvent être pris en compte : - Le coût de la fabrication du livre
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #29
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 28
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. Plusieurs facteurs peuvent être pris en compte : - Le coût de la fabrication du livre. Sur notre site Coollibri, vous pouvez obtenir un devis en quelques clics. - Dautres coûts que vous souhaiteriez imputer au livre (coût de relecture ou de mise en page par exemple). - La concurrence : il est bien de connaître les prix pratiqués sur le marché. - La marge que vous souhaitez conserver pour vous. - Dans le cas d'une vente directe sur notre bibliothèque commerciale, les frais administratifs de 1 TTC par livre commandé. Une fois ce prix fixé, il est imprimé sur le livre qui doit être vendu à ce prix à tous vos clients, avec une remise maximale de 5 (le prix du livre est régi par la Loi sur le prix unique du livre en France)
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #30
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 29
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. Comment sont nommées les différentes parties de la couverture ? Voici la couverture à plat, telle quelle est avant dêtre pliée et collée avec lintérieur du livre : La première de couverture est la page de titre. Sy trouvent le visuel de la couverture, le titre du livre, le nom de lauteur. Cest la vitrine du livre. La quatrième de couverture est la face opposée à la première de couverture, on y trouve généralement un résumé du livre, parfois une courte présentation de lauteur, lISBN et le prix du livre. Le dos est la partie qui recouvre lépaisseur du livre. Cest la partie visible quand le livre est rangé en bibliothèque. On y retrouve en général le titre du livre et le nom de lauteur
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #31
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 30
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. On y retrouve en général le titre du livre et le nom de lauteur. Quelle est la différence entre le nombre de pages et le nombre de feuilles ? Le nombre de pages est celui indiqué dans votre fichier, cest celui que vous devez renseigner pour le calcul du devis. Nous, imprimeur, utilisons des feuilles pour limpression, une feuille a deux faces. On place une page au recto et une page au verso. Il y a donc moitié moins de feuilles que de pages. Par exemple, si lintérieur de votre ouvrage comporte 100 pages, il comporte 50 feuilles. Comment supprimer mon livre de la Bibliothèque Coollibri ? Il faudra aller dans  Mes Projets  et cliquer sur  Modifier les informations du livre dans la bibliothèque  et décocher la case dans laquelle vous acceptiez de mettre le livre dans la bibliothèque
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #32
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 31
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. Vous pouvez également passer par la rubrique Mon Compte - Suivi des ventes - Mes livres et cliquer sur licône  désactiver  Comment fonctionne la Bibliothèque commerciale ? La bibliothèque commerciale permet la vente directe de votre livre, sans intervention de votre part, par un système dimpression à la demande. Le lecteur achète votre livre, nous le fabriquons et nous lui expédions. Nous facturons le service 1 TTC par vente. Il faut bien sûr également prendre en compte le coût de fabrication du livre sur Coollibri
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #33
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 32
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. Il faut bien sûr également prendre en compte le coût de fabrication du livre sur Coollibri. Voilà comment est calculé le bénéfice vous revenant : Prix de vente TTC : 20 Coût de fabrication TTC de votre livre TTC sur Coollibri : -8,50 1 de frais administratifs (par commande) : -1 Bénéfice : 10,50 Ce bénéfice vous est payé par virement, dès que le minimum de 10 TTC de bénéfice cumulé est atteint, et ce une fois par mois. Un suivi des ventes sur votre compte Coollibri vous permet de suivre en direct vos ventes et vos paiements. Quels sont les frais administratifs de ce service ? Le service de mise en vente via la Bibliothèque commercial est facturé 1 TTC par livre commandé
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #34
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 33
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. Comment et quand est-ce que moi auteur je vais être payé ? Lauteur du livre sera payé par virement, dès que le minimum de 10 TTC de bénéfice cumulé est atteint, une fois par mois. Pour cela, lauteur devra renseigner son IBAN dans la rubrique Mes Ventes et Paiements. Comment est-ce que je vais pouvoir suivre mes ventes faites sur la Bibliothèque de Coollibri ? Dans la rubrique Mon compte, suivi des ventes, vous pourrez suivre vos ventes en direct. Vous pourrez également suivre vos paiements effectués ou en attente du montant seuil. Qui soccupe de lexpédition du livre à mon client ? Dès que le lecteur achète votre livre, automatiquement, nous le fabriquons et lexpédions directement à ladresse indiquée par le lecteur
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #35
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 34
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. Comment acheter un livre sur la Bibliothèque Commerciale ? Si vous souhaitez acheter un livre figurant sur la bibliothèque commerciale, vous devez tout dabord vous créer un compte sur notre site. Ensuite, il vous suffit de cliquer sur le bouton : -  Acheter le livre  : Nous lancerons alors la fabriquation de l'ouvrage. -  Contacter l'auteur , dans le cas où lauteur souhaite vendre le livre lui-même. Un formaulaire vous permettra de rentrer en contact directement avec lui. Comment protéger mon œuvre? Les exemples ci-dessous sont donnés à titre informatif et ne peuvent pas se substituer à des conseils dun professionnel. Vous avez plusieurs possibilités pour protéger votre oeuvre. - Une protection implicite: Le but est de prouver lantériorité de votre écriture
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #36
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 35
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. - Une protection implicite: Le but est de prouver lantériorité de votre écriture. Dans cet objectif, lauteur sadresse à lui-même son manuscrit, en courrier recommandé, sans en décacheter lenveloppe au moment de sa réception. La date indiquée sur le cachet de la poste fait foi en cas de nécessité. - Une protection explicite: Le dépôt est fait auprès dun notaire, dun huissier, de la Société des Gens De Lettres (SGDL) ou encore, par le biais dun copyright, à durée illimitée, via le site copyrightdepot.com, par exemple. Quelles sont les informations légales à faire apparaitre dans mon livre? Voici les différentes informations légales à faire apparaitre dans votre ouvrage : Sur la 4eme de couverture le code ISBN ainsi que le prix de vente du livre
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #37
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 36
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. A l'intérieur du livre : - Le numéro ISBN , - La date du dépôt légal (par exemple: Parution Novembre 2022), - le nom et ladresse de léditeur, vous-même en loccurrence, - L'achevé d'imprimer que nous mettons de manière automatique à la fin de l'ouvrage. En complément, vous pouvez si vous le souhaitez ajouter la mention  Copyright  NOM PRENOM  de lauteur, ou bien  NOM de la maison dédition . Quel statut juridique dois-je choisir pour mon activité? Ces indications sont données à titre informatif et ne peuvent se substituer à la consultation d'un professionnel (avocat, expert-comptable, Centre des impôts etc.). A partir du moment où vous encaissez des recettes, et donc des revenus d'autoédition, vous devez en théorie avoir un statut juridique, même si ces recettes sont minimes
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #38
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 37
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. Cest le principe retenu par ladministration fiscale. En pratique, si ces recettes sont vraiment très faibles et que vous nenvisagez pas de poursuivre ou d'étendre votre activité dautoédition, l'administration fiscale pourrait avoir une tolérance : on peut penser quils se concentrent plutôt sur de potentielles fraudes dont les montants dépassent les quelques centaines deuros... Vous pourriez ainsi vous contenter de les déclarer avec vos autres revenus : cela ne vous permettrait pas dêtre en règle mais aurait lavantage de prouver votre bonne foi. Pour exercer votre activité, vous avez le choix entre deux grands types de statut : - Soit en tant que micro entrepreneur : cest le statut idéal pour débuter, les formalités administratives sont très légères et simplifiées
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #39
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 38
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. Vous nêtes pas soumis à la TVA, il ny a donc aucune déclaration à faire dans ce senscela veut aussi dire que vous ne pouvez pas vous faire rembourser la TVA que vous payez sur vos achats TTC ! Le site de ladministration http://www.lautoentrepreneur.fr/ est très complet à ce sujet - Soit en tant que gérant ou président dune société : si votre activité commence à prendre de limportance, il peut être bon de la structurer dans une société commerciale dédiée (SARL ou SAS). Votre régime fiscal et social dépendra de votre statut. Nous vous invitons à consulter un professionnel (avocat ou expert-comptable) qui saura vous conseiller au mieux sur ces sujets
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #40
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 39
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. Jai plusieurs projets terminés mais ils nont pas dISBN, comment les mettre dans la bibliothèque ? Pour faire apparaitre un ouvrage sur la bibliothèque sans le réimprimer, vous devez aller dans l'onglet Mes services puis cliquer sur Publier mon livre en ligne. Vous allez devoir entrer les caractéristiques de votre ouvrage et à la question souhaitez-vous vendre votre livre il faudra répondre oui. A l'étape suivante vous aurez accès à un numéro ISBN, il faudra le télécharger afin de l'ajouter sur la 4eme de couverture de votre livre (et penser à ajouter le prix de vente à côté). Vous devrez ensuite télécharger l'ensemble des fichiers du livre puis suivre les différentes étapes. Le papier satin fait peau neuve. Voici tout ce que ça implique
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #41
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 40
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. Le papier satin fait peau neuve. Voici tout ce que ça implique. En mars 2023, suite à vos nombreuses demandes, nous avons amélioré la qualité du papier satin 90g. A présent, nous travaillons avec du papier satin 115g. Son grammage est plus épais, moins transparent et donne un aspect plus qualitatif au produit. Cela va impliquer pour certains projets (uniquement les projets avec une reliure en Dos Carré Collé de plus de 180 pages) une augmentation de lépaisseur des livres, vous devrez donc vérifier et réadapter votre contenu au nouveau gabarit que lon vous montrera dans létape  couverture et dos . Les photos et images de mon intérieur doivent-elles être dune qualité spécifique ? Nous demandons un minimum de 300 ppp (pixel par pouce) pour une impression de qualité
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #42
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 41
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. Les photos et images de ma couverture doivent-elles être dune qualité spécifique ? Nous demandons un minimum de 300 ppp (pixel par pouce) pour une impression de qualité. Aide au passage dune commande sur coolLibri.com Pour profiter de tous nos services, commencez par vous inscrire. Cliquez sur le bouton  Mon compte  en haut à droite de la fenêtre, puis cliquez sur  Je minscris . Renseignez toutes les informations nécessaires pour créer un compte, puis cliquez sur  Je valide . Vous pouvez maintenant profiter de tous les services proposés par CoolLibri.com Accès direct) : cliquez ici. JIMPRIME MON LIVRE / DEVIS Pour imprimer votre livre, cliquez sur le menu  IMPRIMER UN LIVRE . Vous pouvez maintenant simuler un devis en ligne pour limpression de votre livre
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #43
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 42
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. Vous pouvez maintenant simuler un devis en ligne pour limpression de votre livre. Remplissez en fonction de vos besoins chaque ligne du devis : vous avez le choix entre quatre reliures : Dos Carré Collé, Rembordé, Agrafé ou Spirale. Choisissez ensuite le format du livre, le papier intérieur, le pelliculage de la couverture, le nombre de pages total, le nombre de pages en couleur, la qualité et enfin la livraison. Si vous souhaitez un ISBN cest ici que vous devez le mentionner. Dès que vous avez fini, cliquez sur  Créer mon projet . Votre projet est maintenant créé. Vous pouvez le retrouver dans la partie  Mes projets . Avant dy accéder, vous devez remplir plusieurs étapes à la création de votre livre
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #44
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 43
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. Avant dy accéder, vous devez remplir plusieurs étapes à la création de votre livre. Un fil dAriane à droite de votre écran vous indiquera le nombre détapes restant avant le passage de la commande. Si vous navez pas le temps de faire toutes ces étapes en une fois, ne vous inquiétez pas, à chaque étape votre livre est automatiquement sauvegardé dans la page  Mes Projets . INFORMATIONS DE LAUTEUR Dans cette étape, vous devez remplir toutes les informations liées à lauteur de votre livre. Son nom, son prénom, son mail, son site Internet et sa biographie. Ces informations, à lexception du mail, seront affichées dans la fiche auteur, lorsque vous publierez votre livre dans la bibliothèque CoolLibri. Dès que vous avez terminé, cliquez sur  Continuer
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #45
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 44
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. Dès que vous avez terminé, cliquez sur  Continuer . INFORMATIONS DU LIVRE Dans cette étape, vous devez remplir toutes les informations liées à votre livre. Dans les informations générales, le sous-titre et léditeur du livre ne sont pas des informations obligatoires. La partie  référencement  est utile au bon référencement du livre dans la bibliothèque CoolLibri. Les mots-clefs permettront aux internautes de trouver facilement votre livre dans notre barre de recherche. Enfin dans la partie  Vendre le livre sur CoolLibri  vous pouvez rendre visible plusieurs pages de votre livre sur notre site pour attiser la curiosité de vos futurs lecteurs puis instaurer un prix de vente seulement si vous souhaitez vendre ce livre. Dès que vous avez terminé, cliquez sur  Continuer
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #46
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 45
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. Dès que vous avez terminé, cliquez sur  Continuer . TELECHARGER MON ISBN Dans cette étape, vous pouvez télécharger un ISBN. Si vous souhaitez vendre votre livre, ou y apposer un prix, vous devez obligatoirement obtenir un numéro ISBN. Si votre livre nest pas destiné à la vente, vous naurez pas besoin dISBN. Vous souhaitez un ISBN ? Cliquez sur le bouton en question, puis cliquez sur Générer un nouvel ISBN. Vous pouvez télécharger gratuitement votre ISBN et lapposer sur la couverture de votre livre. Attention, si vous ne passez pas commande avant 15 jours, ce numéro ne sera plus actif. Il vous faudra télécharger un nouvel ISBN. Vous avez déjà un ISBN ? Cliquez sur le bouton en question, renseignez votre ISBN puis cliquez sur  Générer limage de mon ISBN
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #47
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 46
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. Vous pouvez télécharger gratuitement votre ISBN et lapposer sur la couverture de votre livre. Dès que vous avez terminé, cliquez sur  Continuer . Enfin, si vous ne souhaitez pas vendre votre livre, vous navez pas besoin dISBN. Vous pouvez donc ignorer cette étape en cliquant sur  Je ne souhaite pas vendre mon livre . TELECHARGER MES FICHIERS Dans cette étape, vous pouvez télécharger vos fichiers. Nous acceptons les fichiers Word ou les fichiers PDF. Trois solutions soffrent à vous. Si vous avez la couverture séparée de votre intérieur (deux fichiers distincts) cliquez sur  Couverture et intérieur séparés. Si vous avez la couverture et lintérieur sur le même fichier, cliquez sur  Couverture et intérieur  combinés
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #48
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 47
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. Enfin si vous navez pas de couverture, vous pouvez télécharger votre fichier intérieur en cliquant sur  Intérieur seul , nous vous proposerons dans létape suivante de personnaliser votre couverture grâce à nos modèles gratuits. Lorsque vous avez fait votre choix, téléchargez les fichiers en cliquant sur les boutons concernés, puis cliquez sur  Lancer lanalyse de mes fichiers . Cette analyse peut prendre plusieurs minutes, car toutes les pages sont scannées et vérifiées pour que limpression de votre fichier soit optimale. Une fois fini, un rapport saffiche. Les points rouges sont à corriger. Les points orange sont à vérifier et les points verts sont OK. Nous vous guidons grâce à nos boutons solutions sur chaque point rouge
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #49
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 48
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. Nous vous guidons grâce à nos boutons solutions sur chaque point rouge. Si vous ne trouvez pas de solution, nhésitez pas à contacter notre service client. Une fois que vos fichiers sont prêts à être ajoutés au projet, cliquez sur  Ajouter ses fichiers à mon projet . CREER MA COUVERTURE Si vous navez pas de couverture, vous pouvez la créer grâce à nos modèles gratuits. Tous les modèles sont 100 personnalisables. Cliquez sur la mise en page qui vous plaît le plus. Une fois sur loutil de personnalisation, vous pouvez modifier les textes, modifier les couleurs, insérer des images gratuites et libres de droits via notre bibliothèque de 300 images, modifier larrière-plan, rajouter du texte
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #50
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 49
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. Vous êtes libre de créer une couverture 100 personnalisable qui ressemble à votre livre ! Dès que vous avez terminé, cliquez sur  Enregistrer . Si vous navez pas fini votre couverture, vous pouvez aussi cliquer sur  Enregistrer  et la continuer plus tard. Elle senregistre automatiquement dans  Mes projets / Créer ma couverture  MES PROJETS Si vous avez suivi chaque étape les unes à la suite des autres, vous avez maintenant terminé la création de votre livre. La page  Mes projets  est un tableau de bord récapitulatif de votre projet en cours. Cest dans cette page que vous allez interagir sur tous les points de votre livre. Vous pouvez modifier chacune des étapes de votre tableau de bord en cliquant dessus, même si la pastille est verte
+----------------------------------------------------------------------
+
+======================================================================
+CHUNK #51
+======================================================================
+Source: FAQ CoolLibri.pdf
+Chunk ID: 50
+Total chunks: 51
+
+Content:
+----------------------------------------------------------------------
+. Maintenant que toutes les étapes sont validées grâce à la pastille verte, vous pouvez ajouter votre projet au panier et passer commande.
+----------------------------------------------------------------------

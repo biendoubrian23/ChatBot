@@ -124,29 +124,85 @@ class PDFProcessor:
         
         return documents
     
-    def process_directory(self, directory_path: str) -> List[Document]:
-        """Process all PDF files in a directory.
+    def process_txt(self, txt_path: str) -> List[Document]:
+        """Process a TXT file and create chunks.
         
         Args:
-            directory_path: Path to directory containing PDFs
+            txt_path: Path to TXT file
+            
+        Returns:
+            List of Document objects
+        """
+        try:
+            # Read the text file
+            with open(txt_path, 'r', encoding='utf-8') as f:
+                text = f.read()
+            
+            # Clean text
+            text = self.clean_text(text)
+            
+            if not text:
+                print(f"Warning: No text extracted from {txt_path}")
+                return []
+            
+            # Create chunks
+            chunks = self.text_splitter.split_text(text)
+            
+            # Create Document objects with metadata
+            documents = []
+            filename = Path(txt_path).name
+            for i, chunk in enumerate(chunks):
+                doc = Document(
+                    page_content=chunk,
+                    metadata={
+                        "source": filename,
+                        "chunk_id": i,
+                        "total_chunks": len(chunks)
+                    }
+                )
+                documents.append(doc)
+            
+            return documents
+        except Exception as e:
+            print(f"Error processing TXT file {txt_path}: {e}")
+            return []
+    
+    def process_directory(self, directory_path: str) -> List[Document]:
+        """Process all PDF and TXT files in a directory.
+        
+        Args:
+            directory_path: Path to directory containing PDFs and TXT files
             
         Returns:
             List of all Document objects
         """
         all_documents = []
-        pdf_files = list(Path(directory_path).glob("*.pdf"))
         
-        if not pdf_files:
-            print(f"Warning: No PDF files found in {directory_path}")
+        # Process PDF files
+        pdf_files = list(Path(directory_path).glob("*.pdf"))
+        txt_files = list(Path(directory_path).glob("*.txt"))
+        
+        total_files = len(pdf_files) + len(txt_files)
+        
+        if total_files == 0:
+            print(f"Warning: No PDF or TXT files found in {directory_path}")
             return []
         
-        print(f"Processing {len(pdf_files)} PDF files...")
+        print(f"Processing {len(pdf_files)} PDF files and {len(txt_files)} TXT files...")
         
+        # Process PDFs
         for pdf_file in pdf_files:
-            print(f"Processing: {pdf_file.name}")
+            print(f"Processing PDF: {pdf_file.name}")
             documents = self.process_pdf(str(pdf_file))
             all_documents.extend(documents)
             print(f"  → Created {len(documents)} chunks")
         
-        print(f"\nTotal: {len(all_documents)} chunks from {len(pdf_files)} documents")
+        # Process TXTs
+        for txt_file in txt_files:
+            print(f"Processing TXT: {txt_file.name}")
+            documents = self.process_txt(str(txt_file))
+            all_documents.extend(documents)
+            print(f"  → Created {len(documents)} chunks")
+        
+        print(f"\nTotal: {len(all_documents)} chunks from {total_files} documents")
         return all_documents

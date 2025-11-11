@@ -18,13 +18,13 @@ class Settings(BaseSettings):
     
     # Ollama Configuration
     ollama_base_url: str = "http://localhost:11434"
-    ollama_model: str = "mistral:7b"
+    ollama_model: str = "phi3:mini"
     
     # RAG Configuration
-    chunk_size: int = 800
-    chunk_overlap: int = 100
-    top_k_results: int = 5
-    rerank_top_n: int = 3
+    chunk_size: int = 550
+    chunk_overlap: int = 175
+    top_k_results: int = 4
+    rerank_top_n: int = 2
     
     # Embedding Model
     embedding_model: str = "all-MiniLM-L6-v2"

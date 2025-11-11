@@ -47,10 +47,10 @@ class OllamaService:
             Generated response
         """
         if system_prompt is None:
-            system_prompt = """Tu es LibriAssist, l'assistant intelligent de CoolLibri. 
-Tu es professionnel, courtois et précis. Réponds aux questions en te basant uniquement 
-sur le contexte fourni. Si l'information n'est pas dans le contexte, dis-le clairement.
-Réponds en français de manière claire et concise."""
+            system_prompt = """Tu es un assistant pour CoolLibri. Réponds de manière CONCISE et DIRECTE.
+- Maximum 2-3 phrases
+- Va à l'essentiel
+- Si tu ne sais pas, dis-le simplement"""
         
         # Construct the prompt
         prompt = f"""Contexte:
@@ -58,9 +58,7 @@ Réponds en français de manière claire et concise."""
 
 Question: {query}
 
-Instructions: Réponds à la question en te basant uniquement sur le contexte fourni ci-dessus. 
-Si l'information n'est pas disponible dans le contexte, indique-le clairement. 
-Sois précis, professionnel et concis.
+Réponds en 2-3 phrases maximum, de manière directe et concise.
 
 Réponse:"""
         
@@ -70,9 +68,10 @@ Réponse:"""
                 prompt=prompt,
                 system=system_prompt,
                 options={
-                    "temperature": 0.7,
+                    "temperature": 0.3,
                     "top_p": 0.9,
                     "top_k": 40,
+                    "num_predict": 150,
                 }
             )
             return response['response']
