@@ -44,16 +44,20 @@ async def chat(request: ChatRequest, pipeline=Depends(get_rag_pipeline)):
     """Handle chat requests.
     
     Args:
-        request: Chat request with user question
+        request: Chat request with user question and optional conversation history
         pipeline: RAG pipeline instance
         
     Returns:
         Chat response with answer and sources
     """
     try:
+        # Convert history to list of dicts for the pipeline
+        history_list = [{"role": msg.role, "content": msg.content} for msg in request.history] if request.history else []
+        
         response = pipeline.generate_response(
             query=request.question,
-            conversation_id=request.conversation_id
+            conversation_id=request.conversation_id,
+            history=history_list
         )
         return response
     except Exception as e:

@@ -6,6 +6,11 @@ export interface Message {
   sources?: SourceDocument[]
 }
 
+export interface HistoryMessage {
+  role: 'user' | 'assistant'
+  content: string
+}
+
 export interface SourceDocument {
   content: string
   metadata: Record<string, any>
@@ -15,6 +20,7 @@ export interface SourceDocument {
 export interface ChatRequest {
   question: string
   conversation_id?: string
+  history?: HistoryMessage[]
 }
 
 export interface ChatResponse {

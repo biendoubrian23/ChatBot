@@ -34,7 +34,8 @@ class OllamaService:
         self,
         query: str,
         context: str,
-        system_prompt: Optional[str] = None
+        system_prompt: Optional[str] = None,
+        history: Optional[List[Dict]] = None
     ) -> str:
         """Generate a response using the LLM.
         
@@ -42,6 +43,7 @@ class OllamaService:
             query: User question
             context: Retrieved context from documents
             system_prompt: Optional system prompt
+            history: Optional conversation history [{"role": "user|assistant", "content": "..."}]
             
         Returns:
             Generated response
@@ -50,17 +52,29 @@ class OllamaService:
             system_prompt = """Tu es un assistant pour CoolLibri. Réponds de manière CONCISE et DIRECTE.
 - Maximum 2-3 phrases
 - Va à l'essentiel
-- Si tu ne sais pas, dis-le simplement"""
+- Si tu ne sais pas, dis-le simplement
+- Prends en compte l'historique de conversation pour comprendre les références ("ce livre", "et si", "dans ce cas")
+- Ne répète JAMAIS les labels des sections comme "CONTEXTE", "QUESTION CLIENT" ou "INSTRUCTIONS" dans ta réponse."""
+        
+        # Build conversation history for context
+        history_text = ""
+        if history and len(history) > 0:
+            history_text = "\n\nHISTORIQUE DE LA CONVERSATION:\n"
+            for msg in history[-6:]:  # Limit to last 6 messages to avoid token overflow
+                role_label = "Client" if msg["role"] == "user" else "Assistant"
+                history_text += f"{role_label}: {msg['content']}\n"
         
         # Construct the prompt
-        prompt = f"""Contexte:
-{context}
+        prompt = f"""CONTEXTE:
+{context}{history_text}
 
 Question: {query}
 
-Réponds en 2-3 phrases maximum, de manière directe et concise.
+INSTRUCTIONS:
+- Réponds en 2-3 phrases maximum, de manière directe et concise.
+- Tiens compte de l'historique pour comprendre les références
 
-Réponse:"""
+RÉPONSE:"""
         
         try:
             response = self.client.generate(
@@ -68,10 +82,11 @@ Réponse:"""
                 prompt=prompt,
                 system=system_prompt,
                 options={
-                    "temperature": 0.3,
-                    "top_p": 0.9,
+                    "temperature": 0.2,  # Réduit pour plus de précision
+                    "top_p": 0.3,
                     "top_k": 40,
-                    "num_predict": 150,
+                    "num_predict": 100,
+                    "repeat_penalty": 1.1,
                 }
             )
             return response['response']

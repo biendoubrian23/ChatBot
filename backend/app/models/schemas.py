@@ -4,10 +4,17 @@ from typing import List, Optional
 from datetime import datetime
 
 
+class Message(BaseModel):
+    """Message model for conversation history."""
+    role: str = Field(..., description="Message role: 'user' or 'assistant'")
+    content: str = Field(..., description="Message content")
+
+
 class ChatRequest(BaseModel):
     """Chat request model."""
     question: str = Field(..., min_length=1, max_length=1000, description="User question")
     conversation_id: Optional[str] = Field(None, description="Conversation ID for context")
+    history: Optional[List[Message]] = Field(default_factory=list, description="Conversation history")
 
 
 class SourceDocument(BaseModel):

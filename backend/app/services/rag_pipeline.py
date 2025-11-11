@@ -84,13 +84,15 @@ class RAGPipeline:
     def generate_response(
         self,
         query: str,
-        conversation_id: Optional[str] = None
+        conversation_id: Optional[str] = None,
+        history: Optional[List[dict]] = None
     ) -> ChatResponse:
         """Generate a response using the RAG pipeline.
         
         Args:
             query: User question
             conversation_id: Optional conversation ID
+            history: Optional conversation history [{"role": "user|assistant", "content": "..."}]
             
         Returns:
             ChatResponse object
@@ -101,9 +103,9 @@ class RAGPipeline:
         if conversation_id is None:
             conversation_id = str(uuid.uuid4())
         
-        # Check cache
+        # Check cache (only if no history, as context changes with history)
         cache_key = query.lower().strip()
-        if cache_key in self.cache:
+        if cache_key in self.cache and not history:
             cached_response = self.cache[cache_key]
             cached_response.conversation_id = conversation_id
             cached_response.timestamp = datetime.utcnow()
@@ -127,8 +129,12 @@ class RAGPipeline:
         # Format context
         context = self.format_context(reranked_docs)
         
-        # Generate answer with LLM
-        answer = self.llm_service.generate_response(query, context)
+        # Generate answer with LLM (now with history)
+        answer = self.llm_service.generate_response(
+            query=query,
+            context=context,
+            history=history
+        )
         
         # Prepare source documents
         sources = [

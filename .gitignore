@@ -8,6 +8,11 @@ env/
 venv/
 ENV/
 *.egg-info/
+*.egg
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
 
 # Node
 node_modules/
@@ -15,6 +20,10 @@ node_modules/
 out/
 dist/
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
 
 # Environment
 .env
@@ -22,21 +31,43 @@ dist/
 !.env.example
 !.env.local.example
 
-# Vector Store
+# Vector Store & Data
 backend/data/vectorstore/*
 !backend/data/vectorstore/.gitkeep
+backend/data/chroma/
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
 
-# IDE
+# IDE & Editors
 .vscode/
 .idea/
 *.swp
 *.swo
+*.sublime-*
+.project
+.classpath
+.settings/
 
 # OS
 .DS_Store
 Thumbs.db
 *.tmp
+Desktop.ini
+$RECYCLE.BIN/
 
 # Build
 build/
 dist/
+
+# Logs
+logs/
+*.log
+
+# Cache & Temp
+.cache/
+.temp/
+tmp/
+temp/

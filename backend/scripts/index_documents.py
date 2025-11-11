@@ -2,6 +2,7 @@
 import sys
 import os
 from pathlib import Path
+import shutil
 
 # Add parent directory to path
 sys.path.append(str(Path(__file__).parent.parent))
@@ -12,10 +13,36 @@ from app.services.embeddings import EmbeddingService
 from app.services.vectorstore import VectorStoreService
 
 
+def move_scraped_files():
+    """Move scraped files from docs/scraped/ to docs/"""
+    scraped_dir = Path(settings.docs_path) / "scraped"
+    docs_dir = Path(settings.docs_path)
+    
+    if not scraped_dir.exists():
+        return 0
+    
+    moved_count = 0
+    for file in scraped_dir.glob("*.txt"):
+        dest = docs_dir / file.name
+        shutil.move(str(file), str(dest))
+        moved_count += 1
+    
+    # Supprimer le dossier scraped s'il est vide
+    if scraped_dir.exists() and not any(scraped_dir.iterdir()):
+        scraped_dir.rmdir()
+    
+    return moved_count
+
+
 def main():
     """Index PDF documents."""
     print("📚 LibriAssist - Document Indexer")
     print("=" * 50)
+    
+    # Move scraped files first
+    moved = move_scraped_files()
+    if moved > 0:
+        print(f"\n📦 Moved {moved} scraped files from docs/scraped/ to docs/")
     
     # Check if docs directory exists
     docs_path = Path(settings.docs_path)

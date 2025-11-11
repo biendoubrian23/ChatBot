@@ -40,10 +40,17 @@ export default function ChatInterface() {
     setError(null)
 
     try {
-      // Send to API
+      // Prepare conversation history (exclude sources for compact format)
+      const history = messages.map(msg => ({
+        role: msg.role,
+        content: msg.content
+      }))
+
+      // Send to API with history
       const response = await chatAPI.sendMessage({
         question: content,
         conversation_id: conversationId || undefined,
+        history: history, // Send conversation history
       })
 
       // Update conversation ID
