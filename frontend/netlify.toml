@@ -2,7 +2,8 @@
   command = "npm run build"
   publish = ".next"
 
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+[functions]
+  directory = ".netlify/functions"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
