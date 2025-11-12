@@ -1,6 +1,6 @@
 """RAG pipeline service orchestrating all components."""
 import time
-from typing import List, Tuple, Optional
+from typing import List, Tuple, Optional, Union
 from datetime import datetime
 import uuid
 from langchain.schema import Document
@@ -8,6 +8,7 @@ from langchain.schema import Document
 from app.services.embeddings import EmbeddingService
 from app.services.vectorstore import VectorStoreService
 from app.services.llm import OllamaService
+from app.services.huggingface_llm import HuggingFaceLLMService
 from app.models.schemas import ChatResponse, SourceDocument
 
 
@@ -17,7 +18,7 @@ class RAGPipeline:
     def __init__(
         self,
         vectorstore: VectorStoreService,
-        llm_service: OllamaService,
+        llm_service: Union[OllamaService, HuggingFaceLLMService],
         top_k: int = 5,
         rerank_top_n: int = 3
     ):
@@ -25,7 +26,7 @@ class RAGPipeline:
         
         Args:
             vectorstore: Vector store service
-            llm_service: LLM service
+            llm_service: LLM service (Ollama or Hugging Face)
             top_k: Number of documents to retrieve
             rerank_top_n: Number of documents after reranking
         """

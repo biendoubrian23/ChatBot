@@ -19,13 +19,14 @@ class Settings(BaseSettings):
         "http://localhost:5173",
         "https://*.netlify.app",
         "https://libriassist.netlify.app",
-        "https://*.ngrok-free.dev",
-        "https://tsunami-c-postpositively-noel.ngrok-free.dev"
+        "https://*.ngrok-free.app",
+        "https://*.ngrok.io",
+        "https://*.ngrok.app"
     ]
     
     # Ollama Configuration
-    ollama_base_url: str = "http://localhost:11434"
-    ollama_model: str = "llama3.1:8b"  # Upgraded from phi3:mini for +50% quality
+    ollama_base_url: str = "http://localhost:11434"  # Ollama local
+    ollama_model: str = "llama3.1:8b"
     
     # RAG Configuration
     chunk_size: int = 700  # Increased from 550 for +15% completeness

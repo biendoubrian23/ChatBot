@@ -94,9 +94,11 @@ app.include_router(routes.router, prefix="/api/v1", tags=["chatbot"])
 
 
 if __name__ == "__main__":
+    import os
+    port = int(os.environ.get("PORT", settings.api_port))
     uvicorn.run(
         "main:app",
-        host=settings.api_host,
-        port=settings.api_port,
-        reload=settings.api_reload
+        host="0.0.0.0",  # Render nécessite 0.0.0.0
+        port=port,       # Port dynamique de Render
+        reload=False     # Pas de reload en production
     )
