@@ -1,6 +1,6 @@
 """RAG pipeline service orchestrating all components."""
 import time
-from typing import List, Tuple, Optional, Union
+from typing import List, Tuple, Optional
 from datetime import datetime
 import uuid
 from langchain.schema import Document
@@ -8,7 +8,6 @@ from langchain.schema import Document
 from app.services.embeddings import EmbeddingService
 from app.services.vectorstore import VectorStoreService
 from app.services.llm import OllamaService
-from app.services.huggingface_llm import HuggingFaceLLMService
 from app.models.schemas import ChatResponse, SourceDocument
 
 
@@ -18,7 +17,7 @@ class RAGPipeline:
     def __init__(
         self,
         vectorstore: VectorStoreService,
-        llm_service: Union[OllamaService, HuggingFaceLLMService],
+        llm_service: OllamaService,
         top_k: int = 5,
         rerank_top_n: int = 3
     ):
