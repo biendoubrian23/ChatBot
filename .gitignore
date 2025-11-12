@@ -71,3 +71,6 @@ logs/
 .temp/
 tmp/
 temp/
+
+# Local Netlify folder
+.netlify

@@ -19,7 +19,7 @@ class Settings(BaseSettings):
         "http://localhost:5173",
         "https://*.netlify.app",
         "https://*.ngrok-free.dev",
-        "https://suspiciously-noel.ngrok-free.dev"
+        "https://tsunami-c-postpositively-noel.ngrok-free.dev"
     ]
     
     # Ollama Configuration
