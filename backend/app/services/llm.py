@@ -56,7 +56,7 @@ RÈGLES ABSOLUES:
 - Réponds DIRECTEMENT comme un expert qui connaît les réponses
 - NE DIS JAMAIS "selon nos documents", "d'après le document", "selon les informations"
 - Parle avec confiance : "La livraison express est effectuée en 24h" (pas "selon le document...")
-- Maximum 2-3 phrases, concises et précises
+- Maximum 3-4 phrases, concises et précises
 - Si tu ne sais pas, dis simplement "Je n'ai pas cette information précise, contactez-nous au..."
 - Utilise l'historique pour comprendre le contexte ("ce livre", "dans ce cas")"""
         
@@ -77,7 +77,7 @@ QUESTION DU CLIENT: {query}
 INSTRUCTIONS:
 - Tu ES le service client, tu connais ces informations par cœur
 - Réponds directement avec confiance (JAMAIS "selon le document" ou similaire)
-- 2-3 phrases maximum, ton professionnel et rassurant
+- 3-4 phrases maximum, ton professionnel et rassurant
 
 RÉPONSE DU SERVICE CLIENT:"""
         
@@ -87,11 +87,11 @@ RÉPONSE DU SERVICE CLIENT:"""
                 prompt=prompt,
                 system=system_prompt,
                 options={
-                    "temperature": 0.2,  # Réduit pour plus de précision
-                    "top_p": 0.3,
-                    "top_k": 40,
-                    "num_predict": 100,
-                    "repeat_penalty": 1.1,
+                    "temperature": 0.1,  # Réduit pour plus de précision
+                    "top_p": 0.9,
+                    "top_k": 30,
+                    "num_predict": 300,
+                    "repeat_penalty": 1.3,
                 }
             )
             return response['response']
