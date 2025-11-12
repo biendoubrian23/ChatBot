@@ -18,6 +18,7 @@ class Settings(BaseSettings):
         "http://localhost:3000",
         "http://localhost:5173",
         "https://*.netlify.app",
+        "https://libriassist.netlify.app",
         "https://*.ngrok-free.dev",
         "https://tsunami-c-postpositively-noel.ngrok-free.dev"
     ]
