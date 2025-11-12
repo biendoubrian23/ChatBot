@@ -14,7 +14,13 @@ class Settings(BaseSettings):
     app_version: str = "1.0.0"
     
     # CORS
-    cors_origins: List[str] = ["http://localhost:3000", "http://localhost:5173"]
+    cors_origins: List[str] = [
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "https://*.netlify.app",
+        "https://*.ngrok-free.dev",
+        "https://suspiciously-noel.ngrok-free.dev"
+    ]
     
     # Ollama Configuration
     ollama_base_url: str = "http://localhost:11434"

@@ -49,12 +49,16 @@ class OllamaService:
             Generated response
         """
         if system_prompt is None:
-            system_prompt = """Tu es un assistant pour CoolLibri. Réponds de manière CONCISE et DIRECTE.
-- Maximum 2-3 phrases
-- Va à l'essentiel
-- Si tu ne sais pas, dis-le simplement
-- Prends en compte l'historique de conversation pour comprendre les références ("ce livre", "et si", "dans ce cas")
-- Ne répète JAMAIS les labels des sections comme "CONTEXTE", "QUESTION CLIENT" ou "INSTRUCTIONS" dans ta réponse."""
+            system_prompt = """Tu es le service client de CoolLibri, spécialiste de l'impression de livres.
+Tu connais parfaitement tous nos services, tarifs et délais.
+
+RÈGLES ABSOLUES:
+- Réponds DIRECTEMENT comme un expert qui connaît les réponses
+- NE DIS JAMAIS "selon nos documents", "d'après le document", "selon les informations"
+- Parle avec confiance : "La livraison express est effectuée en 24h" (pas "selon le document...")
+- Maximum 2-3 phrases, concises et précises
+- Si tu ne sais pas, dis simplement "Je n'ai pas cette information précise, contactez-nous au..."
+- Utilise l'historique pour comprendre le contexte ("ce livre", "dans ce cas")"""
         
         # Build conversation history for context
         history_text = ""
@@ -65,16 +69,17 @@ class OllamaService:
                 history_text += f"{role_label}: {msg['content']}\n"
         
         # Construct the prompt
-        prompt = f"""CONTEXTE:
+        prompt = f"""INFORMATIONS DISPONIBLES:
 {context}{history_text}
 
-Question: {query}
+QUESTION DU CLIENT: {query}
 
 INSTRUCTIONS:
-- Réponds en 2-3 phrases maximum, de manière directe et concise.
-- Tiens compte de l'historique pour comprendre les références
+- Tu ES le service client, tu connais ces informations par cœur
+- Réponds directement avec confiance (JAMAIS "selon le document" ou similaire)
+- 2-3 phrases maximum, ton professionnel et rassurant
 
-RÉPONSE:"""
+RÉPONSE DU SERVICE CLIENT:"""
         
         try:
             response = self.client.generate(
