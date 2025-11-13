@@ -517,8 +517,8 @@ Description :
 Livraison de vos livres imprimés directement à votre adresse personnelle.
 Tarif :
 
-Coût : 7,50 € TTC (Toutes Taxes Comprises)
-Frais fixes quel que soit le nombre de livres commandés
+Coût de livraison : 7,50 € TTC il s'agit des frais de livraison a domicile ou point relais (Toutes Taxes Comprises)
+Frais fixes quel que soit le nombre de livres commandés a domicile ou point relais
 
 Avantages :
 
@@ -600,7 +600,7 @@ Coût : +12,50 € TTC
 Supplément ajouté au prix de base du livre
 
 Délai de production :
-Production prioritaire, généralement entre 2 et 4 jours ouvrés, auquel s'ajoute le délai de livraison.
+Production prioritaire, généralement entre 2 et 4 jours ouvrés uniquement pour la production et non pour la durée total de la commande, auquel s'ajoute le délai de livraison.
 Avantages :
 
 Priorité dans la chaîne de production

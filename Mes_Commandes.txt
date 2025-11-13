@@ -1,0 +1,8 @@
+1. Indexation des documents :
+cd X:\MesApplis\BiendouCorp\ChatBot\backend; python scripts/index_documents.py
+
+2. Backend (FastAPI) :
+cd X:\MesApplis\BiendouCorp\ChatBot\backend; .\.venv\Scripts\Activate.ps1; uvicorn app.main:app --reload --host 0.0.0.0 --port 8080
+
+3. ngrok (tunnel public) :
+ngrok http 8080

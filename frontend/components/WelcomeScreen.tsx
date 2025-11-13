@@ -7,13 +7,26 @@ interface WelcomeScreenProps {
 }
 
 const suggestions = [
-  "Comment fonctionne CoolLibri ?",
-  "Quels sont les tarifs ?",
-  "Comment puis-je créer un compte ?",
-  "Quelles sont les fonctionnalités disponibles ?"
+  "Puis-je imprimer un seul exemplaire ?",
+  "Puis-je recevoir un échantillon avant impression ?",
+  "Combien de temps faut-il pour recevoir mon livre imprimé ?",
+  "Quels formats de fichiers sont acceptés (PDF, Word, etc.) ?",
+  "Quand et comment suis-je payé pour mes ventes ?",
+  "Quels types de livres puis-je faire imprimer sur CoolLibri ?",
+  "Comment faire une couverture personnalisée ?",
+  "Puis-je modifier mon livre après publication ?",
+  "Quels sont les moyens de paiement acceptés ?",
+  "Est-ce que je garde mes droits d'auteur ?",
+  "Mon livre est-il protégé une fois publié sur CoolLibri ?",
+  "CoolLibri peut-il vendre mon livre sans mon accord ?",
+  "Puis-je supprimer mon livre du site quand je veux ?"
 ]
 
 export default function WelcomeScreen({ onSendMessage }: WelcomeScreenProps) {
+  // Split suggestions into two rows for carousel effect
+  const firstRow = suggestions.slice(0, 7)
+  const secondRow = suggestions.slice(7)
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -51,26 +64,70 @@ export default function WelcomeScreen({ onSendMessage }: WelcomeScreenProps) {
         </motion.p>
       </div>
 
+      {/* Carousel container */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.4 }}
-        className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full max-w-2xl px-4"
+        className="w-full overflow-hidden space-y-4"
       >
-        {suggestions.map((suggestion, index) => (
-          <motion.button
-            key={index}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 + index * 0.1 }}
-            whileHover={{ scale: 1.02, y: -2 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => onSendMessage(suggestion)}
-            className="px-4 py-3 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-700 text-left text-sm text-gray-700 dark:text-gray-300 shadow-soft hover:shadow-soft-lg transition-all"
+        {/* First row - scrolling left to right */}
+        <div className="relative overflow-hidden">
+          <motion.div
+            animate={{
+              x: ['-100%', '0%']
+            }}
+            transition={{
+              x: {
+                repeat: Infinity,
+                repeatType: "loop",
+                duration: 30,
+                ease: "linear"
+              }
+            }}
+            className="flex gap-3 whitespace-nowrap"
           >
-            {suggestion}
-          </motion.button>
-        ))}
+            {/* Duplicate for seamless loop */}
+            {[...firstRow, ...firstRow].map((suggestion, index) => (
+              <button
+                key={`first-${index}`}
+                onClick={() => onSendMessage(suggestion)}
+                className="inline-block px-6 py-3 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-700 text-sm text-gray-700 dark:text-gray-300 shadow-soft hover:shadow-soft-lg transition-all hover:scale-105"
+              >
+                {suggestion}
+              </button>
+            ))}
+          </motion.div>
+        </div>
+
+        {/* Second row - scrolling right to left */}
+        <div className="relative overflow-hidden">
+          <motion.div
+            animate={{
+              x: ['0%', '-100%']
+            }}
+            transition={{
+              x: {
+                repeat: Infinity,
+                repeatType: "loop",
+                duration: 25,
+                ease: "linear"
+              }
+            }}
+            className="flex gap-3 whitespace-nowrap"
+          >
+            {/* Duplicate for seamless loop */}
+            {[...secondRow, ...secondRow].map((suggestion, index) => (
+              <button
+                key={`second-${index}`}
+                onClick={() => onSendMessage(suggestion)}
+                className="inline-block px-6 py-3 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-700 text-sm text-gray-700 dark:text-gray-300 shadow-soft hover:shadow-soft-lg transition-all hover:scale-105"
+              >
+                {suggestion}
+              </button>
+            ))}
+          </motion.div>
+        </div>
       </motion.div>
     </motion.div>
   )
