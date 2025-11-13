@@ -83,11 +83,11 @@ async def chat_stream(request: ChatRequest, pipeline=Depends(get_rag_pipeline)):
             history_list = [{"role": msg.role, "content": msg.content} for msg in request.history] if request.history else []
             
             # Get context from vectorstore
-            context_docs = pipeline.vectorstore.search(request.question, k=pipeline.top_k)
-            context = "\n\n".join([doc.page_content for doc in context_docs])
+            context_docs = pipeline.vectorstore.similarity_search(request.question, k=pipeline.top_k)
+            context = "\n\n".join([doc.page_content for doc, _ in context_docs])
             
             # Send sources first
-            sources = [{"content": doc.page_content, "metadata": doc.metadata} for doc in context_docs]
+            sources = [{"content": doc.page_content, "metadata": doc.metadata} for doc, _ in context_docs]
             yield f"data: {json.dumps({'type': 'sources', 'sources': sources})}\n\n"
             
             # Stream the response
