@@ -19,11 +19,9 @@
 #>
 
 Write-Host "`n" -NoNewline
-Write-Host "╔═══════════════════════════════════════════════════════════════╗" -ForegroundColor Cyan
-Write-Host "║                                                               ║" -ForegroundColor Cyan
-Write-Host "║              🚀 DÉMARRAGE LIBRIASSIST LOCAL 🚀               ║" -ForegroundColor Cyan
-Write-Host "║                                                               ║" -ForegroundColor Cyan
-Write-Host "╚═══════════════════════════════════════════════════════════════╝" -ForegroundColor Cyan
+Write-Host "================================================" -ForegroundColor Cyan
+Write-Host "         DEMARRAGE LIBRIASSIST LOCAL          " -ForegroundColor Cyan
+Write-Host "================================================" -ForegroundColor Cyan
 Write-Host ""
 
 # Fonction pour vérifier si un processus écoute sur un port
@@ -48,19 +46,67 @@ function Write-Step {
     }
     
     $icon = switch ($Status) {
-        "SUCCESS" { "✅" }
-        "ERROR" { "❌" }
-        "WARNING" { "⚠️" }
-        default { "🔧" }
+        "SUCCESS" { "[OK]" }
+        "ERROR" { "[X]" }
+        "WARNING" { "[!]" }
+        default { "[*]" }
     }
     
     Write-Host "$icon $Message" -ForegroundColor $color
 }
 
 # ============================================================
-# ÉTAPE 1: Vérification Ollama
+# ÉTAPE 1: Indexation des documents
 # ============================================================
-Write-Step "ÉTAPE 1/4: Vérification d'Ollama..."
+Write-Step "ÉTAPE 1/5: Indexation des documents PDF..."
+
+# Vérifier s'il y a des documents à indexer dans le dossier racine docs/
+$docsPath = "$PSScriptRoot\docs"
+if (Test-Path $docsPath) {
+    $pdfCount = (Get-ChildItem -Path $docsPath -Filter "*.pdf" -File).Count
+    $txtCount = (Get-ChildItem -Path $docsPath -Filter "*.txt" -File).Count
+    $totalDocs = $pdfCount + $txtCount
+    
+    if ($totalDocs -gt 0) {
+        Write-Step "$totalDocs document(s) trouvé(s) - Lancement de l'indexation..." -Status "INFO"
+        
+        # Aller dans le backend pour l'indexation
+        Push-Location "$PSScriptRoot\backend"
+        
+        # Créer et activer l'environnement virtuel si nécessaire
+        if (Test-Path ".venv\Scripts\Activate.ps1") {
+            . .venv\Scripts\Activate.ps1
+        } else {
+            Write-Step "Création de l'environnement virtuel pour l'indexation..." -Status "INFO"
+            python -m venv .venv
+            . .venv\Scripts\Activate.ps1
+            pip install -r requirements.txt
+            Write-Step "Environnement prêt pour l'indexation" -Status "SUCCESS"
+        }
+        
+        # Lancer le script d'indexation
+        python scripts\index_documents.py
+        
+        Pop-Location
+        
+        if ($LASTEXITCODE -eq 0) {
+            Write-Step "Documents indexés avec succès" -Status "SUCCESS"
+        } else {
+            Write-Step "Erreur lors de l'indexation" -Status "WARNING"
+        }
+    } else {
+        Write-Step "Aucun nouveau document à indexer" -Status "INFO"
+    }
+} else {
+    Write-Step "Dossier docs/ non trouvé - indexation ignorée" -Status "INFO"
+}
+
+Pop-Location
+
+# ============================================================
+# ÉTAPE 2: Vérification Ollama
+# ============================================================
+Write-Step "`nÉTAPE 2/5: Vérification d'Ollama..."
 
 try {
     $ollamaVersion = ollama --version 2>&1
@@ -103,9 +149,9 @@ try {
 }
 
 # ============================================================
-# ÉTAPE 2: Activation environnement Python et démarrage backend
+# ÉTAPE 3: Activation environnement Python et démarrage backend
 # ============================================================
-Write-Step "`nÉTAPE 2/4: Démarrage du backend FastAPI..."
+Write-Step "`nÉTAPE 3/5: Démarrage du backend FastAPI..."
 
 # Vérifier si le port 8080 est déjà utilisé
 if (Test-Port -Port 8080) {
@@ -116,15 +162,37 @@ if (Test-Port -Port 8080) {
     # Aller dans le dossier backend
     Push-Location "$PSScriptRoot\backend"
     
-    # Activer l'environnement virtuel
+    # Créer et activer l'environnement virtuel
     if (Test-Path ".venv\Scripts\Activate.ps1") {
         . .venv\Scripts\Activate.ps1
         Write-Step "Environnement virtuel activé" -Status "SUCCESS"
     } else {
-        Write-Step "Environnement virtuel non trouvé (.venv)" -Status "ERROR"
-        Write-Host "`n   Créez l'environnement avec: python -m venv .venv`n" -ForegroundColor Yellow
-        Pop-Location
-        exit 1
+        Write-Step "Environnement virtuel non trouvé - création automatique..." -Status "INFO"
+        
+        # Créer l'environnement virtuel
+        python -m venv .venv
+        if ($LASTEXITCODE -eq 0) {
+            Write-Step "Environnement virtuel créé avec succès" -Status "SUCCESS"
+            
+            # Activer l'environnement
+            . .venv\Scripts\Activate.ps1
+            Write-Step "Environnement virtuel activé" -Status "SUCCESS"
+            
+            # Installer les dépendances
+            Write-Step "Installation des dépendances Python..." -Status "INFO"
+            pip install -r requirements.txt
+            if ($LASTEXITCODE -eq 0) {
+                Write-Step "Dépendances installées avec succès" -Status "SUCCESS"
+            } else {
+                Write-Step "Erreur lors de l'installation des dépendances" -Status "ERROR"
+                Pop-Location
+                exit 1
+            }
+        } else {
+            Write-Step "Erreur lors de la création de l'environnement virtuel" -Status "ERROR"
+            Pop-Location
+            exit 1
+        }
     }
     
     Write-Step "Lancement de uvicorn sur le port 8080..."
@@ -169,9 +237,9 @@ if (Test-Port -Port 8080) {
 }
 
 # ============================================================
-# ÉTAPE 3: Vérification ngrok
+# ÉTAPE 4: Vérification ngrok
 # ============================================================
-Write-Step "`nÉTAPE 3/4: Vérification de ngrok..."
+Write-Step "`nÉTAPE 4/5: Vérification de ngrok..."
 
 try {
     $ngrokVersion = ngrok version 2>&1
@@ -186,17 +254,17 @@ try {
 }
 
 # ============================================================
-# ÉTAPE 4: Démarrage du tunnel ngrok
+# ÉTAPE 5: Démarrage du tunnel ngrok
 # ============================================================
-Write-Step "`nÉTAPE 4/4: Création du tunnel ngrok..."
+Write-Step "`nÉTAPE 5/5: Création du tunnel ngrok..."
 
 Write-Host "`n┌─────────────────────────────────────────────────────────────┐" -ForegroundColor Green
-Write-Host "│  🌐 Lancement du tunnel ngrok...                           │" -ForegroundColor Green
+Write-Host "│  Lancement du tunnel ngrok...                               │" -ForegroundColor Green
 Write-Host "│                                                             │" -ForegroundColor Green
-Write-Host "│  ⚠️  IMPORTANT: Gardez cette fenêtre OUVERTE !             │" -ForegroundColor Yellow
+Write-Host "│  IMPORTANT: Gardez cette fenetre OUVERTE !                  │" -ForegroundColor Yellow
 Write-Host "│                                                             │" -ForegroundColor Green
 Write-Host "│  L'URL ngrok sera affichée ci-dessous.                     │" -ForegroundColor Green
-Write-Host "│  Si elle change, mettez à jour Netlify avec:               │" -ForegroundColor Green
+Write-Host "│  Si elle change, mettez a jour Netlify avec:               │" -ForegroundColor Green
 Write-Host "│                                                             │" -ForegroundColor Green
 Write-Host "│  netlify env:set NEXT_PUBLIC_API_URL 'https://xxx/api/v1'  │" -ForegroundColor Cyan
 Write-Host "│  netlify deploy --prod                                     │" -ForegroundColor Cyan

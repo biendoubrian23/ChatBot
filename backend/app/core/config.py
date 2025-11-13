@@ -29,8 +29,8 @@ class Settings(BaseSettings):
     ollama_model: str = "llama3.1:8b"
     
     # RAG Configuration
-    chunk_size: int = 700  # Increased from 550 for +15% completeness
-    chunk_overlap: int = 200  # Adjusted proportionally
+    chunk_size: int = 1000  # Increased from 550 for +15% completeness
+    chunk_overlap: int = 300  # Adjusted proportionally
     top_k_results: int = 6  # Increased from 4 for better context
     rerank_top_n: int = 3  # Increased from 2 for better precision
     

@@ -89,8 +89,8 @@ RÉPONSE DU SERVICE CLIENT:"""
                 options={
                     "temperature": 0.1,  # Réduit pour plus de précision
                     "top_p": 0.9,
-                    "top_k": 30,
-                    "num_predict": 300,
+                    "top_k": 50,
+                    "num_predict": 400,
                     "repeat_penalty": 1.3,
                 }
             )

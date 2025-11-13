@@ -1,0 +1,926 @@
+Guide complet du processus de commande et de création de livre
+1. Choix du délai de traitement et impact sur les dates de livraison
+Délai de traitement Standard (gratuit)
+Lorsque vous sélectionnez l'option de traitement Standard (gratuite), votre commande suit un processus classique de préparation. Dans l'exemple présenté, avec une commande passée le 13 novembre 2025, vous pouvez observer que :
+
+Date d'expédition prévue : 25 novembre 2025
+Date de livraison estimée : Entre le 27 novembre et le 28 novembre 2025
+Prix : Gratuit (aucun supplément pour le délai standard)
+Délai total : Environ 14 à 15 jours entre la commande et la réception
+
+Ce délai permet à l'équipe de production de traiter votre commande avec soin, d'effectuer tous les contrôles qualité nécessaires et de préparer votre livre pour l'impression et l'expédition.
+Délai de traitement Express (+ 12,50 € TTC)
+Si vous avez besoin de recevoir votre livre plus rapidement, l'option Express est disponible moyennant un supplément de 12,50 € TTC. Avec cette option prioritaire :
+
+Date d'expédition prévue : 24 novembre 2025 (un jour plus tôt que le standard)
+Date de livraison estimée : Entre le 25 novembre et le 26 novembre 2025
+Gain de temps : 2 à 3 jours par rapport au délai standard
+Prix : + 12,50 € TTC en supplément
+
+L'option Express est particulièrement recommandée si vous avez une échéance importante (cadeau, événement, présentation) et que vous souhaitez recevoir votre livre dans les délais les plus courts possibles.
+Comment choisir le bon délai ?
+
+Optez pour le Standard si vous n'êtes pas pressé et souhaitez économiser les frais supplémentaires
+Choisissez l'Express si vous avez besoin de votre livre rapidement ou si vous approchez d'une date limite importante
+Les dates affichées sont des estimations basées sur une livraison en France métropolitaine
+
+Important : Ces délais s'appliquent uniquement après validation complète de votre fichier et de votre commande. Assurez-vous que vos fichiers sont conformes pour éviter tout retard supplémentaire.
+2. Démarrage du projet : création de votre livre
+Lancement du processus
+Après avoir choisi vos options de livraison, cliquez sur le bouton vert "CRÉER MON PROJET" pour démarrer le processus de création de votre livre. Cette action vous redirige vers l'interface de création guidée en plusieurs étapes.
+Étape à la création du livre
+Le processus est divisé en 4 étapes principales clairement visibles sur le côté droit de l'interface :
+
+Devis (complété ✓)
+Télécharger mes fichiers (étape actuelle)
+Couverture et dos (à venir)
+Récapitulatif (à venir)
+
+Cette progression vous permet de toujours savoir où vous en êtes dans le processus de création.
+3. Téléchargement de vos fichiers : première étape cruciale
+a. Quel est le titre de votre livre ?
+La première information demandée est le titre de votre livre. Cette information sera utilisée pour :
+
+Identifier votre projet dans votre espace personnel
+Faciliter le suivi de votre commande
+Vous permettre de retrouver facilement votre projet si vous avez plusieurs livres en cours
+
+Conseil : Choisissez un titre clair et précis. Si vous travaillez sur plusieurs projets simultanément, utilisez des titres distincts pour éviter toute confusion.
+Note importante : En continuant, vous certifiez être le propriétaire de l'ouvrage ou avoir l'autorisation de ce dernier pour procéder à son impression. Cette certification est essentielle pour respecter les droits d'auteur et la propriété intellectuelle.
+b. Avez-vous déjà créé votre couverture ?
+Cette question détermine le parcours que vous allez suivre :
+Option 1 : "Oui" - Vous avez déjà votre couverture
+Si vous sélectionnez "Oui", le bouton "JE CONTINUE" devient vert, indiquant que vous pouvez passer directement à l'étape suivante. Vous devrez alors télécharger votre fichier de couverture complet (première de couverture, dos et quatrième de couverture) au format PDF.
+Avantages :
+
+Contrôle total sur le design de votre couverture
+Possibilité d'utiliser votre propre logiciel de création graphique
+Aucune limitation créative
+
+Points de vigilance :
+
+Votre fichier doit respecter les dimensions exactes requises
+Les marges de sécurité (fonds perdus) doivent être respectées
+Le format PDF doit être conforme aux spécifications techniques
+
+Option 2 : "Non" - Vous utiliserez les modèles gratuits proposés
+Si vous sélectionnez "Non, j'utiliserai les modèles gratuits proposés", un nouveau texte d'explication apparaît avec des informations importantes :
+Message affiché :
+"À ce stade vous allez pouvoir télécharger vos fichiers (Word ou PDF). Ces derniers seront analysés afin de vérifier qu'ils répondent aux caractéristiques du devis précédemment réalisé."
+Point important concernant la fusion de fichiers :
+Le système précise : "Vous devez nous fournir un seul fichier, contenant toutes les pages du livre les unes à la suite des autres. Si vos pages ne sont pas fusionnées en un seul fichier, vous pouvez le faire en cliquant ici."
+Le lien "cliquant ici" renvoie vers iLovePDF, un outil en ligne gratuit qui permet de :
+
+Fusionner plusieurs fichiers PDF en un seul document
+Réorganiser l'ordre des pages
+Combiner des documents de différentes sources
+
+Pourquoi est-ce important ?
+
+Le système ne peut analyser qu'un seul fichier à la fois
+Toutes vos pages doivent être dans l'ordre de lecture final
+Cela facilite le processus d'impression et évite les erreurs de pagination
+
+Conseils pour préparer votre fichier :
+
+Assurez-vous que toutes vos pages sont numérotées correctement
+Vérifiez l'ordre des chapitres avant de fusionner
+Conservez une copie de vos fichiers originaux séparés
+
+c. Je télécharge mon fichier - L'upload de votre intérieur
+Lorsque vous cliquez sur le bouton vert "JE TÉLÉCHARGE MON INTÉRIEUR SEUL", votre gestionnaire de fichiers s'ouvre automatiquement. Cette fonctionnalité vous permet de :
+Navigation dans vos fichiers :
+
+Parcourir les dossiers de votre ordinateur
+Sélectionner le fichier PDF ou Word contenant votre manuscrit
+Confirmer le téléchargement vers la plateforme
+
+Formats acceptés :
+
+PDF (recommandé) : Format le plus stable, préserve la mise en page exacte
+Word (DOC/DOCX) : Accepté mais peut nécessiter des ajustements de mise en page
+
+Recommandations pour un téléchargement réussi :
+
+Vérifiez que votre connexion Internet est stable avant de commencer
+Pour les gros fichiers (plus de 50 Mo), privilégiez une connexion filaire
+Ne fermez pas la fenêtre pendant le téléchargement
+Attendez la confirmation complète du téléchargement avant de continuer
+
+Composition de votre fichier : règles importantes
+Un encadré d'information jaune vous indique comment doit être composé votre fichier :
+Règle 1 : Un seul fichier fusionné
+"Vous devez nous fournir un seul fichier, contenant toutes les pages du livre les unes à la suite des autres. Si vos pages ne sont pas fusionnées en un seul fichier, vous pouvez le faire en cliquant ici."
+Explication détaillée :
+
+Ne téléchargez pas vos chapitres séparément
+N'envoyez pas plusieurs fichiers à assembler
+Fusionnez tout en amont dans l'ordre de lecture final
+Utilisez iLovePDF (lien fourni) si vous avez besoin d'aide pour fusionner
+
+Règle 2 : Création de la couverture à l'étape suivante
+"Vous pourrez créer votre couverture dans l'étape suivante."
+Si vous avez choisi "Non" à la question sur la couverture, rassurez-vous : une étape dédiée vous permettra de créer votre couverture facilement avec les modèles proposés.
+Règle 3 : Marges de sécurité - TRÈS IMPORTANT
+"Pensez à ne pas mettre d'éléments importants (visages, textes...) trop proches de l'intérieur de la reliure : garder 2 cm de marge."
+Pourquoi cette règle est cruciale ?
+
+La reliure "mange" une partie de la page près du dos du livre
+Les éléments trop près du bord intérieur peuvent être partiellement cachés
+Cela affecte particulièrement les images, tableaux et textes importants
+
+Conseils pratiques pour les marges :
+
+Marge intérieure (côté reliure) : Minimum 2 cm, idéalement 2,5 cm
+Marge extérieure : Minimum 1,5 cm
+Marges haute et basse : Minimum 2 cm
+Pour les images pleine page : prévoir 3 mm de débord (fond perdu) de chaque côté
+
+Éléments à surveiller particulièrement :
+
+Les numéros de page (ne les placez pas trop près du bord)
+Les titres de chapitres
+Les images importantes (visages, schémas, graphiques)
+Les tableaux et leurs bordures
+Les citations ou encadrés de texte
+
+4. Analyse automatique de vos fichiers
+Processus d'analyse
+Après avoir cliqué sur "LANCER L'ANALYSE DE MES FICHIERS", le système effectue un contrôle complet de votre document. Cette analyse est essentielle pour garantir la qualité finale de votre livre.
+Que vérifie l'analyse ?
+
+Nombre de pages : Correspond-il au devis initial ?
+Format du document : Est-il conforme aux dimensions choisies (110 x 170 mm dans l'exemple) ?
+Qualité des images : Résolution suffisante pour l'impression ?
+Conformité du fichier : Respect des spécifications techniques ?
+Présence d'un achevé d'imprimer : Page légale ajoutée automatiquement
+
+Durée de l'analyse
+Temps moyen : 1 à 2 minutes pour un document standard
+Ce délai peut varier en fonction de :
+
+La taille de votre fichier (nombre de pages)
+Le poids du fichier (quantité d'images)
+La complexité de la mise en page
+La charge du serveur à ce moment
+
+Conseil : Soyez patient et ne rafraîchissez pas la page pendant l'analyse. Une fois terminée, vous recevrez un rapport de conformité.
+5. Résultats de l'analyse : warnings et recommandations
+Exemple de warning : Format non conforme
+Dans l'exemple de la capture d'écran 8, on peut voir un avertissement concernant le FORMAT :
+Message d'alerte (icône orange ⚠️) :
+"Attention, votre fichier n'est pas au bon format !
+
+Format de votre fichier : 216 x 279 mm
+Format du livre que vous avez choisi : 110 x 170 mm"
+
+Explication du problème :
+Votre fichier a été créé dans un format différent de celui sélectionné lors du devis. Dans cet exemple :
+
+Le fichier téléchargé est en format 216 x 279 mm (proche d'un format Letter américain)
+Le format choisi pour le livre est 110 x 170 mm (format poche français standard)
+
+Conséquences possibles :
+
+Le logiciel a automatiquement récupéré votre fichier et l'a redimensionné proportionnellement
+Cela réduit la taille du texte et des images dans les mêmes proportions
+Le texte risque d'être trop petit pour une lecture confortable
+
+Comprendre le redimensionnement automatique
+Le système précise : "Notre logiciel a tout de même récupéré votre fichier et l'a redimensionné proportionnellement, réduisant donc en même temps la taille du texte."
+Qu'est-ce que cela signifie concrètement ?
+Imaginez que votre document original fait 216 mm de large, et qu'il doit être réduit à 110 mm. Cela représente une réduction d'environ 49% de la taille. Par conséquent :
+
+Une police de 12 points devient environ 6 points
+Une image de 10 cm devient environ 5 cm
+Toute la mise en page est proportionnellement réduite
+
+Pourquoi est-ce problématique ?
+
+Les textes deviennent trop petits et difficiles à lire
+Les images perdent en impact visuel
+La lisibilité générale du livre est compromise
+
+Comment corriger le problème ?
+Le système vous encourage : "Le texte risque d'être trop petit. Veuillez vérifier sur les quelques pages présentées ici à titre d'exemple."
+Options pour avoir un fichier au bon format :
+Solution 1 : Corriger les réglages dans votre document original
+"Il vous faut corriger votre fichier en le préparant au format 110 x 170 mm, le format final de votre livre. Pour cela :"
+a) Corriger les réglages dans votre document Word
+
+Ouvrez votre fichier Word original
+Allez dans "Mise en page" ou "Disposition"
+Définissez les dimensions personnalisées : 110 mm x 170 mm
+Word ajustera automatiquement le contenu
+Vérifiez la pagination et les sauts de page
+Enregistrez et réexportez en PDF
+
+Le système propose même un tutoriel : "Comment changer les dimensions de page sous Word ?"
+Solution 2 : Charger un gabarit vierge pré-configuré
+"Soit, vous pouvez charger notre gabarit vierge, où les bons réglages sont mis en place :"
+Le système offre deux options de téléchargement :
+
+Télécharger le gabarit du format 110 x 170 mm 📄 Word
+Télécharger le gabarit du format 110 x 170 mm 📄 Adobe Indesign
+
+Avantages du gabarit :
+
+Dimensions exactes déjà configurées
+Marges de sécurité pré-définies
+Styles de paragraphe optimisés pour l'impression
+Vous n'avez qu'à copier-coller votre contenu
+
+Comment utiliser le gabarit ?
+
+Téléchargez le gabarit correspondant à votre logiciel
+Ouvrez le fichier gabarit
+Copiez votre texte depuis votre document original
+Collez-le dans le gabarit
+Ajustez la mise en page si nécessaire
+Enregistrez et exportez en PDF
+
+Solution 3 : Changer le format de votre livre
+"Soit, vous pouvez changer le format de votre livre que vous souhaitez en cliquant ici."
+Si votre document est déjà parfaitement mis en page dans son format actuel, vous pouvez :
+
+Revenir au choix du format
+Sélectionner un format correspondant à vos dimensions actuelles
+Refaire un devis avec ce nouveau format
+
+Attention : Cela peut modifier le prix final et les options disponibles.
+Autres types d'avertissements possibles
+Bien que l'exemple montre un problème de format, d'autres warnings peuvent apparaître :
+Warning sur la qualité des images
+
+Problème : Images en basse résolution (moins de 300 dpi)
+Conséquence : Images floues ou pixelisées à l'impression
+Solution : Remplacer par des images haute résolution
+
+Warning sur les marges
+
+Problème : Éléments trop proches des bords
+Conséquence : Texte ou images coupés lors de la découpe finale
+Solution : Augmenter les marges à 2 cm minimum
+
+Warning sur le nombre de pages
+
+Problème : Nombre de pages différent du devis
+Conséquence : Prix final différent
+Solution : Mettre à jour le devis ou ajuster le document
+
+Warning sur les polices
+
+Problème : Polices non intégrées au PDF
+Conséquence : Remplacement par des polices par défaut
+Solution : Réexporter le PDF en intégrant toutes les polices
+
+Support client disponible
+Le système indique : "Vous pouvez également contacter notre service client au 05 31 61 60 42 du lundi au vendredi de 8h30 à 18h."
+N'hésitez pas à contacter le service client si :
+
+Vous ne comprenez pas un avertissement
+Vous avez besoin d'aide pour corriger votre fichier
+Vous rencontrez des difficultés techniques
+Vous avez des questions sur les formats acceptés
+
+6. Validation et prévisualisation complète
+Une fois l'analyse terminée et les éventuels problèmes corrigés, vous accédez à une section importante : "ANALYSE DES FICHIERS"
+Section "INTÉRIEUR SEUL"
+✅ Nombre de pages
+"Votre livre comprend 284 pages. (Achevé d'imprimer inclus)"
+Qu'est-ce que cela signifie ?
+
+Votre document contient 284 pages au total
+Ce décompte inclut une page "Achevé d'imprimer" ajoutée automatiquement
+L'achevé d'imprimer est une page légale obligatoire qui identifie l'imprimeur
+
+Pourquoi l'achevé d'imprimer est important ?
+
+C'est une obligation légale en France pour tout livre imprimé
+Il contient les informations sur l'éditeur, l'imprimeur et la date d'impression
+Il n'affecte pas la pagination de votre contenu principal
+
+✅ Achevé d'imprimer
+"Pour des raisons légales, nous avons ajouté à la fin de votre livre, une page qui nous identifie en tant qu'imprimeur. Vous n'avez rien à faire."
+Aperçu de cette page :
+Une miniature montre l'apparence de cette page légale. Elle contient typiquement :
+
+Le nom de l'imprimeur
+L'adresse de l'imprimerie
+La date d'impression
+Le numéro de dépôt légal (si applicable)
+Les informations techniques d'impression
+
+Important : Vous ne pouvez pas supprimer cette page, c'est une obligation légale. Elle sera placée automatiquement à la fin de votre livre.
+Vérification des dimensions
+Pages d'exemple présentées
+Le système affiche trois miniatures de pages de votre livre pour que vous puissiez vérifier :
+
+La taille du texte
+La qualité des images
+La disposition générale
+L'aspect visuel final
+
+Conseil : Cliquez sur ces miniatures pour les agrandir et examiner attentivement :
+
+La lisibilité du texte
+La netteté des images
+Le respect des marges
+L'alignement des éléments
+
+Cliquez sur les vignettes pour vérifier
+"Cliquez sur les vignettes pour vérifier votre fichier et l'imprimer en taille réelle si besoin."
+Cette fonctionnalité est très importante car elle vous permet de :
+
+Voir votre page en taille réelle (100%)
+Imprimer une page test pour vérifier la taille du texte
+S'assurer que tout est conforme avant de valider
+
+Astuce : Imprimez une ou deux pages en taille réelle pour avoir une idée exacte du rendu final. Cela vous évitera les mauvaises surprises à la réception.
+Bouton de validation
+Une fois toutes les vérifications effectuées, cliquez sur le bouton vert : "JE VALIDE MES FICHIERS"
+Ce bouton vous fait passer à l'étape suivante : la création de votre couverture.
+Attention : Une fois validé, il peut être difficile de revenir en arrière sans recommencer le processus. Assurez-vous que tout est parfait avant de continuer.
+7. Création de la couverture : personnalisation et templates
+Vous arrivez maintenant à l'étape : "3 - Création de la couverture"
+Options de personnalisation
+Le système vous indique : "Choisissez une couverture et personnalisez-là pour qu'elle soit unique !"
+Vous avez trois niveaux de personnalisation :
+
+Modifier les polices : 50 polices au choix
+Modifier les photos : 500 photos gratuites et libres de droits
+Modifier les couleurs : Palette de couleurs complète
+
+Fonction "Sauvegarder et voir mon projet"
+Un lien important : "Sauvegarder et voir mon projet" vous permet de :
+
+Enregistrer votre progression à tout moment
+Revenir plus tard pour continuer
+Voir un aperçu global de votre projet
+
+Conseil : Sauvegardez régulièrement, surtout si vous prenez du temps pour personnaliser votre couverture.
+Galerie de templates de couverture
+Le système présente une grille de templates de couverture prêts à l'emploi, organisés en plusieurs lignes :
+Première option : Partir d'un modèle vierge
+Un template gris avec l'icône d'un document et le texte : "Partir d'un modèle vierge"
+Cette option vous permet de :
+
+Créer une couverture entièrement personnalisée
+Partir d'une page blanche
+Avoir un contrôle total sur le design
+
+Recommandé pour : Les personnes ayant des compétences en design ou une vision très précise de leur couverture.
+Templates thématiques proposés
+La plateforme offre une variété de templates classés par genre et style :
+1. Templates sportifs/dynamiques
+
+"Nouveau départ" : Image d'une personne en action sportive, style dynamique avec effets d'éclaboussures artistiques
+Bouton : "Je modifie cette couverture"
+
+2. Templates moderne/urbain
+
+"Hors limites" : Design épuré avec typo moderne sur fond doré/orange
+Style contemporain et minimaliste
+
+3. Templates nautiques/aventure
+
+Couverture avec photo de bateau de pêche en mer
+Atmosphère dramatique avec ciel nuageux
+Idéal pour récits d'aventure ou romans maritimes
+
+4. Templates fantasy/féerie
+
+"Contes elliques - Tome 1 : La légende d'Elroïs"
+Image féerique avec maison enchantée et papillons
+Style fantastique et onirique
+
+5. Templates western/historique
+
+Scène de cavaliers dans le désert au coucher de soleil
+Ambiance épique et cinématographique
+Parfait pour romans historiques ou westerns
+
+6. Templates gastronomiques
+
+"Manger sain" par Loïs Ramin
+Photo de fruits frais et colorés
+Design appétissant pour livres de cuisine
+
+7. Templates contemplation/philosophique
+
+"Le sens des maux" : Silhouette de personnage reflétée dans l'eau
+Atmosphère introspective et poétique
+
+8. Templates mystère/thriller
+
+"Meurtre à Greenwood" : Forêt brumeuse et mystérieuse
+Ambiance sombre de polar/thriller
+
+Comment personnaliser un template ?
+Pour chaque template, vous voyez le bouton : "Je modifie cette couverture"
+Une fois cliqué, vous accédez à l'éditeur de couverture qui vous permet de :
+Modifier le texte
+
+Changer le titre
+Ajuster le nom de l'auteur
+Modifier les sous-titres ou taglines
+Choisir parmi 50 polices différentes
+
+Personnaliser les images
+
+Remplacer la photo principale
+Accéder à 500 photos gratuites de la bibliothèque
+Uploader vos propres photos
+Ajuster la position et le recadrage
+
+Ajuster les couleurs
+
+Modifier la palette de couleurs
+Changer les teintes pour correspondre à votre thème
+Ajuster les contrastes
+Harmoniser avec le contenu de votre livre
+
+Ajuster la mise en page
+
+Déplacer les éléments textuels
+Redimensionner les zones de texte
+Modifier l'alignement
+Ajuster les espacements
+
+Conseils pour créer une couverture efficace
+Règles d'or du design de couverture :
+
+Clarté : Le titre doit être lisible même en miniature
+Cohérence : Le design doit refléter le genre et le ton du livre
+Contraste : Assurez-vous que le texte se détache bien du fond
+Équilibre : Ne surchargez pas la couverture d'éléments
+Professionnalisme : Utilisez des images de haute qualité
+
+Erreurs à éviter :
+
+Texte trop petit ou illisible
+Trop de polices différentes (maximum 2-3)
+Images de mauvaise qualité ou pixelisées
+Couleurs qui ne contrastent pas assez
+Design trop chargé ou confus
+
+8. Rendu 3D de votre livre : visualisation finale
+Aperçu en trois dimensions
+Une fois votre couverture validée, le système génère un rendu 3D réaliste de votre livre. Sur la capture d'écran, on voit :
+Caractéristiques du rendu 3D :
+
+Vue en perspective du livre fermé
+Affichage de la couverture avec l'image des cavaliers au coucher de soleil
+Visualisation de l'épaisseur du dos (proportionnelle au nombre de pages)
+Ombre portée pour un effet réaliste
+Fond en bois qui simule une présentation sur table
+
+Pourquoi ce rendu est important ?
+
+Vous voyez exactement à quoi ressemblera votre livre final
+Vous pouvez juger de l'impact visuel de la couverture
+Vous vérifiez que le dos est suffisamment épais pour le titre (si applicable)
+C'est une excellente image de présentation pour vos réseaux sociaux
+
+Astuce marketing : Vous pouvez faire une capture d'écran de ce rendu 3D pour :
+
+Annoncer la sortie de votre livre sur les réseaux sociaux
+Créer du teasing avant la publication
+Illustrer vos communications de pré-vente
+Montrer le résultat à votre entourage avant impression
+Prévisualisation intérieure : vérification finale du contenu
+Interface "JE VALIDE MON LIVRE"
+Vous arrivez sur une page cruciale qui vous permet de vérifier une dernière fois votre livre avant l'impression. Le bandeau supérieur indique clairement :
+"JE VALIDE MON LIVRE"
+Sous-titre important :
+"On y est presque ! C'est le moment de vérifier une dernière fois votre livre. Regardez bien la mise en page, les vifs à vis, l'orthographe. Ce livre virtuel ne matérialisera pas les marges nécessaires pour la fabrication de l'ouvrage. L'aperçu est non contractuel."
+Avertissements et précisions
+Le système vous rappelle plusieurs points essentiels :
+Point 1 : Possibilité de navigation
+"Un doute ? N'hésitez pas à contacter notre service client."
+Le service client reste disponible même à cette étape avancée pour répondre à vos dernières questions ou préoccupations.
+Point 2 : Navigation dans le livre
+"Vous pouvez tourner les pages en cliquant avec votre souris. Une fois que vous avez validé, votre ouvrage part à l'impression."
+Fonctionnalités de navigation :
+
+Clic sur les pages pour tourner
+Flèches de navigation en bas de l'écran
+Possibilité de zoomer pour voir les détails
+Passage d'une page à l'autre en temps réel
+
+Visualiseur de pages interactif
+Sur la capture d'écran, on voit un lecteur en double-page qui simule l'ouverture réelle du livre :
+Barre de contrôle en bas
+Icônes de navigation (de gauche à droite) :
+
+◄ Flèche gauche : Page précédente
+⟲ Rotation : Faire tourner l'affichage
+⟳ Actualiser : Recharger la prévisualisation
+► Flèche droite : Page suivante
+
+Bouton plein écran
+⛶ Icône en haut à droite : Passer en mode plein écran pour une meilleure visualisation
+Contenu visible dans l'exemple
+Dans la prévisualisation affichée, on peut voir deux pages du livre :
+Page de gauche
+Une page contenant un graphique en pyramide (hiérarchie des besoins ou structure organisationnelle) avec plusieurs niveaux en dégradé de bleu, du plus clair au plus foncé. Le texte accompagnant explique le concept illustré.
+Éléments à vérifier sur cette page :
+
+Qualité du graphique : Est-il net et bien visible ?
+Couleurs : Les dégradés sont-ils corrects ?
+Texte autour : Est-il aligné et lisible ?
+Marges : Le graphique n'est-il pas trop proche des bords ?
+
+Page de droite
+Une page de texte pur avec plusieurs paragraphes formatés. On peut voir :
+
+Un numéro de page en haut
+Des paragraphes bien espacés
+Une mise en page aérée
+Du texte justifié
+
+Éléments à vérifier sur cette page :
+
+Pagination : Les numéros sont-ils corrects et bien positionnés ?
+Alignement : Le texte est-il bien justifié ?
+Espacement : Les interlignes sont-ils appropriés ?
+Césures : Y a-t-il des coupures de mots inappropriées ?
+Veuves et orphelines : Pas de lignes seules en haut ou bas de page ?
+
+Ce qu'il faut vérifier minutieusement
+1. La mise en page générale
+
+Cohérence : Toutes les pages ont-elles le même style ?
+Titres : Sont-ils bien hiérarchisés (Titre 1, Titre 2, etc.) ?
+Espacements : Les marges sont-elles uniformes ?
+Sauts de page : Les chapitres commencent-ils correctement ?
+
+2. Les "vis-à-vis"
+Le terme "vis-à-vis" (ou "double-page") désigne deux pages qui se font face quand le livre est ouvert.
+Points à vérifier :
+
+Les images importantes ne sont-elles pas coupées par la reliure ?
+Les tableaux sur deux pages s'alignent-ils correctement ?
+La cohérence visuelle entre les deux pages est-elle respectée ?
+Les marges intérieures (côté reliure) sont-elles suffisantes ?
+
+3. L'orthographe et la grammaire
+Même si ce n'est pas la première relecture, profitez de cette vue pour :
+
+Vérifier les titres et sous-titres (plus visibles maintenant)
+Contrôler les légendes d'images ou de graphiques
+Relire les citations ou encadrés importants
+Vérifier la cohérence de la ponctuation
+
+Astuce : Lisez à haute voix ou en mode "scan rapide" pour repérer les coquilles restantes.
+4. Les images et graphiques
+Pour chaque élément visuel :
+
+Netteté : L'image est-elle floue ou pixelisée ?
+Couleurs : Les teintes sont-elles correctes ?
+Placement : L'image est-elle bien positionnée ?
+Légendes : Sont-elles présentes et correctes ?
+
+5. La pagination
+
+Continuité : Les numéros se suivent-ils correctement ?
+Emplacement : Les numéros sont-ils au même endroit sur chaque page ?
+Pages spéciales : Les pages de titre n'ont-elles pas de numéro (si souhaité) ?
+
+6. Les marges et la reliure
+Rappel important : "Ce livre virtuel ne matérialisera pas les marges nécessaires pour la fabrication de l'ouvrage."
+Cela signifie que :
+
+L'aperçu ne montre pas exactement la zone "perdue" dans la reliure
+Vous devez imaginer environ 2 cm de marge intérieure cachée
+Assurez-vous mentalement que rien d'important n'est trop près du centre
+
+Test mental à faire :
+
+Regardez chaque élément près du centre du livre
+Imaginez 2 cm de moins visible à cet endroit
+Vérifiez que le texte ou l'image reste compréhensible
+
+7. Les éléments répétitifs
+
+En-têtes/pieds de page : Sont-ils cohérents partout ?
+Numérotation : Système de numérotation correct ?
+Style des titres : Même formatage tout au long du livre ?
+
+Cas particuliers à surveiller
+Pages avec des tableaux
+
+Les bordures sont-elles complètes ?
+Le contenu des cellules est-il lisible ?
+Le tableau ne déborde-t-il pas dans les marges ?
+
+Pages avec des listes ou énumérations
+
+Les puces ou numéros sont-ils alignés ?
+L'indentation est-elle cohérente ?
+Les retours à la ligne sont-ils corrects ?
+
+Pages avec des citations ou encadrés
+
+Les encadrés sont-ils visibles et esthétiques ?
+Le texte à l'intérieur est-il lisible ?
+Les citations sont-elles bien attribuées ?
+
+Pages de début de chapitre
+
+La mise en page est-elle spéciale/distinctive ?
+Le titre du chapitre est-il bien visible ?
+L'espacement avant le texte est-il approprié ?
+
+Conseils pour une vérification efficace
+Méthode de vérification en plusieurs passes :
+Première passe : Vue d'ensemble (10-15 minutes)
+
+Parcourez rapidement tout le livre
+Notez les problèmes évidents (pages blanches, images manquantes)
+Vérifiez la structure générale
+
+Deuxième passe : Détails visuels (15-20 minutes)
+
+Examinez chaque image et graphique
+Vérifiez les marges et les espacements
+Contrôlez l'alignement des éléments
+
+Troisième passe : Contenu textuel (20-30 minutes)
+
+Lisez les titres et sous-titres
+Vérifiez la pagination
+Contrôlez les légendes et notes
+
+Quatrième passe : Cohérence globale (10 minutes)
+
+Vérifiez que le style est uniforme
+Contrôlez les en-têtes et pieds de page
+Assurez-vous de la logique de navigation
+
+Astuce professionnelle : Imprimez ou affichez une checklist et cochez chaque point vérifié.
+Erreurs courantes à cette étape
+Top 10 des problèmes découverts en prévisualisation :
+
+Numérotation incorrecte : Saut dans les numéros de page
+Images manquantes : Espaces blancs où devrait être une image
+Texte tronqué : Paragraphes coupés en fin de page
+Tableaux mal alignés : Colonnes décalées
+Marges irrégulières : Différentes d'une page à l'autre
+Titres orphelins : Titre en bas de page, contenu à la page suivante
+Sauts de page intempestifs : Espaces vides inexpliqués
+Graphiques flous : Résolution insuffisante
+Coquilles dans les titres : Fautes très visibles
+Pages blanches involontaires : Pages vides non souhaitées
+
+Que faire si vous trouvez des erreurs ?
+Option 1 : Erreurs mineures acceptables
+Si vous trouvez de petites erreurs qui ne gênent pas la lecture (une virgule, un espacement légèrement irrégulier), vous pouvez décider de les accepter et continuer.
+Option 2 : Erreurs à corriger absolument
+Si vous découvrez :
+
+Des fautes d'orthographe importantes
+Des images manquantes ou floues
+Des problèmes de mise en page majeurs
+Des pages mal ordonnées
+
+Vous devez :
+
+Noter précisément toutes les corrections à faire
+Ne PAS valider le livre
+Retourner à votre fichier source (Word, InDesign, etc.)
+Effectuer les corrections
+Réexporter votre PDF
+Retourner à l'étape "Télécharger mes fichiers"
+Remplacer votre fichier
+Relancer l'analyse
+Revenir à cette étape de prévisualisation
+
+Important : Il vaut mieux prendre le temps de corriger maintenant que de recevoir un livre avec des erreurs imprimées définitivement.
+Contact du service client à cette étape
+Si vous avez des doutes ou des questions :
+Service client disponible :
+
+Par téléphone : 05 31 61 60 42
+Du lundi au vendredi de 8h30 à 18h
+Pour toute question technique ou validation
+
+Questions fréquentes à cette étape :
+
+"Cette image me semble floue, sera-t-elle nette à l'impression ?"
+"Le texte près de la reliure sera-t-il lisible ?"
+"Puis-je encore modifier quelque chose ?"
+"Comment être sûr que les couleurs seront fidèles ?"
+
+11. Option des marque-pages : complément marketing
+Page de proposition des marque-pages
+Après avoir validé votre livre, le système vous propose une option supplémentaire :
+"Et si vous complétiez votre achat avec des marque pages ?"
+Description de l'offre
+Texte de présentation :
+"Idéal pour faire la promotion de votre livre, ces marque pages au format 5x21 cm sont 100% personnalisés."
+Caractéristiques des marque-pages :
+
+Format : 5 cm x 21 cm (format marque-page standard)
+Personnalisation : 100% personnalisable avec l'image de votre couverture
+Utilité : Outil promotionnel et pratique pour vos lecteurs
+
+Modèles de marque-pages proposés
+Le système présente 4 modèles différents basés sur la couverture de votre livre (l'image des cavaliers au coucher de soleil dans l'exemple) :
+Modèle 1 : Format vertical classique (sélectionné par défaut ⚫)
+
+Image de la couverture en entier
+Bande rouge en bas avec "BRIAN BIENDOU" en blanc
+Format vertical classique et élégant
+
+Modèle 2 : Format avec citations (⚪)
+
+Image de la couverture
+Bande rouge avec texte "LET YOUR SMILE CHANGE THE WORLD"
+Effet de texte manuscrit/inspirationnel
+Bouton : "Modifier"
+
+Modèle 3 : Format avec icônes (⚪)
+
+Image de la couverture
+Bande blanche avec icônes de lecture (livres, stylo, notes de musique)
+Style jeune et dynamique
+Bouton : "Modifier"
+
+Modèle 4 : Format citation poétique (⚪)
+
+Image de la couverture
+Fond bleu marine
+Citation : "la vie et la lune"
+Style poétique et littéraire
+Bouton : "Modifier"
+
+Option bonus : Voir tous les modèles
+Un cinquième encadré avec un "+" et le texte :
+"Voir tous les modèles (+ de 40 disponibles)"
+Cela vous donne accès à une bibliothèque complète de designs de marque-pages.
+Configuration de la commande
+Sélecteur de quantité :
+
+Menu déroulant affichant : "10 exemplaires"
+Autres quantités disponibles (à vérifier dans le menu)
+
+Prix affiché :
+14,00€ TTC pour 10 marque-pages
+Calcul du coût unitaire : 1,40€ par marque-page
+Boutons d'action
+"AJOUTER AU PANIER" (bouton vert) : Ajoute les marque-pages à votre commande
+"Non merci, j'accède à mon panier" (lien texte) : Passer cette étape et continuer sans marque-pages
+Avantages des marque-pages personnalisés
+Pour la promotion de votre livre
+
+Visibilité : Chaque lecteur qui utilise le marque-page voit votre couverture régulièrement
+Bouche-à-oreille : Les marque-pages peuvent être offerts à des lecteurs potentiels
+Salons et événements : Parfaits pour les dédicaces, salons du livre, etc.
+Cadeau lecteur : Un petit plus apprécié par ceux qui achètent votre livre
+
+Pour vos lecteurs
+
+Utilité pratique : Un vrai marque-page de qualité
+Souvenir : Un objet lié à leur lecture
+Esthétique : Un beau design qu'ils aimeront utiliser
+Valeur perçue : Augmente la valeur de leur achat
+Personnalisation des modèles
+Chaque modèle peut être personnalisé en cliquant sur "Modifier" :
+Éléments modifiables :
+
+Le texte (slogan, citation, nom d'auteur)
+Les couleurs des bandes
+La disposition des éléments
+L'ajout de votre logo ou site web
+Les informations de contact (réseaux sociaux, site web)
+
+Conseils de personnalisation :
+
+Ajoutez votre site web ou vos réseaux sociaux
+Incluez une courte citation accrocheuse du livre
+Gardez un design épuré et lisible
+Assurez-vous que la couverture reste le point focal
+
+Comparaison coût/bénéfice
+Investissement : 14€ pour 10 marque-pages = 1,40€/pièce
+Retour potentiel :
+
+Si 1 marque-page conduit à 1 vente supplémentaire (20€), le ROI est de +1300%
+Même si seulement 10% conduisent à une vente, c'est rentable
+Valeur marketing et professionnalisme : inestimable
+
+Comparaison avec d'autres supports promotionnels :
+
+Cartes de visite : 0,10-0,30€/pièce (moins d'impact visuel)
+Flyers A6 : 0,20-0,50€/pièce (moins d'utilité, souvent jetés)
+Marque-pages : 1,40€/pièce (utilité + marketing + durabilité)
+Comment obtenir un code promo ?
+
+Newsletter : S'inscrire à la newsletter de l'imprimeur
+Réseaux sociaux : Suivre les pages officielles
+Parrainage : Parrainer un ami
+Promotions saisonnières : Noël, rentrée, etc.
+Premier achat : Parfois offert aux nouveaux clients
+
+Types de codes promo courants :
+
+Réduction en pourcentage (ex: 10% de réduction)
+Réduction en euros (ex: 5€ de réduction)
+Frais de port offerts (bien que la note indique que les codes ne s'appliquent pas aux frais de port, certaines promos spéciales peuvent exister)
+Cadeaux offerts (marque-pages gratuits, etc.)
+
+Section "LIVRAISON"
+Cette section présente les différentes options de livraison disponibles avec leurs caractéristiques et tarifs.
+Option 1 : Domicile 🏠
+"DOMICILE" (icône de maison)
+Prix : 8,20 € TTC
+Description : Livraison directement à votre adresse personnelle
+Avantages :
+
+Confort : Pas besoin de se déplacer
+Simplicité : Réception directe chez vous
+Suivi : Traçabilité du colis
+
+Inconvénients :
+
+Nécessité d'être présent pour réceptionner
+Risque de déposer le colis chez un voisin ou en point relais si absence
+
+Option 2 : Point relais 📦 (SÉLECTIONNÉ)
+"POINT RELAIS" (icône de colis)
+Prix : 8,20 € TTC (même prix que domicile)
+Description : Livraison dans un point relais proche de chez vous
+Avantages :
+
+Flexibilité : Retrait quand vous voulez (dans les horaires du point relais)
+Pas d'absence problématique : Le colis attend votre venue
+Horaires étendus : Souvent ouvert le samedi, en soirée
+Sécurité : Colis gardé en lieu sûr
+
+Inconvénients :
+
+Nécessité de se déplacer
+Délai de garde limité (généralement 14 jours)
+
+Cette option est cochée/sélectionnée dans l'exemple, donc c'est le mode de livraison choisi.
+Option 3 : À sélectionner (livraison offerte) 🎁
+"À SÉLECTIONNER" (avec badge "OFFERT 100%")
+Prix : 0,00 € TTC
+Mention : "Dans nos locaux Toulousain"
+Description : Retrait gratuit dans les locaux de l'imprimerie à Toulouse
+Avantages :
+
+Gratuit : Économie de 8,20 €
+Immédiat : Possibilité de récupérer dès que prêt
+Pas de risque de colis perdu ou abîmé en transport
+Opportunité de rencontrer l'équipe
+
+Inconvénients :
+
+Nécessite d'habiter à Toulouse ou proximité
+Déplacement obligatoire
+Contraintes d'horaires d'ouverture
+
+Pour qui ?
+
+Habitants de Toulouse et région
+Personnes passant par Toulouse régulièrement
+Ceux qui veulent économiser les frais de port
+Auteurs souhaitant voir l'imprimerie
+
+Section "DÉLAI DE TRAITEMENT"
+Cette section rappelle les options de délai vues au début du processus.
+Option 1 : Standard (SÉLECTIONNÉ)
+"STANDARD" (icône de camion 🚚)
+Prix : Gratuit
+Moyens de paiement acceptés
+Quatre icônes de paiement sont visibles :
+
+🏦 Chèque bancaire (icône CB avec €)
+💳 Carte Bleue (logo CB bleu)
+🏧 Visa (logo Visa)
+💳 Mastercard (logo Mastercard rouge/orange)
+💰 PayPal (logo PayPal bleu)
+
+Tous les moyens de paiement courants sont donc acceptés pour sécuriser et faciliter votre achat.
+Bouton de validation finale
+"JE VALIDE MA COMMANDE" (grand bouton vert)
+⚠️ Avant de cliquer, vérifiez une dernière fois :
+
+Le nombre d'exemplaires
+Le mode de livraison choisi
+L'adresse de livraison (à renseigner à l'étape suivante)
+Le prix total
+Que vous avez bien relu tout le contenu de votre livre
+
+Une fois cliqué, vous passez à l'étape de renseignement de l'adresse de livraison et de paiement.
+13. Adresse de livraison : renseignements personnels
+Page "ADRESSE DE LIVRAISON"
+Fil d'Ariane :
+Accueil › Mes Projets › Mon Panier › Adresse
+Structure de la page en trois colonnes
+La page est organisée en trois sections principales pour une navigation claire :
+Colonne 1 : Détails de la commande (gauche)
+"Détails de la commande"
+Un récapitulatif en chiffres de votre commande :
