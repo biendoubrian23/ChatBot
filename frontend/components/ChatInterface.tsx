@@ -39,35 +39,75 @@ export default function ChatInterface() {
     setIsLoading(true)
     setError(null)
 
+    // Create assistant message placeholder for streaming
+    const assistantId = (Date.now() + 1).toString()
+    const assistantMessage: Message = {
+      id: assistantId,
+      role: 'assistant',
+      content: '',
+      timestamp: new Date(),
+      sources: [],
+    }
+    setMessages((prev) => [...prev, assistantMessage])
+
     try {
-      // Prepare conversation history (exclude sources for compact format)
+      // Prepare conversation history
       const history = messages.map(msg => ({
         role: msg.role,
         content: msg.content
       }))
 
-      // Send to API with history
-      const response = await chatAPI.sendMessage({
-        question: content,
-        conversation_id: conversationId || undefined,
-        history: history, // Send conversation history
-      })
+      let fullContent = ''
 
-      // Update conversation ID
-      if (!conversationId) {
-        setConversationId(response.conversation_id)
-      }
-
-      // Add assistant message
-      const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: response.answer,
-        timestamp: new Date(response.timestamp),
-        sources: response.sources,
-      }
-
-      setMessages((prev) => [...prev, assistantMessage])
+      // Use streaming API
+      await chatAPI.sendMessageStream(
+        {
+          question: content,
+          conversation_id: conversationId || undefined,
+          history: history,
+        },
+        // onToken: append each chunk to the message
+        (token: string) => {
+          fullContent += token
+          setMessages((prev) =>
+            prev.map((msg) =>
+              msg.id === assistantId
+                ? { ...msg, content: fullContent }
+                : msg
+            )
+          )
+        },
+        // onSources: add sources when received
+        (sources: any[]) => {
+          setMessages((prev) =>
+            prev.map((msg) =>
+              msg.id === assistantId
+                ? { ...msg, sources }
+                : msg
+            )
+          )
+        },
+        // onComplete
+        () => {
+          setIsLoading(false)
+          if (!conversationId) {
+            setConversationId(Date.now().toString())
+          }
+        },
+        // onError
+        (errorMsg: string) => {
+          console.error('Streaming error:', errorMsg)
+          setError(errorMsg)
+          setMessages((prev) =>
+            prev.map((msg) =>
+              msg.id === assistantId
+                ? { ...msg, content: 'Désolé, une erreur est survenue lors de la génération de la réponse.' }
+                : msg
+            )
+          )
+          setIsLoading(false)
+        }
+      )
     } catch (err: any) {
       console.error('Error sending message:', err)
       setError(
@@ -75,15 +115,14 @@ export default function ChatInterface() {
         'Une erreur est survenue. Vérifiez que le serveur est démarré.'
       )
       
-      // Add error message
-      const errorMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: 'Désolé, je rencontre des difficultés à répondre pour le moment. Assurez-vous que le serveur backend est démarré.',
-        timestamp: new Date(),
-      }
-      setMessages((prev) => [...prev, errorMessage])
-    } finally {
+      // Update message with error
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === assistantId
+            ? { ...msg, content: 'Désolé, je rencontre des difficultés à répondre pour le moment.' }
+            : msg
+        )
+      )
       setIsLoading(false)
     }
   }

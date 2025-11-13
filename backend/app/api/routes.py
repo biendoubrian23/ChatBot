@@ -1,6 +1,8 @@
 """API endpoints for the chatbot."""
 from fastapi import APIRouter, HTTPException, Depends
+from fastapi.responses import StreamingResponse
 from typing import List
+import json
 
 from app.models.schemas import (
     ChatRequest,
@@ -62,6 +64,47 @@ async def chat(request: ChatRequest, pipeline=Depends(get_rag_pipeline)):
         return response
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing request: {str(e)}")
+
+
+@router.post("/chat/stream")
+async def chat_stream(request: ChatRequest, pipeline=Depends(get_rag_pipeline)):
+    """Handle streaming chat requests.
+    
+    Args:
+        request: Chat request with user question and optional conversation history
+        pipeline: RAG pipeline instance
+        
+    Returns:
+        Streaming response with answer chunks
+    """
+    async def generate():
+        try:
+            # Convert history to list of dicts
+            history_list = [{"role": msg.role, "content": msg.content} for msg in request.history] if request.history else []
+            
+            # Get context from vectorstore
+            context_docs = pipeline.vectorstore.search(request.question, k=pipeline.top_k)
+            context = "\n\n".join([doc.page_content for doc in context_docs])
+            
+            # Send sources first
+            sources = [{"content": doc.page_content, "metadata": doc.metadata} for doc in context_docs]
+            yield f"data: {json.dumps({'type': 'sources', 'sources': sources})}\n\n"
+            
+            # Stream the response
+            for chunk in pipeline.llm_service.generate_response_stream(
+                query=request.question,
+                context=context,
+                history=history_list
+            ):
+                yield f"data: {json.dumps({'type': 'token', 'content': chunk})}\n\n"
+            
+            # Send completion signal
+            yield f"data: {json.dumps({'type': 'done'})}\n\n"
+            
+        except Exception as e:
+            yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
+    
+    return StreamingResponse(generate(), media_type="text/event-stream")
 
 
 @router.get("/health", response_model=HealthResponse)
