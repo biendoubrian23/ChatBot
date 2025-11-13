@@ -32,7 +32,16 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
               : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-tl-none shadow-soft'
           }`}
         >
-          <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
+          {!isUser && message.content === '...' ? (
+            // Animation des 3 points pendant le chargement
+            <div className="flex space-x-2">
+              <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+              <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+              <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+            </div>
+          ) : (
+            <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
+          )}
         </div>
 
         {!isUser && message.sources && message.sources.length > 0 && (

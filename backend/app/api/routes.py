@@ -86,17 +86,17 @@ async def chat_stream(request: ChatRequest, pipeline=Depends(get_rag_pipeline)):
             context_docs = pipeline.vectorstore.similarity_search(request.question, k=pipeline.top_k)
             context = "\n\n".join([doc.page_content for doc, _ in context_docs])
             
-            # Send sources first
-            sources = [{"content": doc.page_content, "metadata": doc.metadata} for doc, _ in context_docs]
-            yield f"data: {json.dumps({'type': 'sources', 'sources': sources})}\n\n"
-            
-            # Stream the response
+            # Stream the response FIRST
             for chunk in pipeline.llm_service.generate_response_stream(
                 query=request.question,
                 context=context,
                 history=history_list
             ):
                 yield f"data: {json.dumps({'type': 'token', 'content': chunk})}\n\n"
+            
+            # Send sources AFTER the response is complete
+            sources = [{"content": doc.page_content, "metadata": doc.metadata} for doc, _ in context_docs]
+            yield f"data: {json.dumps({'type': 'sources', 'sources': sources})}\n\n"
             
             # Send completion signal
             yield f"data: {json.dumps({'type': 'done'})}\n\n"

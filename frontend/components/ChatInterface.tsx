@@ -39,12 +39,12 @@ export default function ChatInterface() {
     setIsLoading(true)
     setError(null)
 
-    // Create assistant message placeholder for streaming
+    // Create assistant message placeholder with loading indicator
     const assistantId = (Date.now() + 1).toString()
     const assistantMessage: Message = {
       id: assistantId,
       role: 'assistant',
-      content: '',
+      content: '...', // Indicateur de chargement
       timestamp: new Date(),
       sources: [],
     }
@@ -58,6 +58,7 @@ export default function ChatInterface() {
       }))
 
       let fullContent = ''
+      let hasStartedReceiving = false
 
       // Use streaming API
       await chatAPI.sendMessageStream(
@@ -68,7 +69,12 @@ export default function ChatInterface() {
         },
         // onToken: append each chunk to the message
         (token: string) => {
-          fullContent += token
+          if (!hasStartedReceiving) {
+            hasStartedReceiving = true
+            fullContent = token // Replace loading indicator with first token
+          } else {
+            fullContent += token
+          }
           setMessages((prev) =>
             prev.map((msg) =>
               msg.id === assistantId
@@ -77,7 +83,7 @@ export default function ChatInterface() {
             )
           )
         },
-        // onSources: add sources when received
+        // onSources: add sources when received (à la fin maintenant)
         (sources: any[]) => {
           setMessages((prev) =>
             prev.map((msg) =>
@@ -146,25 +152,6 @@ export default function ChatInterface() {
               <MessageBubble key={message.id} message={message} />
             ))}
           </AnimatePresence>
-        )}
-
-        {isLoading && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex items-start space-x-3"
-          >
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">
-              LA
-            </div>
-            <div className="flex-1 bg-white dark:bg-gray-800 rounded-2xl rounded-tl-none px-4 py-3 shadow-soft">
-              <div className="flex space-x-2">
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-              </div>
-            </div>
-          </motion.div>
         )}
 
         <div ref={messagesEndRef} />
