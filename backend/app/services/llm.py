@@ -88,8 +88,8 @@ RÉPONSE DU SERVICE CLIENT:"""
                 system=system_prompt,
                 options={
                     "temperature": 0.1,  # Réduit pour plus de précision
-                    "top_p": 0.9,
-                    "top_k": 50,
+                    "top_p": 0.3,
+                    "top_k": 30,
                     "num_predict": 400,
                     "repeat_penalty": 1.3,
                 }
