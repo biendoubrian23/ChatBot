@@ -4,6 +4,7 @@ export interface Message {
   content: string
   timestamp: Date
   sources?: SourceDocument[]
+  responseTime?: number  // Temps de réponse en millisecondes
 }
 
 export interface HistoryMessage {

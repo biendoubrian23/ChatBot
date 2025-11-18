@@ -2,7 +2,24 @@
 cd X:\MesApplis\BiendouCorp\ChatBot\backend; python scripts/index_documents.py
 
 2. Backend (FastAPI) :
-cd X:\MesApplis\BiendouCorp\ChatBot\backend; .\.venv\Scripts\Activate.ps1; uvicorn app.main:app --reload --host 0.0.0.0 --port 8080
+cd X:\MesApplis\BiendouCorp\ChatBot\backend; .\.venv\Scripts\Activate.ps1; uvicorn main:app --reload --host 0.0.0.0 --port 8080
 
 3. ngrok (tunnel public) :
 ngrok http 8080
+
+
+j'aimerai mettre un systeme en place
+
+c'est a dire sans se connecter tout le monde pourrai avoir accès au chatbot
+
+mais s'il ya des questions concernant une commande, j'aimerai que le chatbot inivte la personne à se connecter, maintenant je reflechi comment le chatbot pourrai savoir qu'une personne est connectée ou pas, de plus si une personne demande le conseille concernant son numéro de commande, que le chatbot l'invite a insérer le numero de sa commande suivie de son nom de famille
+
+vu que pour le moment je ne suis pas connectées a la base de donnée il faudra juste que le chatbot renv
+
+Voulez-vous que je commence à :
+
+Créer l'endpoint API /api/order/{order_number} ?
+Installer les dépendances SQL Server (pyodbc, sqlalchemy) ?
+Créer une fonction d'extraction du numéro de commande depuis le message ?
+Intégrer tout ça dans le flux du chatbot ?
+Dites-moi quand vous aurez les informations de connexion SQL (host, port, username, password), et je créerai toute l'infrastructure !

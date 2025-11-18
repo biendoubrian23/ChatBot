@@ -38,6 +38,9 @@ export default function ChatInterface() {
     setMessages((prev) => [...prev, userMessage])
     setIsLoading(true)
     setError(null)
+    
+    // Démarrer le chronomètre
+    const startTime = Date.now()
 
     // Create assistant message placeholder with loading indicator
     const assistantId = (Date.now() + 1).toString()
@@ -95,6 +98,14 @@ export default function ChatInterface() {
         },
         // onComplete
         () => {
+          const responseTime = Date.now() - startTime
+          setMessages((prev) =>
+            prev.map((msg) =>
+              msg.id === assistantId
+                ? { ...msg, responseTime }
+                : msg
+            )
+          )
           setIsLoading(false)
           if (!conversationId) {
             setConversationId(Date.now().toString())

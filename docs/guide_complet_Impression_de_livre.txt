@@ -3,89 +3,14 @@ Introduction au Service d'Autoédition
 CoolLibri propose un service d'impression de livres à la demande qui rend l'autoédition accessible et abordable. Que vous souhaitiez imprimer un livre photo personnel, un livre de recettes de cuisine familiales, un livre illustré pour enfants, un roman, un livre personnel ou tout autre type d'ouvrage, CoolLibri vous accompagne dans toutes les étapes de l'impression. Le service permet d'imprimer aussi bien un exemplaire unique qu'une série de mille exemplaires selon vos besoins.
 
 TYPES DE RELIURE DISPONIBLES
-1. Dos Carré Collé (Recommandé pour les romans)
-Description détaillée :
-Le Dos Carré Collé est la reliure la plus utilisée et la plus populaire pour l'impression de romans et livres de type professionnel. Cette reliure offre un rendu identique aux livres que vous trouvez en librairie traditionnelle.
-Caractéristiques techniques :
 
-Type de livre : Format roman classique
-Couverture : Souple, flexible, facile à manipuler
-Papier de couverture : 300g couché, garantissant une excellente résistance et durabilité
-Qualité : Excellente, avec un rapport qualité/prix optimal
-Aspect professionnel : La couverture est imprimée en recto uniquement (face avant)
-Intérieur : L'impression des pages intérieures se fait en recto/verso pour optimiser la lecture
+CoolLibri propose 4 types de reliure professionnelle :
+1. Dos Carré Collé - Reliure souple professionnelle (60-700 pages selon papier)
+2. Rembordé - Couverture rigide haut de gamme (24-150 pages)
+3. Agrafé - Reliure magazine économique (8-60 pages)
+4. Spirale - Ouverture 360° pour consultation fréquente (1-500 pages)
 
-Avantages :
-
-Manipulation très agréable et confortable
-Grande maniabilité pour l'ouverture du livre
-Finition professionnelle comparable aux livres du commerce
-Idéal pour les romans, nouvelles, essais, biographies
-Économique pour les moyens et grands formats
-
-Utilisation recommandée :
-
-Romans de fiction ou non-fiction
-Livres de poche
-Essais littéraires
-Autobiographies et biographies
-Recueils de nouvelles
-Livres personnels à contenu textuel important
-
-2. Reliure Rembordé
-Description :
-Format adapté aux livres de type BD (bandes dessinées) et albums illustrés.
-Caractéristiques :
-
-Couverture plus rigide que le dos carré collé
-Permet une meilleure protection des pages intérieures
-Idéal pour les contenus visuels et graphiques
-Format album classique
-
-Utilisation recommandée :
-
-Bandes dessinées
-Albums illustrés
-Livres pour enfants
-Portfolios artistiques
-
-3. Reliure Agrafé
-Description :
-Format magazine pratique et économique.
-Caractéristiques :
-
-Reliure par agrafes métalliques au niveau de la pliure centrale
-Format léger et compact
-Ouverture facile et manipulation simple
-Adapté aux publications de petit format
-
-Utilisation recommandée :
-
-Magazines
-Brochures
-Catalogues courts
-Livrets promotionnels
-Fanzines
-Publications périodiques
-
-4. Reliure Spirale
-Description :
-Format thèse et documents techniques avec spirale métallique ou plastique.
-Caractéristiques :
-
-Ouverture à plat à 360 degrés
-Facilite la consultation et l'écriture
-Très pratique pour les documents de référence
-Permet de tourner complètement les pages
-
-Utilisation recommandée :
-
-Thèses universitaires
-Mémoires académiques
-Manuels de formation
-Cahiers de travaux pratiques
-Livres de recettes (utilisation en cuisine)
-Documents techniques nécessitant une consultation fréquente
+→ Pour les détails complets sur chaque reliure (limites de pages précises, caractéristiques techniques, recommandations), consultez le document "Guide Complet des Reliures - CoolLibri.com"
 
 
 FORMATS DISPONIBLES
@@ -600,7 +525,7 @@ Coût : +12,50 € TTC
 Supplément ajouté au prix de base du livre
 
 Délai de production :
-Production prioritaire, généralement entre 2 et 4 jours ouvrés uniquement pour la production et non pour la durée total de la commande, auquel s'ajoute le délai de livraison.
+généralement entre 2 et 4 jours pour la production prioritaire et non pour la durée total de la commande, auquel s'ajoute le délai de livraison.
 Avantages :
 
 Priorité dans la chaîne de production

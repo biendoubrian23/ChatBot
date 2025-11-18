@@ -77,12 +77,19 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
           </motion.div>
         )}
 
-        <p className="text-xs text-gray-400 dark:text-gray-600 mt-1 px-1">
-          {message.timestamp.toLocaleTimeString('fr-FR', {
-            hour: '2-digit',
-            minute: '2-digit',
-          })}
-        </p>
+        <div className="flex items-center space-x-2 mt-1 px-1">
+          <p className="text-xs text-gray-400 dark:text-gray-600">
+            {message.timestamp.toLocaleTimeString('fr-FR', {
+              hour: '2-digit',
+              minute: '2-digit',
+            })}
+          </p>
+          {!isUser && message.responseTime && (
+            <span className="text-xs font-mono text-blue-500 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 px-2 py-0.5 rounded-full">
+              ⚡ {(message.responseTime / 1000).toFixed(2)}s
+            </span>
+          )}
+        </div>
       </div>
 
       {isUser && (
