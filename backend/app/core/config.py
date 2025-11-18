@@ -31,8 +31,8 @@ class Settings(BaseSettings):
     # RAG Configuration
     chunk_size: int = 1000  # Increased from 550 for +15% completeness
     chunk_overlap: int = 300  # Adjusted proportionally
-    top_k_results: int = 6  # Increased from 4 for better context
-    rerank_top_n: int = 3  # Increased from 2 for better precision
+    top_k_results: int = 8  # Increased from 4 for better context
+    rerank_top_n: int = 4  # Increased from 2 for better precision
     
     # Embedding Model
     embedding_model: str = "paraphrase-multilingual-mpnet-base-v2"  # Upgraded for +30% search precision

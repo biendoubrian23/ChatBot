@@ -41,6 +41,7 @@ export default function ChatInterface() {
     
     // Démarrer le chronomètre
     const startTime = Date.now()
+    let firstByteTime: number | undefined = undefined
 
     // Create assistant message placeholder with loading indicator
     const assistantId = (Date.now() + 1).toString()
@@ -74,6 +75,7 @@ export default function ChatInterface() {
         (token: string) => {
           if (!hasStartedReceiving) {
             hasStartedReceiving = true
+            firstByteTime = Date.now() - startTime // Capturer TTFB
             fullContent = token // Replace loading indicator with first token
           } else {
             fullContent += token
@@ -81,7 +83,7 @@ export default function ChatInterface() {
           setMessages((prev) =>
             prev.map((msg) =>
               msg.id === assistantId
-                ? { ...msg, content: fullContent }
+                ? { ...msg, content: fullContent, ttfb: firstByteTime }
                 : msg
             )
           )

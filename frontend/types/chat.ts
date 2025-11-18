@@ -4,7 +4,8 @@ export interface Message {
   content: string
   timestamp: Date
   sources?: SourceDocument[]
-  responseTime?: number  // Temps de réponse en millisecondes
+  responseTime?: number  // Temps total de réponse en millisecondes
+  ttfb?: number  // Time To First Byte - temps avant le 1er caractère (ms)
 }
 
 export interface HistoryMessage {

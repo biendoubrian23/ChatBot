@@ -87,10 +87,10 @@ RÉPONSE DU SERVICE CLIENT:"""
                 prompt=prompt,
                 system=system_prompt,
                 options={
-                    "temperature": 0.1,  # Réduit pour plus de précision
+                    "temperature": 0,  # Réduit pour plus de précision
                     "top_p": 0.3,
-                    "top_k": 30,
-                    "num_predict": 600,
+                    "top_k": 20,
+                    "num_predict": 800,
                     "repeat_penalty": 1.3,
                 }
             )

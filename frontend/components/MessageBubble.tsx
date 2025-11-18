@@ -84,9 +84,14 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
               minute: '2-digit',
             })}
           </p>
+          {!isUser && message.ttfb && (
+            <span className="text-xs font-mono text-green-500 dark:text-green-400 bg-green-50 dark:bg-green-900/20 px-2 py-0.5 rounded-full">
+              🚀 {(message.ttfb / 1000).toFixed(2)}s
+            </span>
+          )}
           {!isUser && message.responseTime && (
             <span className="text-xs font-mono text-blue-500 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 px-2 py-0.5 rounded-full">
-              ⚡ {(message.responseTime / 1000).toFixed(2)}s
+              ⏱️ {(message.responseTime / 1000).toFixed(2)}s
             </span>
           )}
         </div>
