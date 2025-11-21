@@ -8,7 +8,8 @@ from app.models.schemas import (
     ChatRequest,
     ChatResponse,
     HealthResponse,
-    IndexStatus
+    IndexStatus,
+    CustomerValidationRequest
 )
 from app.core.config import settings
 
@@ -136,3 +137,124 @@ async def get_stats(vs=Depends(get_vectorstore)):
         "total_documents": vs.count(),
         "collection_name": vs.collection_name
     }
+
+
+@router.get("/order/{order_number}")
+async def get_order(order_number: int, last_name: str = None):
+    """
+    Récupérer les détails d'une commande par son numéro.
+    
+    Args:
+        order_number: Numéro de commande (OrderId)
+        last_name: Nom de famille (optionnel pour validation)
+    
+    Returns:
+        Détails complets de la commande
+    """
+    try:
+        from app.services.database import db_service
+        
+        order_data = db_service.get_order_by_number(str(order_number), last_name)
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, 
+            detail=f"Erreur base de données: {str(e)}"
+        )
+    
+    if not order_data:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Commande #{order_number} introuvable"
+        )
+    
+    # Validation optionnelle du nom de famille
+    if last_name and order_data.get("customer", {}).get("name"):
+        customer_name = order_data["customer"]["name"].lower()
+        if last_name.lower() not in customer_name:
+            raise HTTPException(
+                status_code=403,
+                detail="Le nom ne correspond pas à cette commande"
+            )
+    
+    return order_data
+
+
+@router.post("/order/validate-customer")
+async def validate_customer_name(request: CustomerValidationRequest):
+    """
+    Valide le nom/prénom du client pour une commande.
+    
+    Args:
+        order_number: Numéro de commande
+        customer_name: Nom ou prénom saisi par le client
+    
+    Returns:
+        Validation et message d'erreur si invalide
+    """
+    try:
+        from app.services.order_tracking_service import OrderTrackingService
+        
+        tracking_service = OrderTrackingService()
+        is_valid, full_name, error_message = tracking_service.validate_customer_name(
+            str(request.order_number), 
+            request.customer_name
+        )
+        
+        if is_valid:
+            return {
+                "valid": True,
+                "customer_name": full_name
+            }
+        else:
+            return {
+                "valid": False,
+                "error_message": error_message
+            }
+            
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Erreur validation: {str(e)}"
+        )
+
+
+@router.get("/order/{order_number}/tracking")
+async def get_order_tracking(order_number: int):
+    """
+    Génère une réponse intelligente de suivi de commande.
+    
+    Args:
+        order_number: Numéro de commande
+    
+    Returns:
+        Réponse formatée avec toutes les informations de suivi
+    """
+    try:
+        from app.services.order_tracking_service import OrderTrackingService
+        
+        tracking_service = OrderTrackingService()
+        order_data = tracking_service.get_order_tracking_info(str(order_number))
+        
+        if not order_data:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Commande #{order_number} introuvable"
+            )
+        
+        tracking_response = tracking_service.generate_tracking_response(order_data)
+        
+        return {
+            "order_number": order_number,
+            "tracking_response": tracking_response,
+            "order_data": order_data
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Erreur génération tracking: {str(e)}"
+        )
+
+

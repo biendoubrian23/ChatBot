@@ -1,0 +1,158 @@
+dbo	Address
+dbo	AddressType
+dbo	AdminMenu
+dbo	AdminQuestion
+dbo	Adwords
+dbo	Applications
+dbo	Article
+dbo	ArticleOption
+dbo	Author
+dbo	Banner
+dbo	Bat
+dbo	BatType
+dbo	Campaign
+dbo	Cart
+dbo	CartCustomFile
+dbo	CartFile
+dbo	Comment
+dbo	Countries
+dbo	CoverModel
+dbo	DirectSalePayment
+dbo	DirectSalePaymentFile
+dbo	DirectSalePaymentLigne
+dbo	Email
+dbo	FamilleArticle
+dbo	FaqCategory
+dbo	FaqItem
+dbo	FormatDimensionImages
+dbo	Genre
+dbo	Invoice
+dbo	InvoiceLine
+dbo	InvoiceType
+dbo	ISBN
+dbo	LandingPage
+dbo	Language
+dbo	LivreLibre
+dbo	LocalizedResources
+dbo	MarquePageModel
+dbo	Memberships
+dbo	MobileInfo
+dbo	OldRedirection
+dbo	Option
+dbo	OptionType
+dbo	OptionWeight
+dbo	Order
+dbo	OrderLine
+dbo	OrderLineFile
+dbo	OrderLineStatus
+dbo	OrderRegularization
+dbo	OrderStatus
+dbo	Payment
+dbo	PaymentType
+dbo	PoolRecycleHistory
+dbo	Price
+dbo	Product
+dbo	ProductionDelay
+dbo	ProductOption
+dbo	Project
+dbo	ProjectCover
+dbo	ProjectFile
+dbo	ProjectFileType
+dbo	ProjectFolder
+dbo	ProjectGenre
+dbo	PromoCode
+dbo	PromoCodeArticle
+dbo	PromoCodeReason
+dbo	PromoCodeUser
+dbo	Remise
+dbo	Review
+dbo	Roles
+dbo	Setting
+dbo	ShippingCompany
+dbo	ShippingCompanyType
+dbo	ShortCut
+dbo	sysdiagrams
+dbo	TechnoUpload
+dbo	TradTest
+dbo	UserAddress
+dbo	Users
+dbo	UsersInRoles
+
+
+
+
+la structure de la table Cart (commandes)
+RecordId   CartId                               ProductId  Quantity  DateCreated                BatTyoeId   HasPao  Total   PersonalizedText EstimatedDeliveryDate      CustomizedProductExpirationDate     MailDestinataire    QuantityPagesTotal  QuantityPagesCouleur    ProjectId   HasISBN   ShippingCompanyId TVA     FIleRequiredSpecialOrder    LivraisonPointRelaySpecialOrder CreateChronoNumber  CountryId   DirectSale  PromoCodeId  IsProductionExpress
+440	       be162049-176f-4526-ab40-d40d6ade3d5b	27	       1	     2016-09-20 15:59:37.580	NULL	    NULL	5.940	NULL	         2016-09-21 15:59:37.580	NULL	                            NULL	            102	                0	                    1041	    0	      1	                NULL	NULL	                    NULL	                        NULL	            NULL	    NULL	    NULL	     NULL
+441	       be162049-176f-4526-ab40-d40d6ade3d5b	27	       1	     2016-09-20 15:59:40.287	NULL	    NULL	8.040	NULL	         2016-09-21 15:59:40.287	NULL	                            NULL	            192	                0	                    1042	    0	      1	                NULL	NULL	                    NULL	                        NULL	            NULL	    NULL	    NULL	     NULL
+442	       be162049-176f-4526-ab40-d40d6ade3d5b	27	       1	     2016-09-20 15:59:43.050	NULL	    NULL	4.160	NULL	         2016-09-21 15:59:43.067	NULL	                            NULL	            26	                0	                    1045	    0	      1	                NULL	NULL	                    NULL	                        NULL	            NULL	    NULL	    NULL	     NULL
+443	       be162049-176f-4526-ab40-d40d6ade3d5b	25	       1	     2016-09-20 16:21:48.767	NULL	    NULL	5.190	NULL	         2016-09-21 16:21:48.767	NULL	                            NULL	            102	                0	                    1041	    0	      2	                NULL	NULL	                    NULL	                        NULL	            NULL	    NULL	    NULL	     NULL
+444	       be162049-176f-4526-ab40-d40d6ade3d5b	25	       1	     2016-09-20 16:23:21.037	NULL	    NULL	7.290	NULL	         2016-09-21 16:23:21.037	NULL	                            NULL	            192	                0	                    1042	    0	      2	                NULL	NULL	                    NULL	                        NULL	            NULL	    NULL	    NULL	     NULL
+
+
+ Voir les colonnes de la table Cart
+COLUMN_NAME  DATA_TYPE  IS_NULLABLE
+RecordId	int	NO
+CartId	varchar	NO
+ProductId	int	NO
+Quantity	int	NO
+DateCreated	datetime	NO
+BatTypeId	int	YES
+HasPao	bit	YES
+Total	decimal	YES
+PersonalizedText	varchar	YES
+EstimatedDeliveryDate	datetime	YES
+CustomizedProductExpirationDate	date	YES
+MailDestinataire	varchar	YES
+QuantityPagesTotal	int	YES
+QuantityPagesCouleur	int	YES
+ProjectId	int	YES
+HasISBN	bit	YES
+ShippingCompanyId	int	YES
+TVA	decimal	YES
+FileRequiredSpecialOrder	bit	YES
+LivraisonPointRelaySpecialOrder	bit	YES
+CreateChronoNumber	bit	YES
+CountryId	int	YES
+DirectSale	bit	YES
+PromoCodeId	int	YES
+IsProductionExpress	bit	YES
+
+
+
+Workflow des Statuts (OrderStatus):
+ID 1: OrderStatusNCommencee (Stage 1) - Commande non commencée
+ID 2: OrderStatusCommencee (Stage 1) - Commande commencée
+ID 3: OrderStatusPao (Stage 2) - Phase PAO (Prépresse)
+ID 4: OrderStatusBAT (Stage 3) - Bon À Tirer
+ID 5: OrderStatusPPnumerique (Stage 4) - Prépresse numérique
+ID 6: OrderStatusPPOffset (Stage 4) - Prépresse offset
+ID 7: OrderStatusNumerique (Stage 4) - Impression numérique
+ID 8: OrderStatusOffset (Stage 4) - Impression offset
+ID 9: OrderStatusReliure (Stage 5) - Reliure
+ID 10: OrderStatusFaconnage (Stage 5) - Façonnage/finition
+Informations de Tracking pour la Commande 13349:
+Produit: Product_96 (24 pages)
+Chrono: 9000847
+Dates clés:
+Production: 18 décembre 2025
+Expédition estimée: 22 décembre 2025
+Expédition finale: 23 décembre 2025
+Expédition confirmée: Pas encore
+État fichiers: Tous récupérés (1/1)
+Prêt pour reproduction: Oui
+Transporteurs Disponibles:
+GLS - Livraison standard (2-3 jours) ✅ Actif
+Chronopost - Express 24h ❌ Désactivé
+Messages Standard - Click & Collect ✅ Actif
+Relais Colis - Standard (2-3 jours) ✅ Actif
+
+
+
+
+
+
+
+# ð¦ Suivi de votre commande #13349
+
+**Client** : SÃ©bastien PAAS

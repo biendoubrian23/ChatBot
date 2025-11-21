@@ -27,6 +27,12 @@ app.add_middleware(
 )
 
 
+@app.get("/health")
+async def health_check():
+    """Health check endpoint."""
+    return {"status": "healthy", "service": "LibriAssist API"}
+
+
 @app.on_event("startup")
 async def startup_event():
     """Initialize services on startup."""

@@ -62,6 +62,20 @@ export default function WelcomeScreen({ onSendMessage }: WelcomeScreenProps) {
           Votre assistant intelligent pour toutes vos questions sur CoolLibri.
           Posez-moi n&apos;importe quelle question !
         </motion.p>
+
+        {/* Bouton de suivi de commande prominent */}
+        <motion.button
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.4, type: "spring", stiffness: 200 }}
+          onClick={() => onSendMessage("Je veux suivre ma commande")}
+          className="mx-auto px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl font-semibold shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200 flex items-center gap-3"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+          </svg>
+          Suivre ma commande
+        </motion.button>
       </div>
 
       {/* Carousel container */}

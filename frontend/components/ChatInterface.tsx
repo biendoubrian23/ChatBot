@@ -8,12 +8,16 @@ import MessageBubble from './MessageBubble'
 import InputBox from './InputBox'
 import Header from './Header'
 import WelcomeScreen from './WelcomeScreen'
+import OrderTrackingWorkflow from './OrderTrackingWorkflow'
+import { detectOrderInquiry } from '@/lib/orderUtils'
 
 export default function ChatInterface() {
   const [messages, setMessages] = useState<Message[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [conversationId, setConversationId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [showOrderTracking, setShowOrderTracking] = useState(false)
+  const [detectedOrderNumber, setDetectedOrderNumber] = useState<string | undefined>(undefined)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const scrollToBottom = () => {
@@ -27,6 +31,14 @@ export default function ChatInterface() {
   const handleSendMessage = async (content: string) => {
     if (!content.trim() || isLoading) return
 
+    // Détecter si c'est une demande de suivi de commande
+    const orderInquiry = detectOrderInquiry(content)
+    if (orderInquiry.isOrderInquiry) {
+      setShowOrderTracking(true)
+      setDetectedOrderNumber(orderInquiry.orderNumber)
+      return
+    }
+
     // Add user message
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -38,6 +50,10 @@ export default function ChatInterface() {
     setMessages((prev) => [...prev, userMessage])
     setIsLoading(true)
     setError(null)
+    
+    // Masquer le workflow de commande si affiché
+    setShowOrderTracking(false)
+    setDetectedOrderNumber(undefined)
     
     // Démarrer le chronomètre
     const startTime = Date.now()
@@ -146,10 +162,17 @@ export default function ChatInterface() {
     }
   }
 
+  const handleCloseOrderTracking = () => {
+    setShowOrderTracking(false)
+    setDetectedOrderNumber(undefined)
+  }
+
   const handleNewChat = () => {
     setMessages([])
     setConversationId(null)
     setError(null)
+    setShowOrderTracking(false)
+    setDetectedOrderNumber(undefined)
   }
 
   return (
@@ -157,14 +180,32 @@ export default function ChatInterface() {
       <Header onNewChat={handleNewChat} hasMessages={messages.length > 0} />
 
       <div className="flex-1 overflow-y-auto px-4 py-6 space-y-4">
-        {messages.length === 0 ? (
+        {messages.length === 0 && !showOrderTracking ? (
           <WelcomeScreen onSendMessage={handleSendMessage} />
         ) : (
-          <AnimatePresence>
-            {messages.map((message) => (
-              <MessageBubble key={message.id} message={message} />
-            ))}
-          </AnimatePresence>
+          <>
+            {/* Messages du chat */}
+            <AnimatePresence>
+              {messages.map((message) => (
+                <MessageBubble key={message.id} message={message} />
+              ))}
+            </AnimatePresence>
+
+            {/* Workflow de suivi de commande */}
+            {showOrderTracking && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="mt-4"
+              >
+                <OrderTrackingWorkflow
+                  initialOrderNumber={detectedOrderNumber}
+                  onClose={handleCloseOrderTracking}
+                />
+              </motion.div>
+            )}
+          </>
         )}
 
         <div ref={messagesEndRef} />

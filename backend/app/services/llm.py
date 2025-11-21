@@ -88,9 +88,9 @@ RÉPONSE DU SERVICE CLIENT:"""
                 system=system_prompt,
                 options={
                     "temperature": 0,  # Réduit pour plus de précision
-                    "top_p": 0.3,
+                    "top_p": 0.,
                     "top_k": 20,
-                    "num_predict": 800,
+                    "num_predict": 900,
                     "repeat_penalty": 1.3,
                 }
             )

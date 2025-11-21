@@ -10,6 +10,12 @@ class Message(BaseModel):
     content: str = Field(..., description="Message content")
 
 
+class CustomerValidationRequest(BaseModel):
+    """Request model for customer name validation."""
+    order_number: int = Field(..., description="Order number")
+    customer_name: str = Field(..., description="Customer name or first name")
+
+
 class ChatRequest(BaseModel):
     """Chat request model."""
     question: str = Field(..., min_length=1, max_length=1000, description="User question")

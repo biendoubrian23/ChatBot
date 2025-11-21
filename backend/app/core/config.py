@@ -31,8 +31,8 @@ class Settings(BaseSettings):
     # RAG Configuration
     chunk_size: int = 1000  # Increased from 550 for +15% completeness
     chunk_overlap: int = 300  # Adjusted proportionally
-    top_k_results: int = 8  # Increased from 4 for better context
-    rerank_top_n: int = 4  # Increased from 2 for better precision
+    top_k_results: int = 10  # Increased from 4 for better context
+    rerank_top_n: int = 5  # Increased from 2 for better precision
     
     # Embedding Model
     embedding_model: str = "paraphrase-multilingual-mpnet-base-v2"  # Upgraded for +30% search precision
@@ -40,6 +40,14 @@ class Settings(BaseSettings):
     # Paths
     vectorstore_path: str = "./data/vectorstore"
     docs_path: str = "../docs"
+    
+    # SQL Server Database Configuration
+    sql_server_host: str = "alpha.messages.fr"
+    sql_server_port: int = 1433
+    sql_server_database: str = "Coollibri_dev"
+    sql_server_username: str = "lecteur-dev"
+    sql_server_password: str = "Messages"
+    sql_server_driver: str = "ODBC Driver 18 for SQL Server"
     
     # Cache
     enable_cache: bool = True
