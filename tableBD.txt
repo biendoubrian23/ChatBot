@@ -156,3 +156,20 @@ Relais Colis - Standard (2-3 jours) ✅ Actif
 # ð¦ Suivi de votre commande #13349
 
 **Client** : SÃ©bastien PAAS
+
+
+T+0ms    : Clic "Valider"
+T+5ms    : Message utilisateur ajouté
+T+10ms   : Démarrage requête HTTP
+T+15ms   : Backend reçoit requête
+T+20ms   : Connexion SQL Server
+T+150ms  : Requête SQL exécutée
+T+180ms  : Données retournées
+T+200ms  : Response JSON envoyée
+T+598ms  : Frontend reçoit données (TTFB)
+T+600ms  : Formatage de la réponse
+T+605ms  : Ajout message bot
+T+610ms  : Mise à jour métriques
+T+620ms  : Rendu visuel complet
+
+

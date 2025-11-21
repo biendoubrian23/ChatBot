@@ -12,6 +12,8 @@ import QuickActions from './QuickActions'
 import OrderNumberInput from './OrderNumberInput'
 import { getOrderTracking } from '@/lib/orderUtils'
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'
+
 type ConversationMode = 'welcome' | 'normal' | 'order_tracking'
 
 export interface ResponseMetric {
@@ -95,11 +97,20 @@ export default function ChatInterface({ onMetricsUpdate }: ChatInterfaceProps) {
 
     try {
       const startTime = Date.now()
-      const orderData = await getOrderTracking(orderNumber)
-      const ttfb = Date.now() - startTime
-
-      // Formatter la réponse du chatbot avec les données de commande
-      const formattedResponse = formatOrderResponse(orderData, orderNumber)
+      
+      // Utiliser la nouvelle API de tracking qui retourne le message formaté
+      const ttfbStart = Date.now()
+      const response = await fetch(`${API_BASE_URL}/order/${orderNumber}/tracking`)
+      const ttfb = Date.now() - ttfbStart
+      
+      if (!response.ok) {
+        throw new Error('Order not found')
+      }
+      
+      const data = await response.json()
+      
+      // Utiliser directement la réponse formatée du backend
+      const formattedResponse = data.tracking_response
 
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),

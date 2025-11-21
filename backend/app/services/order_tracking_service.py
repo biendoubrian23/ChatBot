@@ -1,327 +1,336 @@
-"""
-Service intelligent de suivi de commandes avec réponses contextuelles
-"""
-from datetime import datetime, timedelta
+"""Service pour le tracking intelligent des commandes avec calcul de dates."""
 from typing import Optional, Dict, Any
-import pyodbc
-from app.services.database import db_service
+from datetime import datetime, timedelta
+from app.services.database import DatabaseService
+
 
 class OrderTrackingService:
-    """Service pour le suivi intelligent des commandes"""
+    """Service pour récupérer et formater les informations de tracking."""
     
-    # Mapping des statuts vers des messages clients
-    STATUS_MESSAGES = {
-        1: {
-            "stage": "Commande non commencée",
-            "message": "📋 Votre commande n'a pas encore démarré le processus de production.",
-            "emoji": "⏳",
-            "color": "gray"
-        },
-        2: {
-            "stage": "Commande commencée",
-            "message": "🎯 Votre commande a été prise en charge et est en cours de traitement.",
-            "emoji": "✅",
-            "color": "blue"
-        },
-        3: {
-            "stage": "Phase PAO (Prépresse)",
-            "message": "🎨 Votre commande est en phase PAO (Prépresse). Nos graphistes préparent vos fichiers pour l'impression.",
-            "emoji": "🎨",
-            "color": "purple"
-        },
-        4: {
-            "stage": "Bon À Tirer (BAT)",
-            "message": "✅ Le Bon À Tirer (BAT) a été validé. Vos fichiers sont prêts pour la production.",
-            "emoji": "📄",
-            "color": "green"
-        },
-        5: {
-            "stage": "Prépresse numérique",
-            "message": "⚙️ Vos fichiers sont en prépresse numérique, préparation finale avant impression.",
-            "emoji": "⚙️",
-            "color": "blue"
-        },
-        6: {
-            "stage": "Prépresse offset",
-            "message": "⚙️ Vos fichiers sont en prépresse offset, préparation des plaques d'impression.",
-            "emoji": "🔧",
-            "color": "blue"
-        },
-        7: {
-            "stage": "Impression numérique",
-            "message": "🖨️ Votre commande est en cours d'impression numérique.",
-            "emoji": "🖨️",
-            "color": "orange"
-        },
-        8: {
-            "stage": "Impression offset",
-            "message": "🖨️ Votre commande est en cours d'impression offset.",
-            "emoji": "🖨️",
-            "color": "orange"
-        },
-        9: {
-            "stage": "Reliure",
-            "message": "📚 Votre livre est en cours de reliure.",
-            "emoji": "📚",
-            "color": "orange"
-        },
-        10: {
-            "stage": "Façonnage/Finition",
-            "message": "✨ Votre commande est en phase de façonnage et finition. Dernières étapes avant expédition !",
-            "emoji": "✨",
-            "color": "green"
-        }
+    # Mapping des statuts en français
+    STATUS_LABELS = {
+        1: "Commande non commencée",
+        2: "Commande commencée",
+        3: "Phase PAO (Prépresse)",
+        4: "Bon À Tirer (BAT)",
+        5: "Prépresse numérique",
+        6: "Prépresse offset",
+        7: "Impression numérique",
+        8: "Impression offset",
+        9: "Reliure",
+        10: "Façonnage/finition",
+        11: "Expédition",
+        12: "Livrée",
+        13: "Anomalie",
+        14: "Validation Transport",
+        15: "Annulée",
+        16: "Terminée"
+    }
+    
+    # Étapes du workflow
+    WORKFLOW_STAGES = {
+        1: "Initialisation",
+        2: "Préparation fichiers",
+        3: "Validation",
+        4: "Impression",
+        5: "Finition",
+        6: "Expédition",
+        7: "Livraison"
     }
     
     def __init__(self):
-        self.db = db_service
-    
-    def validate_customer_name(self, order_number: str, customer_input: str) -> tuple[bool, Optional[str], Optional[str]]:
-        """
-        Valide le nom/prénom du client pour une commande.
-        
-        Returns:
-            tuple (is_valid, full_name, error_message)
-        """
-        if not self.db.connect():
-            return False, None, "Erreur de connexion à la base de données."
-        
-        try:
-            cursor = self.db.connection.cursor()
-            query = """
-            SELECT 
-                addr.Name as CustomerName,
-                addr.Company
-            FROM dbo.[Order] o
-            LEFT JOIN dbo.Address addr ON o.AddressShippingId = addr.AddressId
-            WHERE o.OrderId = ?
-            """
-            
-            cursor.execute(query, (order_number,))
-            row = cursor.fetchone()
-            
-            if not row:
-                return False, None, "Commande introuvable."
-            
-            # Le nom complet du client (ex: "Sébastien PAAS")
-            customer_name = (row.CustomerName or '').strip()
-            company = (row.Company or '').strip()
-            full_name = customer_name if customer_name else company
-            
-            # Séparer le prénom et nom si possible
-            name_parts = customer_name.split() if customer_name else []
-            first_name = name_parts[0].upper() if len(name_parts) > 0 else ""
-            last_name = " ".join(name_parts[1:]).upper() if len(name_parts) > 1 else ""
-            
-            # Fonction pour normaliser les chaînes (supprimer accents, casse, espaces)
-            def normalize_string(s):
-                if not s:
-                    return ""
-                # Supprimer les accents simples
-                s = s.replace('É', 'E').replace('È', 'E').replace('Ê', 'E').replace('Ë', 'E')
-                s = s.replace('À', 'A').replace('Á', 'A').replace('Â', 'A').replace('Ã', 'A').replace('Ä', 'A')
-                s = s.replace('Ù', 'U').replace('Ú', 'U').replace('Û', 'U').replace('Ü', 'U')
-                s = s.replace('Ì', 'I').replace('Í', 'I').replace('Î', 'I').replace('Ï', 'I')
-                s = s.replace('Ò', 'O').replace('Ó', 'O').replace('Ô', 'O').replace('Õ', 'O').replace('Ö', 'O')
-                s = s.replace('Ç', 'C')
-                return s.strip().upper()
-            
-            # Normaliser toutes les entrées
-            customer_input_normalized = normalize_string(customer_input)
-            first_name_normalized = normalize_string(first_name)
-            last_name_normalized = normalize_string(last_name)
-            full_name_normalized = normalize_string(full_name)
-            
-            # Validation très flexible :
-            is_valid = False
-            
-            if len(customer_input_normalized) >= 3:
-                is_valid = (
-                    # Correspondance exacte
-                    customer_input_normalized == first_name_normalized or
-                    customer_input_normalized == last_name_normalized or
-                    # Nom complet dans les deux ordres
-                    customer_input_normalized == f"{first_name_normalized} {last_name_normalized}" or
-                    customer_input_normalized == f"{last_name_normalized} {first_name_normalized}" or
-                    # Correspondance partielle (l'entrée est contenue dans le prénom/nom)
-                    customer_input_normalized in first_name_normalized or
-                    customer_input_normalized in last_name_normalized or
-                    # Le prénom/nom est contenu dans l'entrée
-                    first_name_normalized in customer_input_normalized or
-                    last_name_normalized in customer_input_normalized
-                )
-            
-            if is_valid:
-                return True, full_name, None
-            else:
-                # Message d'erreur avec exemples clairs
-                examples = []
-                if first_name:
-                    examples.append(f"• `{first_name.title()}`")
-                if last_name:
-                    examples.append(f"• `{last_name.title()}`")
-                if first_name and last_name:
-                    examples.append(f"• `{first_name.title()} {last_name.title()}`")
-                    examples.append(f"• `{last_name.title()} {first_name.title()}`")
-                
-                error_msg = (
-                    f"❌ **Le nom saisi ne correspond pas à cette commande.**\n\n"
-                    f"🔒 **Sécurité** : Pour protéger vos données, nous devons vérifier votre identité.\n\n"
-                    f"✨ **Bonne nouvelle** : Le système n'est pas sensible aux majuscules/minuscules !\n\n"
-                    f"📝 **Vous pouvez entrer** :\n"
-                    + "\n".join(examples) + "\n\n"
-                    f"💡 **Astuce** : Même une partie de votre nom suffit (minimum 3 caractères).\n\n"
-                    f"🔄 **Veuillez réessayer avec l'un des formats ci-dessus.**"
-                )
-                return False, None, error_msg
-            
-            cursor.close()
-                
-        except Exception as e:
-            print(f"Erreur validation client: {e}")
-            return False, None, "Erreur lors de la validation. Veuillez réessayer."
-        finally:
-            self.db.disconnect()
+        self.db = DatabaseService()
     
     def get_order_tracking_info(self, order_number: str) -> Optional[Dict[str, Any]]:
-        """Récupère toutes les informations de suivi d'une commande"""
-        # Utiliser la méthode existante du database service
-        order_data = self.db.get_order_by_number(order_number)
-        return order_data
+        """Récupère les infos complètes de tracking."""
+        return self.db.get_order_tracking_details(order_number)
+    
+    def calculate_delivery_estimate(self, order_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Calcule l'estimation de livraison basée sur les dates actuelles et les délais.
+        
+        Returns:
+            Dict avec dates estimées et messages formatés
+        """
+        today = datetime.now().date()
+        
+        # Récupérer les infos du premier item (principal)
+        if not order_data.get("items"):
+            return {}
+        
+        first_item = order_data["items"][0]
+        
+        # Dates de production et expédition prévues
+        production_date_str = first_item.get("production_date")
+        estimated_shipping_str = first_item.get("estimated_shipping")
+        confirmed_shipping_str = first_item.get("confirmed_shipping")
+        
+        # Convertir en objets date
+        production_date = None
+        estimated_shipping_date = None
+        confirmed_shipping_date = None
+        
+        if production_date_str:
+            production_date = datetime.fromisoformat(production_date_str.split()[0]).date()
+        
+        if estimated_shipping_str:
+            estimated_shipping_date = datetime.fromisoformat(estimated_shipping_str.split()[0]).date()
+        
+        if confirmed_shipping_str:
+            confirmed_shipping_date = datetime.fromisoformat(confirmed_shipping_str.split()[0]).date()
+        
+        # Délai de livraison depuis l'expédition
+        shipping_info = first_item.get("shipping", {})
+        delay_min = shipping_info.get("delay_min", 2)
+        delay_max = shipping_info.get("delay_max", 3)
+        
+        # Calculer la date de livraison estimée
+        delivery_date_min = None
+        delivery_date_max = None
+        
+        if confirmed_shipping_date:
+            # Si expédition confirmée, on calcule depuis cette date
+            delivery_date_min = confirmed_shipping_date + timedelta(days=delay_min)
+            delivery_date_max = confirmed_shipping_date + timedelta(days=delay_max)
+        elif estimated_shipping_date:
+            # Sinon depuis l'estimation
+            delivery_date_min = estimated_shipping_date + timedelta(days=delay_min)
+            delivery_date_max = estimated_shipping_date + timedelta(days=delay_max)
+        
+        # Calculer le nombre de jours restants
+        days_until_production = None
+        days_until_shipping = None
+        days_until_delivery = None
+        
+        if production_date and production_date > today:
+            days_until_production = (production_date - today).days
+        
+        if estimated_shipping_date and estimated_shipping_date > today:
+            days_until_shipping = (estimated_shipping_date - today).days
+        
+        if delivery_date_min and delivery_date_min > today:
+            days_until_delivery = (delivery_date_min - today).days
+        
+        return {
+            "today": today,
+            "production_date": production_date,
+            "estimated_shipping_date": estimated_shipping_date,
+            "confirmed_shipping_date": confirmed_shipping_date,
+            "delivery_date_min": delivery_date_min,
+            "delivery_date_max": delivery_date_max,
+            "days_until_production": days_until_production,
+            "days_until_shipping": days_until_shipping,
+            "days_until_delivery": days_until_delivery,
+            "delay_min": delay_min,
+            "delay_max": delay_max
+        }
     
     def generate_tracking_response(self, order_data: Dict[str, Any]) -> str:
-        """Génère une réponse intelligente et contextuelle sur le suivi de commande"""
+        """
+        Génère une réponse formatée en Markdown avec toutes les informations de tracking.
         
-        status_id = order_data['status_id']
-        status_info = self.STATUS_MESSAGES.get(status_id, {
-            "stage": "Statut inconnu",
-            "message": "Nous traitons votre commande.",
-            "emoji": "📦",
-            "color": "gray"
-        })
+        Args:
+            order_data: Données complètes de la commande
         
-        today = datetime.now()
+        Returns:
+            Réponse formatée en Markdown
+        """
+        # Infos de base
+        order_id = order_data["order_id"]
+        customer_name = order_data["customer"]["name"]
+        status_id = order_data["status_id"]
+        status_name = order_data.get("status_name", "")
+        status_stage = order_data.get("status_stage", 1)
         
-        # Construction de la réponse
-        response_parts = []
+        # Label français du statut
+        status_label = self.STATUS_LABELS.get(status_id, status_name)
         
-        # En-tête avec gestion sécurisée des valeurs
-        customer_name = order_data.get('customer', {}).get('name', 'Client')
-        response_parts.append(f"# 📦 Suivi de votre commande #{order_data['order_id']}")
-        response_parts.append("")
-        response_parts.append(f"**Client** : {customer_name}")
-        response_parts.append(f"**Date de commande** : {self._format_date(order_data.get('order_date'))}")
-        response_parts.append(f"**Montant total** : {order_data.get('total', 0):.2f}€ TTC")
-        response_parts.append("")
+        # Calcul des dates
+        dates = self.calculate_delivery_estimate(order_data)
         
-        # Statut actuel
-        response_parts.append("## 🎯 Statut actuel")
-        response_parts.append("")
-        response_parts.append(f"{status_info['emoji']} **{status_info['stage']}**")
-        response_parts.append(f"{status_info['message']}")
-        response_parts.append("")
+        # Items
+        items = order_data.get("items", [])
+        first_item = items[0] if items else {}
         
-        # Détails des produits
-        response_parts.append("## 📚 Détails de votre commande")
-        response_parts.append("")
+        # Construction du message conversationnel
+        lines = []
         
-        items = order_data.get('items', [])
-        for item in items:
-            product_name = item.get('product_name', 'Produit')
-            response_parts.append(f"### {product_name}")
-            response_parts.append(f"• **Quantité** : {item.get('quantity', 1)}")
-            if item.get('num_pages'):
-                response_parts.append(f"• **Nombre de pages** : {item['num_pages']}")
-            if item.get('chrono_number'):
-                response_parts.append(f"• **Numéro Chrono** : {item['chrono_number']}")
+        # En-tête personnalisé
+        # Extraire le prénom du nom complet
+        first_name = customer_name.split()[0] if customer_name else "Client"
+        
+        lines.append(f"# Suivi de votre commande #{order_id}")
+        lines.append("")
+        lines.append(f"Bonjour {first_name} ! 👋")
+        lines.append("")
+        
+        # État actuel avec emoji
+        stage_emoji = {
+            1: "🟡", 2: "🟠", 3: "🔵", 4: "🟣",
+            5: "🟢", 6: "🚚", 7: "✅"
+        }
+        emoji = stage_emoji.get(status_stage, "⚪")
+        
+        lines.append(f"{emoji} **État actuel : {status_label}**")
+        
+        # Message personnalisé selon le statut
+        if status_id in [1, 2]:
+            lines.append("Votre commande est en cours de préparation initiale. Nous allons bientôt commencer à travailler dessus. ⏳")
+        elif status_id in [3, 4]:
+            lines.append("Vos fichiers sont en cours de validation et préparation. Nos graphistes s'assurent que tout est parfait pour l'impression. 🎨")
+        elif status_id in [5, 6, 7, 8]:
+            lines.append("Votre commande est en cours d'impression. Les machines tournent pour créer votre ouvrage ! 🖨️")
+        elif status_id in [9, 10]:
+            lines.append("Votre commande est en phase de finition, c'est-à-dire que la reliure et le façonnage sont en cours. Tout est sur la bonne voie pour que vous la receviez rapidement. ✂️")
+        elif status_id == 11:
+            lines.append("Bonne nouvelle ! Votre commande a été expédiée et est en route vers vous. 📮")
+        elif status_id == 12:
+            lines.append("Parfait ! Votre commande a été livrée. Nous espérons que vous en êtes satisfait ! ✅")
+        elif status_id == 13:
+            lines.append("Une anomalie a été détectée sur votre commande. Notre équipe travaille activement à la résoudre. Nous vous tiendrons informé. ⚠️")
+        
+        lines.append("")
+        
+        # Dates clés
+        lines.append("## 📅 Dates clés")
+        lines.append("")
+        
+        # Production
+        if dates.get("production_date"):
+            prod_date = dates["production_date"]
+            formatted_prod = prod_date.strftime("%d/%m/%Y")
             
-            # Dates de production et expédition
-            production_date = self._parse_date(item.get('production_date'))
-            estimated_shipping = self._parse_date(item.get('estimated_shipping'))
-            confirmed_shipping = self._parse_date(item.get('confirmed_shipping'))
+            if dates.get("days_until_production") and dates["days_until_production"] > 0:
+                lines.append(f"🏭 **Production** : le {formatted_prod} (dans {dates['days_until_production']} jours)")
+                lines.append("→ La production commencera officiellement à cette date.")
+            else:
+                lines.append(f"🏭 **Production** : le {formatted_prod}")
+                lines.append("→ La production a déjà commencé ou est terminée.")
             
-            response_parts.append("")
-            response_parts.append("**📅 Planning :**")
+            lines.append("")
+        
+        # Expédition
+        if dates.get("estimated_shipping_date"):
+            ship_date = dates["estimated_shipping_date"]
+            formatted_ship = ship_date.strftime("%d/%m/%Y")
             
-            if production_date:
-                if production_date <= today:
-                    response_parts.append(f"• ✅ Production : Terminée le {self._format_date(item.get('production_date'))}")
+            if dates.get("days_until_shipping") and dates["days_until_shipping"] > 0:
+                lines.append(f"📦 **Expédition prévue** : le {formatted_ship} (dans {dates['days_until_shipping']} jours)")
+                lines.append("→ Votre commande sera expédiée ce jour-là.")
+            else:
+                lines.append(f"📦 **Expédition prévue** : le {formatted_ship}")
+                lines.append("→ L'expédition est imminente ou déjà effectuée.")
+            
+            lines.append("")
+        
+        # Livraison avec info transporteur
+        if dates.get("delivery_date_min") and dates.get("delivery_date_max"):
+            del_min = dates["delivery_date_min"]
+            del_max = dates["delivery_date_max"]
+            
+            formatted_min = del_min.strftime("%d/%m/%Y")
+            formatted_max = del_max.strftime("%d/%m/%Y")
+            
+            shipping = first_item.get("shipping", {})
+            company_name = shipping.get("company_name", "")
+            company_label = shipping.get("label", "Livraison standard")
+            delay_min = shipping.get("delay_min", 0)
+            delay_max = shipping.get("delay_max", 0)
+            
+            if del_min == del_max:
+                if dates.get("days_until_delivery"):
+                    days = dates["days_until_delivery"]
+                    lines.append(f"🚚 **Livraison estimée** : le {formatted_min} (dans environ {days} jours)")
                 else:
-                    days_until = (production_date - today).days
-                    response_parts.append(f"• ⏳ Production prévue : {self._format_date(item.get('production_date'))} (dans {days_until} jour{'s' if days_until > 1 else ''})")
-            
-            # Gestion de l'expédition
-            if confirmed_shipping:
-                response_parts.append(f"• ✅ **Expédié le** : {self._format_date(item.get('confirmed_shipping'))}")
-                delivery_date = confirmed_shipping + timedelta(days=2)
-                if delivery_date <= today:
-                    response_parts.append(f"• 📬 **Livraison** : Devrait être arrivée")
+                    lines.append(f"🚚 **Livraison estimée** : le {formatted_min}")
+            else:
+                if dates.get("days_until_delivery"):
+                    days = dates["days_until_delivery"]
+                    days_max = days + (dates['delay_max'] - dates['delay_min'])
+                    lines.append(f"🚚 **Livraison estimée** : entre le {formatted_min} et le {formatted_max} (dans environ {days} à {days_max} jours)")
                 else:
-                    days_until = (delivery_date - today).days
-                    response_parts.append(f"• 📬 **Livraison estimée** : {self._format_date(delivery_date)} (dans {days_until} jour{'s' if days_until > 1 else ''})")
+                    lines.append(f"🚚 **Livraison estimée** : entre le {formatted_min} et le {formatted_max}")
+            
+            # Info transporteur dans le texte
+            if company_name:
+                delivery_info = f"→ Vous la recevrez à domicile via {company_name}"
+                if company_label and "standard" in company_label.lower():
+                    delivery_info += " en livraison standard"
+                elif company_label and "express" in company_label.lower():
+                    delivery_info += " en livraison express"
                 
-                if item.get('tracking_url'):
-                    response_parts.append(f"• 🔍 [Suivre votre colis]({item['tracking_url']})")
-                    
-            elif estimated_shipping:
-                if estimated_shipping < today:
-                    # Retard détecté
-                    delay_days = (today - estimated_shipping).days
-                    response_parts.append(f"• ⚠️ **Expédition prévue** : {self._format_date(item.get('estimated_shipping'))}")
-                    response_parts.append(f"• 🕐 **Retard estimé** : {delay_days} jour{'s' if delay_days > 1 else ''}")
-                    response_parts.append(f"• 💡 Votre commande sera expédiée très prochainement. Nous nous excusons pour ce léger retard.")
+                if delay_min and delay_max and delay_min == delay_max:
+                    delivery_info += f", avec un délai de {delay_min} jour(s) après expédition."
+                elif delay_min and delay_max:
+                    delivery_info += f", avec un délai de {delay_min} à {delay_max} jours après expédition."
                 else:
-                    days_until = (estimated_shipping - today).days
-                    response_parts.append(f"• 📦 **Expédition prévue** : {self._format_date(item.get('estimated_shipping'))} (dans {days_until} jour{'s' if days_until > 1 else ''})")
-                    
-                    # Estimation de livraison
-                    delivery_date = estimated_shipping + timedelta(days=2)
-                    delivery_days = (delivery_date - today).days
-                    response_parts.append(f"• 📬 **Livraison estimée** : {self._format_date(delivery_date)} (dans {delivery_days} jour{'s' if delivery_days > 1 else ''})")
+                    delivery_info += "."
+                
+                lines.append(delivery_info)
             
-            response_parts.append("")
+            lines.append("")
         
-        # Adresse de livraison
-        response_parts.append("## 🏠 Adresse de livraison")
-        response_parts.append("")
-        customer = order_data.get('customer', {})
-        if customer.get('address'):
-            response_parts.append(f"{customer['address']}")
-        if customer.get('address2'):
-            response_parts.append(f"{customer['address2']}")
-        if customer.get('zip_code') and customer.get('city'):
-            response_parts.append(f"{customer['zip_code']} {customer['city']}")
-        if customer.get('phone'):
-            response_parts.append(f"📞 {customer['phone']}")
-        response_parts.append("")
+        # Détails de la commande (simplifié)
+        lines.append("## 📚 Détails de votre commande")
+        lines.append("")
         
-        # Message de clôture
-        response_parts.append("---")
-        response_parts.append("")
-        response_parts.append("💡 **Besoin d'aide ?** N'hésitez pas à nous contacter si vous avez des questions sur votre commande.")
+        num_pages = first_item.get("num_pages", 0)
+        quantity = first_item.get("quantity", 1)
+        ready = first_item.get("ready_to_reproduce", False)
+        files_retrieved = first_item.get("files_retrieved", 0)
         
-        return "\n".join(response_parts)
+        if num_pages:
+            lines.append(f"**Pages** : {num_pages}")
+            lines.append("")
+        
+        if quantity:
+            lines.append(f"**Quantité** : {quantity}")
+            lines.append("")
+        
+        if ready:
+            lines.append(f"**Fichiers** : ✅ Prêt pour reproduction ({files_retrieved} fichier récupéré)")
+        else:
+            lines.append(f"**Fichiers** : ⏳ En attente ({files_retrieved} fichier récupéré)")
+        
+        lines.append("")
+        
+        # Récapitulatif financier
+        lines.append("## 💰 Récapitulatif")
+        lines.append("")
+        
+        total = order_data.get("total", 0)
+        shipping_cost = order_data.get("shipping", 0)
+        paid = order_data.get("paid", False)
+        
+        lines.append(f"**Montant total** : {total:.2f} €")
+        lines.append("")
+        lines.append(f"**Frais de port** : {shipping_cost:.2f} €")
+        lines.append("")
+        lines.append(f"**Paiement** : {'✅ Payé' if paid else '⏳ En attente'}")
+        
+        lines.append("")
+        
+        # Message de fin convivial
+        lines.append("💡 Si vous avez des questions ou souhaitez plus de détails sur votre commande, n'hésitez pas à me demander ! Je peux également vous informer dès que l'expédition est confirmée. 🚀")
+        
+        return "\n".join(lines)
     
-    def _parse_date(self, date_value) -> Optional[datetime]:
-        """Parse une date depuis différents formats"""
-        if not date_value:
-            return None
+    def validate_customer_name(self, order_number: str, customer_name: str) -> tuple:
+        """
+        Valide le nom du client pour une commande.
         
-        if isinstance(date_value, datetime):
-            return date_value
+        Returns:
+            (is_valid, full_name, error_message)
+        """
+        order_data = self.get_order_tracking_info(order_number)
         
-        try:
-            if isinstance(date_value, str):
-                return datetime.fromisoformat(date_value.replace('Z', '+00:00'))
-        except:
-            pass
+        if not order_data:
+            return (False, None, "Commande introuvable")
         
-        return None
-    
-    def _format_date(self, date_value) -> str:
-        """Formate une date en français"""
-        date_obj = self._parse_date(date_value)
-        if not date_obj:
-            return "Date inconnue"
+        full_name = order_data["customer"]["name"]
         
-        return date_obj.strftime("%d/%m/%Y")
+        # Validation simple : vérifier si le nom saisi est dans le nom complet
+        if customer_name.lower() in full_name.lower():
+            return (True, full_name, None)
+        else:
+            return (False, None, "Le nom ne correspond pas à cette commande")

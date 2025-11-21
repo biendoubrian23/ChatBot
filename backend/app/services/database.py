@@ -63,16 +63,15 @@ class DatabaseService:
         finally:
             self.disconnect()
     
-    def get_order_by_number(self, order_number: str, last_name: Optional[str] = None) -> Optional[Dict[str, Any]]:
+    def get_order_tracking_details(self, order_number: str) -> Optional[Dict[str, Any]]:
         """
-        Récupérer les détails complets d'une commande par son numéro.
+        Récupérer TOUS les détails de tracking d'une commande avec jointures complètes.
         
         Args:
             order_number: Numéro de commande (OrderId)
-            last_name: Nom de famille (optionnel pour validation)
         
         Returns:
-            Dictionnaire avec les détails de la commande ou None
+            Dictionnaire avec les détails complets de tracking ou None
         """
         if not self.connect():
             return None
@@ -80,9 +79,10 @@ class DatabaseService:
         try:
             cursor = self.connection.cursor()
             
-            # Requête complète avec jointures
+            # Requête complète avec TOUTES les jointures nécessaires
             query = """
                 SELECT 
+                    -- Infos commande
                     o.OrderId,
                     o.OrderDate,
                     o.PaymentDate,
@@ -90,6 +90,10 @@ class DatabaseService:
                     o.ShippingAmount,
                     o.OrderStatusId,
                     o.Paid,
+                    -- Infos statut
+                    os.Name as StatusName,
+                    os.Stage as StatusStage,
+                    -- Infos ligne de commande
                     ol.OrderLineId,
                     ol.Quantity,
                     ol.PriceHT,
@@ -100,8 +104,12 @@ class DatabaseService:
                     ol.DateShippingConfirmed,
                     ol.NumberPagesTotal,
                     ol.TrackingUrl,
+                    ol.ReadyToReproduce,
+                    ol.GetFiles,
+                    -- Infos produit
                     p.ProductId,
                     p.Name as ProductName,
+                    -- Infos client
                     addr.Name as CustomerName,
                     addr.AddressLine1,
                     addr.AddressLine2,
@@ -109,26 +117,34 @@ class DatabaseService:
                     addr.Zip,
                     addr.CountryId,
                     addr.Phone,
-                    addr.Company
+                    addr.Company,
+                    -- Infos transporteur
+                    sc.ShippingCompanyId,
+                    sc.Name as ShippingCompanyName,
+                    sc.Label as ShippingCompanyLabel,
+                    sc.DelayMin,
+                    sc.DelayMax,
+                    sc.IsEnabled as ShippingEnabled,
+                    sc.IsExpress as ShippingExpress
                 FROM dbo.[Order] o
                 INNER JOIN dbo.OrderLine ol ON o.OrderId = ol.OrderId
                 LEFT JOIN dbo.Product p ON ol.ProductId = p.ProductId
                 LEFT JOIN dbo.Address addr ON o.AddressShippingId = addr.AddressId
+                LEFT JOIN dbo.OrderStatus os ON o.OrderStatusId = os.OrderStatusId
+                LEFT JOIN dbo.ShippingCompany sc ON ol.ShippingCompanyId = sc.ShippingCompanyId
                 WHERE o.OrderId = ?
             """
             
             cursor.execute(query, (order_number,))
             
-            # Récupérer colonnes
-            columns = [column[0] for column in cursor.description]
-            
-            # Récupérer toutes les lignes (peut y avoir plusieurs produits)
+            # Récupérer toutes les lignes
             rows = cursor.fetchall()
             
             if not rows:
+                cursor.close()
                 return None
             
-            # Construire le résultat structuré
+            # Construire le résultat structuré COMPLET
             first_row = rows[0]
             order_data = {
                 "order_id": first_row.OrderId,
@@ -137,6 +153,8 @@ class DatabaseService:
                 "total": float(first_row.OrderTotal) if first_row.OrderTotal else 0,
                 "shipping": float(first_row.ShippingAmount) if first_row.ShippingAmount else 0,
                 "status_id": first_row.OrderStatusId,
+                "status_name": first_row.StatusName,
+                "status_stage": first_row.StatusStage,
                 "paid": bool(first_row.Paid),
                 "customer": {
                     "name": first_row.CustomerName,
@@ -151,7 +169,7 @@ class DatabaseService:
                 "items": []
             }
             
-            # Ajouter chaque ligne de commande
+            # Ajouter chaque ligne de commande avec infos complètes
             for row in rows:
                 item = {
                     "line_id": row.OrderLineId,
@@ -165,7 +183,18 @@ class DatabaseService:
                     "estimated_shipping": str(row.DateShippingEstimatedFinal) if row.DateShippingEstimatedFinal else None,
                     "confirmed_shipping": str(row.DateShippingConfirmed) if row.DateShippingConfirmed else None,
                     "num_pages": row.NumberPagesTotal,
-                    "tracking_url": row.TrackingUrl
+                    "tracking_url": row.TrackingUrl,
+                    "ready_to_reproduce": bool(row.ReadyToReproduce) if row.ReadyToReproduce is not None else False,
+                    "files_retrieved": row.GetFiles if row.GetFiles is not None else 0,
+                    "shipping": {
+                        "company_id": row.ShippingCompanyId,
+                        "company_name": row.ShippingCompanyName,
+                        "label": row.ShippingCompanyLabel,
+                        "delay_min": row.DelayMin,
+                        "delay_max": row.DelayMax,
+                        "enabled": bool(row.ShippingEnabled) if row.ShippingEnabled is not None else False,
+                        "express": bool(row.ShippingExpress) if row.ShippingExpress is not None else False
+                    }
                 }
                 order_data["items"].append(item)
             
@@ -177,6 +206,12 @@ class DatabaseService:
             return None
         finally:
             self.disconnect()
+    
+    def get_order_by_number(self, order_number: str, last_name: Optional[str] = None) -> Optional[Dict[str, Any]]:
+        """
+        Méthode simplifiée pour compatibilité - utilise get_order_tracking_details en interne.
+        """
+        return self.get_order_tracking_details(order_number)
     
     def list_tables(self) -> List[str]:
         """Lister toutes les tables de la base de données."""

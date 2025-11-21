@@ -90,7 +90,7 @@ export default function MetricsPanel({ metrics }: MetricsPanelProps) {
                     </svg>
                     <span className="text-xs font-medium text-gray-600">TTFB</span>
                   </div>
-                  <p className="text-lg font-bold text-blue-600">{metric.ttfb}ms</p>
+                  <p className="text-lg font-bold text-blue-600">{(metric.ttfb / 1000).toFixed(2)}s</p>
                 </div>
 
                 <div className="bg-white rounded-lg p-2 border border-purple-100">
@@ -100,7 +100,7 @@ export default function MetricsPanel({ metrics }: MetricsPanelProps) {
                     </svg>
                     <span className="text-xs font-medium text-gray-600">Total</span>
                   </div>
-                  <p className="text-lg font-bold text-purple-600">{metric.responseTime}ms</p>
+                  <p className="text-lg font-bold text-purple-600">{(metric.responseTime / 1000).toFixed(2)}s</p>
                 </div>
               </div>
 

@@ -42,6 +42,7 @@ export default function MessageBubble({ message, hideAvatar = false }: MessageBu
 
   return (
     <motion.div
+      layout
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0 }}
