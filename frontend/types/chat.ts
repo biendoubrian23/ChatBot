@@ -6,6 +6,7 @@ export interface Message {
   sources?: SourceDocument[]
   responseTime?: number  // Temps total de réponse en millisecondes
   ttfb?: number  // Time To First Byte - temps avant le 1er caractère (ms)
+  isThinking?: boolean   // Pour l'effet thinking des commandes SQL
 }
 
 export interface HistoryMessage {

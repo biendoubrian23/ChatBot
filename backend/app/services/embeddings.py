@@ -7,11 +7,11 @@ import numpy as np
 class EmbeddingService:
     """Service for generating text embeddings."""
     
-    def __init__(self, model_name: str = "all-MiniLM-L6-v2"):
+    def __init__(self, model_name: str = "intfloat/multilingual-e5-large"):
         """Initialize embedding service.
         
         Args:
-            model_name: Name of the SentenceTransformer model
+            model_name: Name of the SentenceTransformer model (default: e5-large)
         """
         self.model_name = model_name
         print(f"Loading embedding model: {model_name}")

@@ -39,8 +39,36 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
               <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
               <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
             </div>
+          ) : !isUser && message.isThinking ? (
+            // Style spécial pour les étapes de thinking
+            <div className="flex items-center space-x-2">
+              <div className="flex space-x-1">
+                <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" style={{ animationDelay: '0ms' }} />
+                <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" style={{ animationDelay: '100ms' }} />
+                <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" style={{ animationDelay: '200ms' }} />
+              </div>
+              <p className="text-xs text-gray-500 dark:text-gray-500 italic">{message.content}</p>
+            </div>
           ) : (
-            <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
+            // Réponse finale avec effet de shader
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ 
+                opacity: 1, 
+                scale: 1,
+                background: [
+                  'linear-gradient(90deg, rgba(59,130,246,0.1) 0%, rgba(147,51,234,0.1) 100%)',
+                  'rgba(255,255,255,0)',
+                ]
+              }}
+              transition={{ 
+                duration: 0.8,
+                background: { duration: 1.5, ease: "easeOut" }
+              }}
+              className="rounded-lg p-1"
+            >
+              <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
+            </motion.div>
           )}
         </div>
 

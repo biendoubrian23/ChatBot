@@ -9,7 +9,9 @@ from app.models.schemas import (
     ChatResponse,
     HealthResponse,
     IndexStatus,
-    CustomerValidationRequest
+    CustomerValidationRequest,
+    MessageAnalysisRequest,
+    MessageAnalysisResponse
 )
 from app.core.config import settings
 
@@ -106,6 +108,37 @@ async def chat_stream(request: ChatRequest, pipeline=Depends(get_rag_pipeline)):
             yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
     
     return StreamingResponse(generate(), media_type="text/event-stream")
+
+
+@router.post("/chat/analyze", response_model=MessageAnalysisResponse)
+async def analyze_message(request: MessageAnalysisRequest, ollama=Depends(get_ollama_service)):
+    """Analyse intelligente d'un message pour détecter l'intention de l'utilisateur.
+    
+    Détermine si le message concerne :
+    - Le suivi d'une commande (avec ou sans numéro)
+    - Une question générale sur l'impression de livres
+    
+    Args:
+        request: Message à analyser
+        ollama: Service Ollama pour l'analyse LLM
+        
+    Returns:
+        Analyse avec intention, numéro de commande extrait (si présent), 
+        et indicateur si un numéro est requis
+    """
+    try:
+        from app.services.message_analyzer import MessageAnalyzer
+        
+        analyzer = MessageAnalyzer(ollama)
+        analysis = await analyzer.analyze_message(request.message)
+        
+        return MessageAnalysisResponse(**analysis)
+        
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Erreur analyse message: {str(e)}"
+        )
 
 
 @router.get("/health", response_model=HealthResponse)
@@ -231,6 +264,7 @@ async def get_order_tracking(order_number: int):
     """
     try:
         from app.services.order_tracking_service import OrderTrackingService
+        from order_status_logic import generate_order_status_response
         
         tracking_service = OrderTrackingService()
         order_data = tracking_service.get_order_tracking_info(str(order_number))
@@ -241,7 +275,8 @@ async def get_order_tracking(order_number: int):
                 detail=f"Commande #{order_number} introuvable"
             )
         
-        tracking_response = tracking_service.generate_tracking_response(order_data)
+        # Utiliser la nouvelle logique avec validation de paiement et dates intelligentes
+        tracking_response = generate_order_status_response(order_data)
         
         return {
             "order_number": order_number,
@@ -256,5 +291,59 @@ async def get_order_tracking(order_number: int):
             status_code=500,
             detail=f"Erreur génération tracking: {str(e)}"
         )
+
+
+@router.get("/order/{order_number}/tracking/stream")
+async def stream_order_tracking(order_number: int):
+    """
+    Stream la réponse de suivi de commande avec un effet de typing naturel.
+    
+    Args:
+        order_number: Numéro de commande
+    
+    Returns:
+        Streaming response avec effet typing
+    """
+    async def generate():
+        try:
+            from app.services.order_tracking_service import OrderTrackingService
+            from order_status_logic import generate_order_status_response
+            import asyncio
+            
+            tracking_service = OrderTrackingService()
+            order_data = tracking_service.get_order_tracking_info(str(order_number))
+            
+            if not order_data:
+                yield f"data: {json.dumps({'type': 'error', 'message': f'Commande #{order_number} introuvable'})}\n\n"
+                return
+            
+            # Étapes de réflexion (effet ChatGPT thinking)
+            thinking_steps = [
+                "🔍 Recherche de la commande dans la base de données...",
+                "📋 Analyse des informations de commande...",
+                "📅 Vérification des dates de production et d'expédition...",
+                "⚙️ Récupération du statut de traitement...",
+                "💳 Contrôle du statut de paiement...",
+                "📦 Calcul des estimations de livraison..."
+            ]
+            
+            # Envoyer les étapes de thinking
+            for step in thinking_steps:
+                yield f"data: {json.dumps({'type': 'thinking', 'content': step})}\n\n"
+                await asyncio.sleep(1.2)  # 1.2 seconde par étape
+            
+            # Générer la réponse complète
+            tracking_response = generate_order_status_response(order_data)
+            
+            # Envoyer la réponse finale d'un coup (pas de streaming)
+            yield f"data: {json.dumps({'type': 'final_response', 'content': tracking_response})}\n\n"
+            
+            # Envoyer le signal de fin
+            yield f"data: {json.dumps({'type': 'done'})}\n\n"
+            
+        except Exception as e:
+            yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
+    
+    return StreamingResponse(generate(), media_type="text/event-stream")
 
 

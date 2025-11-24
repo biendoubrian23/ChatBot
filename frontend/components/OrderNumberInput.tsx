@@ -5,10 +5,11 @@ import { motion } from 'framer-motion'
 
 interface OrderNumberInputProps {
   onSubmit: (orderNumber: string) => void
+  onCancel?: () => void
   isLoading?: boolean
 }
 
-export default function OrderNumberInput({ onSubmit, isLoading = false }: OrderNumberInputProps) {
+export default function OrderNumberInput({ onSubmit, onCancel, isLoading = false }: OrderNumberInputProps) {
   const [orderNumber, setOrderNumber] = useState('')
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -48,12 +49,27 @@ export default function OrderNumberInput({ onSubmit, isLoading = false }: OrderN
           )}
         </div>
         
-        <button
-          type="submit"
-          disabled={!orderNumber.trim() || isLoading}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
-        >
-          {isLoading ? (
+        <div className="flex gap-2">
+          {onCancel && (
+            <button
+              type="button"
+              onClick={onCancel}
+              disabled={isLoading}
+              className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 py-3 rounded-xl font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              <span>Annuler</span>
+            </button>
+          )}
+          
+          <button
+            type="submit"
+            disabled={!orderNumber.trim() || isLoading}
+            className={`${onCancel ? 'flex-1' : 'w-full'} bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2`}
+          >
+            {isLoading ? (
             <>
               <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -70,6 +86,7 @@ export default function OrderNumberInput({ onSubmit, isLoading = false }: OrderN
             </>
           )}
         </button>
+        </div>
       </form>
     </motion.div>
   )

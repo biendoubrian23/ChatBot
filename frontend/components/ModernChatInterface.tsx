@@ -83,6 +83,19 @@ export default function ChatInterface({ onMetricsUpdate }: ChatInterfaceProps) {
     }
   }
 
+  const handleCancelOrderInput = () => {
+    setShowOrderInput(false)
+    setMode('normal')
+    
+    const cancelMessage: Message = {
+      id: Date.now().toString(),
+      role: 'assistant',
+      content: 'D\'accord, n\'hésitez pas à me poser vos questions sur nos services d\'impression !',
+      timestamp: new Date(),
+    }
+    setMessages((prev) => [...prev, cancelMessage])
+  }
+
   const handleOrderNumberSubmit = async (orderNumber: string) => {
     // Ajouter le message utilisateur avec le numéro
     const userMessage: Message = {
@@ -95,57 +108,121 @@ export default function ChatInterface({ onMetricsUpdate }: ChatInterfaceProps) {
     setShowOrderInput(false)
     setIsLoading(true)
 
+    const startTime = Date.now()
+    let firstByteTime: number | undefined = undefined
+
+    const assistantId = (Date.now() + 1).toString()
+    const assistantMessage: Message = {
+      id: assistantId,
+      role: 'assistant',
+      content: '...',
+      timestamp: new Date(),
+      sources: [{ source: 'Base de données CoolLibri', relevance: 1.0 }],
+    }
+    setMessages((prev) => [...prev, assistantMessage])
+
     try {
-      const startTime = Date.now()
-      
-      // Utiliser la nouvelle API de tracking qui retourne le message formaté
-      const ttfbStart = Date.now()
-      const response = await fetch(`${API_BASE_URL}/order/${orderNumber}/tracking`)
-      const ttfb = Date.now() - ttfbStart
-      
-      if (!response.ok) {
-        throw new Error('Order not found')
-      }
-      
-      const data = await response.json()
-      
-      // Utiliser directement la réponse formatée du backend
-      const formattedResponse = data.tracking_response
+      let fullContent = ''
+      let hasStartedReceiving = false
 
-      const botMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: formattedResponse,
-        timestamp: new Date(),
-      }
-      setMessages((prev) => [...prev, botMessage])
-
-      // Sauvegarder les métriques
-      const newMetric: ResponseMetric = {
-        id: Date.now().toString(),
-        question: `Commande n°${orderNumber}`,
-        responseTime: Date.now() - startTime,
-        ttfb,
-        timestamp: new Date(),
-        sources: [{ source: 'Base de données CoolLibri', relevance: 1.0 }]
-      }
-      
-      setMetricsHistory((prev) => {
-        const updated = [...prev, newMetric]
-        if (onMetricsUpdate) {
-          onMetricsUpdate(updated)
+      // Utiliser le streaming endpoint avec effet thinking
+      await chatAPI.streamOrderTracking(
+        orderNumber,
+        // onToken: recevoir chaque chunk (pour compatibilité)
+        (chunk: string) => {
+          if (!hasStartedReceiving) {
+            hasStartedReceiving = true
+            firstByteTime = Date.now() - startTime
+          }
+          
+          fullContent += chunk
+          
+          setMessages((prev) =>
+            prev.map((msg) =>
+              msg.id === assistantId
+                ? { ...msg, content: fullContent.trim() }
+                : msg
+            )
+          )
+        },
+        // onComplete
+        () => {
+          // Sauvegarder les métriques
+          const newMetric: ResponseMetric = {
+            id: Date.now().toString(),
+            question: `Commande n°${orderNumber}`,
+            responseTime: Date.now() - startTime,
+            ttfb: firstByteTime || 0,
+            timestamp: new Date(),
+            sources: [{ source: 'Base de données CoolLibri', relevance: 1.0 }]
+          }
+          
+          setMetricsHistory((prev) => {
+            const updated = [...prev, newMetric]
+            if (onMetricsUpdate) {
+              onMetricsUpdate(updated)
+            }
+            return updated
+          })
+          
+          setIsLoading(false)
+          setMode('normal')
+        },
+        // onError
+        (error: string) => {
+          const errorMessage: Message = {
+            id: assistantId,
+            role: 'assistant',
+            content: `Désolé, je n'ai pas pu trouver la commande n°${orderNumber}. ${error}`,
+            timestamp: new Date(),
+          }
+          setMessages((prev) => 
+            prev.map((msg) =>
+              msg.id === assistantId ? errorMessage : msg
+            )
+          )
+          setIsLoading(false)
+          setMode('normal')
+        },
+        // onThinking: afficher les étapes de réflexion
+        (thinkingStep: string) => {
+          if (!hasStartedReceiving) {
+            hasStartedReceiving = true
+            firstByteTime = Date.now() - startTime
+          }
+          
+          setMessages((prev) =>
+            prev.map((msg) =>
+              msg.id === assistantId
+                ? { ...msg, content: thinkingStep, isThinking: true }
+                : msg
+            )
+          )
+        },
+        // onFinalResponse: afficher la réponse finale d'un coup
+        (finalContent: string) => {
+          setMessages((prev) =>
+            prev.map((msg) =>
+              msg.id === assistantId
+                ? { ...msg, content: finalContent, isThinking: false }
+                : msg
+            )
+          )
         }
-        return updated
-      })
+      )
+      
     } catch (error) {
       const errorMessage: Message = {
-        id: (Date.now() + 1).toString(),
+        id: assistantId,
         role: 'assistant',
         content: `Désolé, je n'ai pas pu trouver la commande n°${orderNumber}. Veuillez vérifier le numéro et réessayer.`,
         timestamp: new Date(),
       }
-      setMessages((prev) => [...prev, errorMessage])
-    } finally {
+      setMessages((prev) => 
+        prev.map((msg) =>
+          msg.id === assistantId ? errorMessage : msg
+        )
+      )
       setIsLoading(false)
       setMode('normal')
     }
@@ -232,6 +309,66 @@ export default function ChatInterface({ onMetricsUpdate }: ChatInterfaceProps) {
     setIsLoading(true)
     setError(null)
 
+    try {
+      // 1. Analyser le message d'abord
+      const analysisResponse = await fetch(`${API_BASE_URL}/chat/analyze`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: content })
+      })
+
+      if (!analysisResponse.ok) {
+        throw new Error('Erreur analyse du message')
+      }
+
+      const analysis = await analysisResponse.json()
+      
+      // 2. Router selon l'intention détectée
+      if (analysis.intent === 'order_tracking') {
+        if (analysis.order_number) {
+          // Numéro extrait → appeler directement le tracking
+          await handleOrderNumberSubmit(analysis.order_number)
+        } else if (analysis.needs_order_input) {
+          // Pas de numéro trouvé → demander le numéro
+          const botMessage: Message = {
+            id: (Date.now() + 1).toString(),
+            role: 'assistant',
+            content: 'Veuillez entrer le numéro de votre commande :',
+            timestamp: new Date(),
+          }
+          setMessages((prev) => [...prev, botMessage])
+          setShowOrderInput(true)
+          setMode('order_tracking')
+          setIsLoading(false)
+        }
+      } else if (analysis.intent === 'general_question') {
+        // Question générale → utiliser RAG
+        await handleGeneralQuestion(content, userMessage.id)
+      } else {
+        // Incertain → demander clarification
+        const botMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          role: 'assistant',
+          content: 'Je ne suis pas sûr de comprendre votre demande. Souhaitez-vous suivre une commande ou poser une question sur nos services d\'impression ?',
+          timestamp: new Date(),
+        }
+        setMessages((prev) => [...prev, botMessage])
+        setIsLoading(false)
+      }
+    } catch (err: any) {
+      setError(err.message || 'Une erreur est survenue')
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: 'Désolé, une erreur est survenue. Veuillez réessayer.',
+        timestamp: new Date(),
+      }
+      setMessages((prev) => [...prev, errorMessage])
+      setIsLoading(false)
+    }
+  }
+
+  const handleGeneralQuestion = async (content: string, userMessageId: string) => {
     const startTime = Date.now()
     let firstByteTime: number | undefined = undefined
 
@@ -312,6 +449,7 @@ export default function ChatInterface({ onMetricsUpdate }: ChatInterfaceProps) {
             }
             return updated
           })
+          setIsLoading(false)
         },
         // onError
         (errorMsg: string) => {
@@ -326,6 +464,7 @@ export default function ChatInterface({ onMetricsUpdate }: ChatInterfaceProps) {
                 : msg
             )
           )
+          setIsLoading(false)
         }
       )
     } catch (err: any) {
@@ -340,7 +479,6 @@ export default function ChatInterface({ onMetricsUpdate }: ChatInterfaceProps) {
             : msg
         )
       )
-    } finally {
       setIsLoading(false)
     }
   }
@@ -371,6 +509,7 @@ export default function ChatInterface({ onMetricsUpdate }: ChatInterfaceProps) {
             {showOrderInput && (
               <OrderNumberInput
                 onSubmit={handleOrderNumberSubmit}
+                onCancel={handleCancelOrderInput}
                 isLoading={isLoading}
               />
             )}

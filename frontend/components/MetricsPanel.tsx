@@ -21,7 +21,7 @@ interface MetricsPanelProps {
 export default function MetricsPanel({ metrics }: MetricsPanelProps) {
   if (metrics.length === 0) {
     return (
-      <div className="bg-white rounded-xl shadow-lg p-6 max-w-md">
+      <div className="bg-white rounded-xl shadow-lg p-6 w-full">
         <div className="flex items-center space-x-3 mb-4">
           <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
             <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -43,7 +43,7 @@ export default function MetricsPanel({ metrics }: MetricsPanelProps) {
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6 max-w-md max-h-[600px] overflow-hidden flex flex-col">
+    <div className="bg-white rounded-xl shadow-lg p-6 w-full max-h-[600px] overflow-hidden flex flex-col">
       <div className="flex items-center space-x-3 mb-4">
         <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
           <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -82,7 +82,7 @@ export default function MetricsPanel({ metrics }: MetricsPanelProps) {
               </div>
 
               {/* Métriques de temps */}
-              <div className="grid grid-cols-2 gap-3 mb-3">
+              <div className="grid grid-cols-2 gap-4 mb-3">
                 <div className="bg-white rounded-lg p-2 border border-blue-100">
                   <div className="flex items-center space-x-1 mb-1">
                     <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

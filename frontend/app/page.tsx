@@ -22,7 +22,7 @@ export default function Home() {
 
         {/* Panneau de métriques centré */}
         <div className="flex justify-center">
-          <div className="w-full max-w-2xl">
+          <div className="w-full max-w-4xl">
             <MetricsPanel metrics={metrics} />
           </div>
         </div>

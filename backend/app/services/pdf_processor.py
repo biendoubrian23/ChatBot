@@ -10,14 +10,14 @@ from langchain.schema import Document
 
 
 class PDFProcessor:
-    """Process PDF documents and extract text."""
+    """Service to process PDF files and extract text."""
     
-    def __init__(self, chunk_size: int = 800, chunk_overlap: int = 100):
+    def __init__(self, chunk_size: int = 800, chunk_overlap: int = 150):
         """Initialize PDF processor.
         
         Args:
-            chunk_size: Size of text chunks
-            chunk_overlap: Overlap between chunks
+            chunk_size: Size of text chunks (800 optimal pour FAQ)
+            chunk_overlap: Overlap between chunks (150 = 18.75%)
         """
         self.chunk_size = chunk_size
         self.chunk_overlap = chunk_overlap

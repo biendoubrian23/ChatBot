@@ -29,13 +29,13 @@ class Settings(BaseSettings):
     ollama_model: str = "llama3.1:8b"
     
     # RAG Configuration
-    chunk_size: int = 1000  # Increased from 550 for +15% completeness
-    chunk_overlap: int = 300  # Adjusted proportionally
+    chunk_size: int = 800  # Optimal pour FAQ et guides techniques
+    chunk_overlap: int = 150  # 18.75% overlap - équilibre contexte/performance
     top_k_results: int = 10  # Increased from 4 for better context
     rerank_top_n: int = 5  # Increased from 2 for better precision
     
     # Embedding Model
-    embedding_model: str = "paraphrase-multilingual-mpnet-base-v2"  # Upgraded for +30% search precision
+    embedding_model: str = "intfloat/multilingual-e5-large"  # +25% précision vs mpnet, 1024 dims
     
     # Paths
     vectorstore_path: str = "./data/vectorstore"

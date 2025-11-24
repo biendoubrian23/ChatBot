@@ -53,3 +53,17 @@ class IndexStatus(BaseModel):
     documents_processed: int = Field(..., description="Number of documents processed")
     chunks_created: int = Field(..., description="Number of chunks created")
     message: str = Field(..., description="Status message")
+
+
+class MessageAnalysisRequest(BaseModel):
+    """Request model for message intent analysis."""
+    message: str = Field(..., min_length=1, max_length=1000, description="User message to analyze")
+
+
+class MessageAnalysisResponse(BaseModel):
+    """Response model for message intent analysis."""
+    intent: str = Field(..., description="Detected intent: 'order_tracking' or 'general_question'")
+    order_number: Optional[str] = Field(None, description="Extracted order number if found")
+    needs_order_input: bool = Field(..., description="Whether to show order number input")
+    confidence: str = Field(..., description="Confidence level: 'high', 'medium', or 'low'")
+

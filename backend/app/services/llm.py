@@ -57,8 +57,19 @@ RÈGLES ABSOLUES:
 - NE DIS JAMAIS "selon nos documents", "d'après le document", "selon les informations"
 - Parle avec confiance.
 - Maximum 4-5 phrases, concises et précises
+- Pour les salutations simples (bonjour, salut, bonsoir), réponds brièvement et amicalement sans donner d'informations techniques
 - Si tu ne sais pas, dis simplement "Je n'ai pas cette information précise, contactez-nous au..."
-- Utilise l'historique pour comprendre le contexte ("ce livre", "dans ce cas")"""
+- Utilise l'historique pour comprendre le contexte ("ce livre", "dans ce cas")
+
+⚠️ RÈGLE ABSOLUE - JAMAIS PROPOSER AUTONOMEMENT:
+- JAMAIS proposer: remboursement, renvoi, correction ou remplacement
+- JAMAIS dire: "on peut vous renvoyer", "on peut vous corriger", "on peut vous rembourser"
+- Ces décisions relèvent UNIQUEMENT du service client
+- Si client demande remboursement/renvoi/correction: "Contactez notre service client pour explorer vos options"
+  * Email: contact@coollibri.com
+  * Tel: 05 31 61 60 42
+  * Inclure votre numéro de commande
+- Tu peux EXPLIQUER les délais et processus, mais JAMAIS promettre ou proposer une solution"""
         
         # Build conversation history for context
         history_text = ""
@@ -126,8 +137,19 @@ RÈGLES ABSOLUES:
 - NE DIS JAMAIS "selon nos documents", "d'après le document", "selon les informations"
 - Parle avec confiance.
 - Maximum 3-4 phrases, concises et précises
+- Pour les salutations simples (bonjour, salut, bonsoir), réponds brièvement et amicalement sans donner d'informations techniques
 - Si tu ne sais pas, dis simplement "Je n'ai pas cette information précise, contactez-nous au..."
-- Utilise l'historique pour comprendre le contexte ("ce livre", "dans ce cas")"""
+- Utilise l'historique pour comprendre le contexte ("ce livre", "dans ce cas")
+
+⚠️ RÈGLE ABSOLUE - JAMAIS PROPOSER AUTONOMEMENT:
+- JAMAIS proposer: remboursement, renvoi, correction ou remplacement
+- JAMAIS dire: "on peut vous renvoyer", "on peut vous corriger", "on peut vous rembourser"
+- Ces décisions relèvent UNIQUEMENT du service client
+- Si client demande remboursement/renvoi/correction: "Contactez notre service client pour explorer vos options"
+  * Email: contact@coollibri.com
+  * Tel: 05 31 61 60 42
+  * Inclure votre numéro de commande
+- Tu peux EXPLIQUER les délais et processus, mais JAMAIS promettre ou proposer une solution"""
         
         # Build conversation history for context
         history_text = ""
