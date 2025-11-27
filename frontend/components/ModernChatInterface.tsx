@@ -10,7 +10,8 @@ import FloatingChatButton from './FloatingChatButton'
 import ChatWindow from './ChatWindow'
 import QuickActions from './QuickActions'
 import OrderNumberInput from './OrderNumberInput'
-import { getOrderTracking } from '@/lib/orderUtils'
+import { getOrderTracking, detectOrderInquiry } from '@/lib/orderUtils'
+import { detectGreeting } from '@/lib/greetingUtils'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'
 
@@ -298,6 +299,86 @@ export default function ChatInterface({ onMetricsUpdate }: ChatInterfaceProps) {
   const handleSendMessage = async (content: string) => {
     if (!content.trim() || isLoading) return
 
+    // ============================================================
+    // 1. DÉTECTION DES SALUTATIONS PURES → Réponse avec délai naturel
+    // ============================================================
+    const greetingResult = detectGreeting(content)
+    if (greetingResult.isGreeting) {
+      // Ajouter le message utilisateur
+      const userMessage: Message = {
+        id: Date.now().toString(),
+        role: 'user',
+        content,
+        timestamp: new Date(),
+      }
+      setMessages((prev) => [...prev, userMessage])
+      
+      // Afficher l'indicateur de chargement
+      setIsLoading(true)
+      
+      // Délai naturel de 1-1.5 secondes pour simuler une réponse humaine
+      const delay = 1000 + Math.random() * 500 // Entre 1s et 1.5s
+      await new Promise(resolve => setTimeout(resolve, delay))
+      
+      // Réponse après le délai
+      const botMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: greetingResult.response || "Bonjour ! Comment puis-je vous aider ?",
+        timestamp: new Date(),
+      }
+      setMessages((prev) => [...prev, botMessage])
+      setIsLoading(false)
+      setMode('normal')
+      return
+    }
+
+    // ============================================================
+    // 2. DÉTECTION DES DEMANDES DE SUIVI DE COMMANDE
+    // ============================================================
+    const inquiryResult = detectOrderInquiry(content)
+    
+    // Si numéro de commande présent → workflow SQL direct (sans ajouter le message utilisateur ici)
+    if (inquiryResult.type === 'direct_tracking') {
+      // Ajouter le message utilisateur
+      const userMessage: Message = {
+        id: Date.now().toString(),
+        role: 'user',
+        content,
+        timestamp: new Date(),
+      }
+      setMessages((prev) => [...prev, userMessage])
+      
+      // Appeler directement le tracking
+      await handleOrderNumberSubmit(inquiryResult.orderNumber)
+      return
+    }
+    
+    // Si demande de suivi sans numéro → demander le numéro
+    if (inquiryResult.type === 'ask_order_number') {
+      // Ajouter le message utilisateur
+      const userMessage: Message = {
+        id: Date.now().toString(),
+        role: 'user',
+        content,
+        timestamp: new Date(),
+      }
+      setMessages((prev) => [...prev, userMessage])
+      
+      // Demander le numéro de commande
+      const botMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: 'Veuillez entrer le numéro de votre commande :',
+        timestamp: new Date(),
+      }
+      setMessages((prev) => [...prev, botMessage])
+      setShowOrderInput(true)
+      setMode('order_tracking')
+      return
+    }
+    
+    // Sinon → question générale, laisser le RAG répondre
     const userMessage: Message = {
       id: Date.now().toString(),
       role: 'user',
@@ -309,63 +390,8 @@ export default function ChatInterface({ onMetricsUpdate }: ChatInterfaceProps) {
     setIsLoading(true)
     setError(null)
 
-    try {
-      // 1. Analyser le message d'abord
-      const analysisResponse = await fetch(`${API_BASE_URL}/chat/analyze`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: content })
-      })
-
-      if (!analysisResponse.ok) {
-        throw new Error('Erreur analyse du message')
-      }
-
-      const analysis = await analysisResponse.json()
-      
-      // 2. Router selon l'intention détectée
-      if (analysis.intent === 'order_tracking') {
-        if (analysis.order_number) {
-          // Numéro extrait → appeler directement le tracking
-          await handleOrderNumberSubmit(analysis.order_number)
-        } else if (analysis.needs_order_input) {
-          // Pas de numéro trouvé → demander le numéro
-          const botMessage: Message = {
-            id: (Date.now() + 1).toString(),
-            role: 'assistant',
-            content: 'Veuillez entrer le numéro de votre commande :',
-            timestamp: new Date(),
-          }
-          setMessages((prev) => [...prev, botMessage])
-          setShowOrderInput(true)
-          setMode('order_tracking')
-          setIsLoading(false)
-        }
-      } else if (analysis.intent === 'general_question') {
-        // Question générale → utiliser RAG
-        await handleGeneralQuestion(content, userMessage.id)
-      } else {
-        // Incertain → demander clarification
-        const botMessage: Message = {
-          id: (Date.now() + 1).toString(),
-          role: 'assistant',
-          content: 'Je ne suis pas sûr de comprendre votre demande. Souhaitez-vous suivre une commande ou poser une question sur nos services d\'impression ?',
-          timestamp: new Date(),
-        }
-        setMessages((prev) => [...prev, botMessage])
-        setIsLoading(false)
-      }
-    } catch (err: any) {
-      setError(err.message || 'Une erreur est survenue')
-      const errorMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: 'Désolé, une erreur est survenue. Veuillez réessayer.',
-        timestamp: new Date(),
-      }
-      setMessages((prev) => [...prev, errorMessage])
-      setIsLoading(false)
-    }
+    // Utiliser directement le RAG pour les questions générales
+    await handleGeneralQuestion(content, userMessage.id)
   }
 
   const handleGeneralQuestion = async (content: string, userMessageId: string) => {

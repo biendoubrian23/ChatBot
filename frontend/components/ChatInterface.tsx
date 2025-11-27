@@ -31,13 +31,24 @@ export default function ChatInterface() {
   const handleSendMessage = async (content: string) => {
     if (!content.trim() || isLoading) return
 
-    // Détecter si c'est une demande de suivi de commande
-    const orderInquiry = detectOrderInquiry(content)
-    if (orderInquiry.isOrderInquiry) {
+    // Détecter le type de demande (suivi commande vs question générale)
+    const inquiryResult = detectOrderInquiry(content)
+    
+    // Si numéro de commande présent → workflow SQL direct
+    if (inquiryResult.type === 'direct_tracking') {
       setShowOrderTracking(true)
-      setDetectedOrderNumber(orderInquiry.orderNumber)
+      setDetectedOrderNumber(inquiryResult.orderNumber)
       return
     }
+    
+    // Si demande de suivi sans numéro → demander le numéro
+    if (inquiryResult.type === 'ask_order_number') {
+      setShowOrderTracking(true)
+      setDetectedOrderNumber(undefined)
+      return
+    }
+    
+    // Sinon → question générale, laisser le RAG répondre
 
     // Add user message
     const userMessage: Message = {

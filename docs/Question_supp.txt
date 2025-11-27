@@ -1,0 +1,123 @@
+Impression en reliure spirale
+
+Réponse : Les reliures spirales ne peuvent pas supporter des livres très épais.
+
+Pour tout nombre de pages supérieur à 200–250, la spirale devient trop grande pour être pratique et le livre difficile à manipuler.
+
+Exemple : 1000 pages, 1010 pages, 1200 pages → aucune spirale standard ne pourra supporter ce volume.
+
+Détails techniques :
+
+Les spirales (plastique ou métallique) ont une capacité maximale limitée par leur diamètre.
+
+Au-delà de 250 pages, la manipulation est difficile et le document risque de se détériorer rapidement.
+
+Contrainte : Pour des livres très épais, il faut envisager dos carré collé ou reliure professionnelle sur mesure.
+
+Impression en dos carré collé pour un petit nombre de pages
+
+Réponse : Les livres très fins ne sont pas adaptés au dos carré collé.
+
+Pour tout nombre de pages inférieur à ~500 (ex. 50 pages, 100 pages), le collage ne tiendra pas correctement et le livre sera trop fin.
+
+Détails techniques :
+
+Dos carré collé conçu pour des livres épais, généralement 500 à 700 pages selon le papier.
+
+Avec moins de 500 pages, la tenue mécanique du livre est insuffisante.
+
+Alternative : Agrafé / piqué à cheval ou spirale pour les petits livres.
+
+Utilisation du papier 60g pour toutes les reliures
+
+Réponse : Le papier 60g n’est pas compatible avec toutes les reliures.
+
+Agrafé/Piqué à cheval : compatible, idéal pour livres fins (≤ 60 pages).
+
+Dos carré collé : minimum 80g recommandé.
+
+Rembordé / Hardcover : minimum 80–120g pour rigidité.
+
+Contrainte : Choisir le papier en fonction de l’épaisseur et de la tenue de la reliure.
+
+Différence de prix entre Agrafé et Rembordé
+
+Réponse : L’agrafé est toujours beaucoup plus économique que le remborré pour des livres courts (ex. ≤ 60 pages).
+
+Pour tout nombre de pages faible (50, 75, 100), le coût du remborré reste supérieur en raison de la couverture rigide et des finitions complexes.
+
+Exemple : Pour 50 pages A5 : Agrafé ≈ 3–5€, Rembordé ≈ 15–25€.
+
+Explication : La couverture rigide, la colle et les finitions augmentent le prix, quelle que soit la quantité de pages dans la plage basse.
+
+Nombre maximum de pages pour la reliure agrafée
+
+Réponse : Limite fixe à 60 pages.
+
+Tout livre dépassant 60 pages (ex. 75, 100, 1010) ne peut pas utiliser cette reliure.
+
+Détails techniques :
+
+La capacité des agrafes limite le nombre de feuilles.
+
+Au-delà de 60 pages, le livre risque de se désassembler ou d’être difficile à plier.
+
+Contraintes techniques de la reliure agrafée
+
+Réponse : Limite mécanique et tenue du papier.
+
+Convient uniquement aux livres fins (≤ 60 pages).
+
+Papier trop épais ou trop fin compromet la solidité.
+
+Détails techniques :
+
+Largeur de la tranche et épaisseur des agrafes limitent le nombre de pages.
+
+Nombre minimum de pages pour dos carré collé
+
+Réponse : ~500 pages minimum selon le papier.
+
+Pour tout nombre inférieur à cette limite, le collage ne tiendra pas correctement (ex. 50, 100, 499 pages).
+
+Détails techniques :
+
+Papier 80g → ~500 pages minimum
+
+Papier 100g → ~550 pages minimum
+
+Papier 120g → ~600 pages minimum
+
+Utilisation de la reliure agrafée pour des livres supérieurs à 60 pages
+
+Réponse : Impossible.
+
+Tout nombre de pages supérieur à 60 (ex. 75, 100, 1010) ne peut pas utiliser cette reliure.
+
+Alternative : Dos carré collé ou spiralé selon format et épaisseur du papier.
+
+Reliure la plus économique
+
+Réponse : Toujours l’agrafée / piquée à cheval pour les livres courts.
+
+Simple, rapide à produire, peu de matériel.
+
+Idéale pour cahiers, brochures, livres ≤ 60 pages.
+
+Reliure utilisée en librairie
+
+Réponse : Dos carré collé ou reliure remborrée (hardcover).
+
+Romans, essais, guides → dos carré collé.
+
+Livres de collection ou jeunesse → remborré / hardcover.
+
+Options pour un livre très épais (ex. 600 pages, 700 pages, 1010 pages) en papier 90g
+
+Réponse : Dos carré collé uniquement.
+
+Papier 90g → compatible, colle tiendra correctement.
+
+Agrafé ou spiralé → impossible (limite trop basse).
+
+Rembordé / Hardcover → possible mais dépend du fabricant et du coût, devient très épais et très cher.

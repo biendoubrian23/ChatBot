@@ -1,8 +1,9 @@
 """API endpoints for the chatbot."""
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Request
 from fastapi.responses import StreamingResponse
 from typing import List
 import json
+import asyncio
 
 from app.models.schemas import (
     ChatRequest,
@@ -70,10 +71,11 @@ async def chat(request: ChatRequest, pipeline=Depends(get_rag_pipeline)):
 
 
 @router.post("/chat/stream")
-async def chat_stream(request: ChatRequest, pipeline=Depends(get_rag_pipeline)):
+async def chat_stream(http_request: Request, request: ChatRequest, pipeline=Depends(get_rag_pipeline)):
     """Handle streaming chat requests.
     
     Args:
+        http_request: HTTP request object to detect client disconnection
         request: Chat request with user question and optional conversation history
         pipeline: RAG pipeline instance
         
@@ -89,13 +91,18 @@ async def chat_stream(request: ChatRequest, pipeline=Depends(get_rag_pipeline)):
             context_docs = pipeline.vectorstore.similarity_search(request.question, k=pipeline.top_k)
             context = "\n\n".join([doc.page_content for doc, _ in context_docs])
             
-            # Stream the response FIRST
-            for chunk in pipeline.llm_service.generate_response_stream(
+            # Stream the response with disconnect detection
+            async for chunk in pipeline.llm_service.generate_response_stream_async(
                 query=request.question,
                 context=context,
-                history=history_list
+                history=history_list,
+                is_disconnected=http_request.is_disconnected
             ):
                 yield f"data: {json.dumps({'type': 'token', 'content': chunk})}\n\n"
+            
+            # Vérifier avant d'envoyer les sources
+            if await http_request.is_disconnected():
+                return
             
             # Send sources AFTER the response is complete
             sources = [{"content": doc.page_content, "metadata": doc.metadata} for doc, _ in context_docs]
@@ -104,8 +111,12 @@ async def chat_stream(request: ChatRequest, pipeline=Depends(get_rag_pipeline)):
             # Send completion signal
             yield f"data: {json.dumps({'type': 'done'})}\n\n"
             
+        except asyncio.CancelledError:
+            # Requête annulée (client déconnecté)
+            pass
         except Exception as e:
-            yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
+            if not await http_request.is_disconnected():
+                yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
     
     return StreamingResponse(generate(), media_type="text/event-stream")
 
@@ -294,12 +305,13 @@ async def get_order_tracking(order_number: int):
 
 
 @router.get("/order/{order_number}/tracking/stream")
-async def stream_order_tracking(order_number: int):
+async def stream_order_tracking(order_number: int, http_request: Request):
     """
     Stream la réponse de suivi de commande avec un effet de typing naturel.
     
     Args:
         order_number: Numéro de commande
+        http_request: HTTP request object to detect client disconnection
     
     Returns:
         Streaming response avec effet typing
@@ -308,7 +320,6 @@ async def stream_order_tracking(order_number: int):
         try:
             from app.services.order_tracking_service import OrderTrackingService
             from order_status_logic import generate_order_status_response
-            import asyncio
             
             tracking_service = OrderTrackingService()
             order_data = tracking_service.get_order_tracking_info(str(order_number))
@@ -319,18 +330,26 @@ async def stream_order_tracking(order_number: int):
             
             # Étapes de réflexion (effet ChatGPT thinking)
             thinking_steps = [
-                "🔍 Recherche de la commande dans la base de données...",
-                "📋 Analyse des informations de commande...",
-                "📅 Vérification des dates de production et d'expédition...",
-                "⚙️ Récupération du statut de traitement...",
+                "🔍 Recherche de la commande...",
+                "📋 Analyse des informations...",
+                "📅 dates de production et d'expédi...",
+                "⚙️ Récupération du statut de trait...",
                 "💳 Contrôle du statut de paiement...",
-                "📦 Calcul des estimations de livraison..."
+                "📦 Calcul des estimations de livra..."
             ]
             
             # Envoyer les étapes de thinking
             for step in thinking_steps:
+                # Vérifier si le client est toujours connecté
+                if await http_request.is_disconnected():
+                    return  # Client déconnecté, arrêter proprement
+                
                 yield f"data: {json.dumps({'type': 'thinking', 'content': step})}\n\n"
                 await asyncio.sleep(1.2)  # 1.2 seconde par étape
+            
+            # Vérifier avant de générer la réponse
+            if await http_request.is_disconnected():
+                return
             
             # Générer la réponse complète
             tracking_response = generate_order_status_response(order_data)
@@ -341,8 +360,12 @@ async def stream_order_tracking(order_number: int):
             # Envoyer le signal de fin
             yield f"data: {json.dumps({'type': 'done'})}\n\n"
             
+        except asyncio.CancelledError:
+            # Requête annulée (client déconnecté)
+            pass
         except Exception as e:
-            yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
+            if not await http_request.is_disconnected():
+                yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
     
     return StreamingResponse(generate(), media_type="text/event-stream")
 

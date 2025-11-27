@@ -196,9 +196,19 @@ def generate_order_status_response(order_data, current_status_id=None):
     
     # Mentionner le paiement validé avec la date
     payment_date_obj = datetime.fromisoformat(payment_date[:10]) if isinstance(payment_date, str) else payment_date
-    response += f"Votre paiement de {total}€ a bien été validé le {payment_date_obj.strftime('%d/%m/%Y')}.\n\n\n"
+    response += f"Votre paiement de {total}€ a bien été validé le {payment_date_obj.strftime('%d/%m/%Y')}.\n\n"
+    
+    # ⚠️ Vérifier d'abord s'il y a un retard pour adapter le message
+    current_date = datetime.now()
+    has_delay = False
+    
+    if estimated_shipping:
+        ship_date = datetime.fromisoformat(estimated_shipping[:10])
+        if ship_date.date() < current_date.date():
+            has_delay = True
     
     # Message selon le statut avec langage naturel
+    # ⚠️ Si retard détecté, on ne met PAS le message "Bonne nouvelle..."
     if status_id in STATUS_MESSAGES:
         status_info = STATUS_MESSAGES[status_id]
         
@@ -209,7 +219,9 @@ def generate_order_status_response(order_data, current_status_id=None):
                 response += f", normalement dès le {prod_date.strftime('%d/%m/%Y')}"
             response += ".\n\n"
         elif status_id == 2:
-            response += "Bonne nouvelle, votre commande est actuellement en cours de traitement ! Nos équipes sont en train de préparer tout le nécessaire pour lancer la production.\n\n"
+            # Si retard → ne pas mettre ce paragraphe du tout
+            if not has_delay:
+                response += "Bonne nouvelle, votre commande est actuellement en cours de traitement ! Nos équipes sont en train de préparer tout le nécessaire pour lancer la production.\n\n"
         elif status_id == 3:
             response += "Votre livre est en phase de prépresse, c'est-à-dire que nos graphistes travaillent sur la mise en page et vérifient que tout est parfait avant l'impression.\n\n"
         elif status_id == 4:

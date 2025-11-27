@@ -167,3 +167,17 @@ Réponses rapides et précises basées sur les PDFs fournis.
 Système simple à comprendre, maintenir et mettre à jour.
 
 Tout gratuit et auto-hébergé.
+
+
+
+
+
+
+j'aimerai tester mon chatbot sur sa rapidité et la qualité de ses reponses et par la suite tester aussi plusieurs model d'ia gratuites comme mistral 7b ou ollama3.2 ou neural chat7b
+j'aimerai que tu me proposes des reponses et question très varié, ne propose pas des questions sur la commande car les reponses sont généralement extrement rapide vu que c'est que tu SQL
+
+je veux 6 question facile/direct extrement varié
+je veux 8 question avec chiffres précis pour evaluer les reponses de chaque model
+je veux 6 question comparatives
+je veux 6 questions complexes
+je veux 4 question pièges

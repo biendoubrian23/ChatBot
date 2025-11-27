@@ -2,6 +2,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
+import logging
 
 from app.core.config import settings
 from app.api import routes
@@ -9,6 +10,19 @@ from app.services.embeddings import EmbeddingService
 from app.services.vectorstore import VectorStoreService
 from app.services.llm import OllamaService
 from app.services.rag_pipeline import RAGPipeline
+
+# Configurer le logging pour ignorer les erreurs de socket déconnectés
+logging.getLogger("uvicorn.error").setLevel(logging.WARNING)
+
+# Filtre pour supprimer les messages "socket.send() raised exception"
+class SocketErrorFilter(logging.Filter):
+    def filter(self, record):
+        return "socket.send()" not in str(record.getMessage())
+
+# Appliquer le filtre aux loggers uvicorn
+for logger_name in ["uvicorn", "uvicorn.error", "uvicorn.access"]:
+    logger = logging.getLogger(logger_name)
+    logger.addFilter(SocketErrorFilter())
 
 # Create FastAPI app
 app = FastAPI(

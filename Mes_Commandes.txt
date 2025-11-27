@@ -10,6 +10,17 @@ cd X:\MesApplis\BiendouCorp\ChatBot\frontend ; npm run dev
 4. ngrok (tunnel public) - si besoin :
 ngrok http 8000
 
+cd "x:\MesApplis\BiendouCorp\ChatBot"
+.\start_ollama_parallel.ps1
+
+cd "x:\MesApplis\BiendouCorp\ChatBot"
+.\start_backend_parallel.ps1
+
+ $env:OLLAMA_NUM_PARALLEL = "3" ; ollama serve
+
+ python X:\MesApplis\BiendouCorp\ChatBot\benchmark_chatbot.py
+
+ 
 
 j'aimerai mettre un systeme en place
 

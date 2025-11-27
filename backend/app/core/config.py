@@ -26,7 +26,7 @@ class Settings(BaseSettings):
     
     # Ollama Configuration
     ollama_base_url: str = "http://localhost:11434"  # Ollama local
-    ollama_model: str = "llama3.1:8b"
+    ollama_model: str = "zephyr"
     
     # RAG Configuration
     chunk_size: int = 800  # Optimal pour FAQ et guides techniques
