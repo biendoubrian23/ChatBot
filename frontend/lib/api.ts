@@ -7,6 +7,7 @@ const apiClient = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
+    'ngrok-skip-browser-warning': 'true',
   },
   timeout: 60000, // 60 seconds for LLM responses
 })
@@ -35,6 +36,7 @@ export const chatAPI = {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'ngrok-skip-browser-warning': 'true',
         },
         body: JSON.stringify(request),
       })
@@ -102,12 +104,20 @@ export const chatAPI = {
     onFinalResponse?: (content: string) => void
   ): Promise<void> {
     try {
+      console.log('[streamOrderTracking] Starting request for order:', orderNumber)
+      console.log('[streamOrderTracking] URL:', `${API_BASE_URL}/order/${orderNumber}/tracking/stream`)
+      
       const response = await fetch(`${API_BASE_URL}/order/${orderNumber}/tracking/stream`, {
         method: 'GET',
+        mode: 'cors',
         headers: {
-          'Content-Type': 'application/json',
+          'Accept': 'text/event-stream',
+          'ngrok-skip-browser-warning': 'true',
         },
       })
+
+      console.log('[streamOrderTracking] Response status:', response.status)
+      console.log('[streamOrderTracking] Response headers:', Object.fromEntries(response.headers.entries()))
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
