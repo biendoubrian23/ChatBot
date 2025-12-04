@@ -162,7 +162,7 @@ export default function ChatInterface({ onMetricsUpdate }: ChatInterfaceProps) {
             responseTime: Date.now() - startTime,
             ttfb: firstByteTime || 0,
             timestamp: new Date(),
-            sources: [{ content: 'Base de données CoolLibri', metadata: { type: 'database' }, relevance_score: 1.0 }]
+            sources: [{ source: 'Base de données CoolLibri', relevance: 1.0 }]
           }
           
           setMetricsHistory((prev) => {
