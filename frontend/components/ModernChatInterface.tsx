@@ -125,7 +125,7 @@ export default function ChatInterface({ onMetricsUpdate }: ChatInterfaceProps) {
       role: 'assistant',
       content: '...',
       timestamp: new Date(),
-      sources: [{ source: 'Base de données CoolLibri', relevance: 1.0 }],
+      sources: [{ content: 'Base de données CoolLibri', metadata: { type: 'database' }, relevance_score: 1.0 }],
     }
     setMessages((prev) => [...prev, assistantMessage])
 
