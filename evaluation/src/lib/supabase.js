@@ -79,3 +79,80 @@ export const getDistinctUsers = async () => {
   // Retourner les IDs uniques
   return [...new Set(data.map(row => row.user_id))];
 };
+
+// ============================================
+// FONCTIONS POUR LES COMMENTAIRES
+// ============================================
+
+// Sauvegarder ou mettre à jour un commentaire
+export const saveComment = async (userId, questionId, commentText) => {
+  const { data, error } = await supabase
+    .from('user_comments')
+    .upsert({
+      user_id: userId,
+      question_id: questionId,
+      comment_text: commentText,
+      updated_at: new Date().toISOString()
+    }, {
+      onConflict: 'user_id,question_id'
+    });
+
+  if (error) {
+    console.error('Error saving comment:', error);
+    return null;
+  }
+  return data;
+};
+
+// Récupérer tous les commentaires d'un utilisateur
+export const getUserComments = async (userId) => {
+  const { data, error } = await supabase
+    .from('user_comments')
+    .select('*')
+    .eq('user_id', userId);
+
+  if (error) {
+    console.error('Error fetching user comments:', error);
+    return {};
+  }
+
+  // Transformer en format {questionId: commentText}
+  const comments = {};
+  data.forEach(row => {
+    comments[row.question_id] = row.comment_text;
+  });
+
+  return comments;
+};
+
+// Récupérer tous les commentaires (pour l'admin)
+export const getAllComments = async () => {
+  const { data, error } = await supabase
+    .from('user_comments')
+    .select('*')
+    .order('question_id', { ascending: true })
+    .order('user_id', { ascending: true });
+
+  if (error) {
+    console.error('Error fetching all comments:', error);
+    return [];
+  }
+
+  return data;
+};
+
+// Récupérer les commentaires pour une question spécifique
+export const getCommentsForQuestion = async (questionId) => {
+  const { data, error } = await supabase
+    .from('user_comments')
+    .select('*')
+    .eq('question_id', questionId)
+    .order('user_id', { ascending: true });
+
+  if (error) {
+    console.error('Error fetching question comments:', error);
+    return [];
+  }
+
+  return data;
+};

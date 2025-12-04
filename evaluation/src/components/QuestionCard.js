@@ -1,9 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import StarRating from './StarRating';
 import './QuestionCard.css';
 
-const QuestionCard = ({ question, ratings, onRatingChange }) => {
+const QuestionCard = ({ question, ratings, onRatingChange, comment, onCommentChange }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [localComment, setLocalComment] = useState(comment || '');
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Mettre à jour le commentaire local quand le prop change
+  useEffect(() => {
+    setLocalComment(comment || '');
+  }, [comment]);
+
+  // Debounce pour sauvegarder automatiquement après 1 seconde d'inactivité
+  const debouncedSave = useCallback(
+    (() => {
+      let timeoutId;
+      return (value) => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+          if (onCommentChange && value !== comment) {
+            setIsSaving(true);
+            onCommentChange(question.id, value).finally(() => {
+              setIsSaving(false);
+            });
+          }
+        }, 1000);
+      };
+    })(),
+    [question.id, comment, onCommentChange]
+  );
+
+  const handleCommentChange = (e) => {
+    const value = e.target.value;
+    setLocalComment(value);
+    debouncedSave(value);
+  };
 
   const criteria = [
     { id: 'exactitude', label: 'Exactitude', description: 'La reponse est-elle correcte ?' },
@@ -95,6 +127,21 @@ const QuestionCard = ({ question, ratings, onRatingChange }) => {
                 </div>
               ))}
             </div>
+          </div>
+
+          {/* Zone de commentaire */}
+          <div className="comment-section">
+            <h4>
+              Commentaire (optionnel)
+              {isSaving && <span className="saving-indicator"> Enregistrement...</span>}
+            </h4>
+            <textarea
+              className="comment-input"
+              placeholder="Ajoutez vos remarques ou observations sur cette question..."
+              value={localComment}
+              onChange={handleCommentChange}
+              rows={3}
+            />
           </div>
         </div>
       )}

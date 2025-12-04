@@ -4,7 +4,7 @@ import QuestionCard from './components/QuestionCard';
 import Summary from './components/Summary';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
-import { saveRating, getUserRatings } from './lib/supabase';
+import { saveRating, getUserRatings, saveComment, getUserComments } from './lib/supabase';
 import './App.css';
 
 function App() {
@@ -12,6 +12,7 @@ function App() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [userId, setUserId] = useState(null);
   const [ratings, setRatings] = useState({});
+  const [comments, setComments] = useState({});
   const [filterCategory, setFilterCategory] = useState('all');
   const [loading, setLoading] = useState(false);
 
@@ -32,8 +33,12 @@ function App() {
   useEffect(() => {
     const loadRatings = async () => {
       setLoading(true);
-      const userRatings = await getUserRatings(userId);
+      const [userRatings, userComments] = await Promise.all([
+        getUserRatings(userId),
+        getUserComments(userId)
+      ]);
       setRatings(userRatings);
+      setComments(userComments);
       setLoading(false);
     };
     
@@ -57,6 +62,7 @@ function App() {
     setIsAdmin(false);
     setUserId(null);
     setRatings({});
+    setComments({});
     localStorage.removeItem('evaluation-userId');
     localStorage.removeItem('evaluation-isAdmin');
   };
@@ -73,6 +79,17 @@ function App() {
 
     // Sauvegarde dans Supabase
     await saveRating(userId, questionId, criteriaId, value);
+  };
+
+  const handleCommentChange = async (questionId, commentText) => {
+    // Mise à jour locale immédiate
+    setComments(prev => ({
+      ...prev,
+      [questionId]: commentText
+    }));
+
+    // Sauvegarde dans Supabase
+    await saveComment(userId, questionId, commentText);
   };
 
   const handleExport = () => {
@@ -238,6 +255,8 @@ function App() {
                   question={question}
                   ratings={ratings[question.id] || {}}
                   onRatingChange={handleRatingChange}
+                  comment={comments[question.id] || ''}
+                  onCommentChange={handleCommentChange}
                 />
               ))}
             </div>

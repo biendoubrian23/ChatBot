@@ -30,3 +30,36 @@ CREATE POLICY "Allow all operations" ON evaluations
 
 -- Vérification
 SELECT 'Table evaluations créée avec succès!' as message;
+
+-- ============================================
+-- TABLE POUR LES COMMENTAIRES UTILISATEURS
+-- ============================================
+
+-- Créer la table user_comments
+CREATE TABLE IF NOT EXISTS user_comments (
+  id SERIAL PRIMARY KEY,
+  user_id VARCHAR(10) NOT NULL,
+  question_id INTEGER NOT NULL,
+  comment_text TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  
+  -- Contrainte d'unicité: un seul commentaire par user par question
+  UNIQUE(user_id, question_id)
+);
+
+-- Index pour les recherches rapides
+CREATE INDEX IF NOT EXISTS idx_user_comments_user_id ON user_comments(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_comments_question_id ON user_comments(question_id);
+
+-- Activer RLS (Row Level Security)
+ALTER TABLE user_comments ENABLE ROW LEVEL SECURITY;
+
+-- Politique pour permettre toutes les opérations
+CREATE POLICY "Allow all operations on comments" ON user_comments
+  FOR ALL
+  USING (true)
+  WITH CHECK (true);
+
+-- Vérification
+SELECT 'Table user_comments créée avec succès!' as message;

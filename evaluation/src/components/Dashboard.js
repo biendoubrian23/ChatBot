@@ -3,15 +3,18 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar
 } from 'recharts';
-import { getAllRatings, getDistinctUsers } from '../lib/supabase';
+import { getAllRatings, getDistinctUsers, getAllComments, getCommentsForQuestion } from '../lib/supabase';
 import benchmarkData from '../data/benchmarkData';
 import './Dashboard.css';
 
 const Dashboard = ({ onLogout }) => {
   const [allRatings, setAllRatings] = useState([]);
+  const [allComments, setAllComments] = useState([]);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState('all');
+  const [selectedQuestionComments, setSelectedQuestionComments] = useState(null);
+  const [showCommentsModal, setShowCommentsModal] = useState(false);
 
   const categories = [...new Set(benchmarkData.results.map(q => q.category))];
   const criteria = ['exactitude', 'completude', 'clarte'];
@@ -22,10 +25,14 @@ const Dashboard = ({ onLogout }) => {
 
   const loadData = async () => {
     setLoading(true);
-    const ratings = await getAllRatings();
-    const userIds = await getDistinctUsers();
+    const [ratings, userIds, comments] = await Promise.all([
+      getAllRatings(),
+      getDistinctUsers(),
+      getAllComments()
+    ]);
     setAllRatings(ratings);
     setUsers(userIds);
+    setAllComments(comments);
     setLoading(false);
   };
 
@@ -128,9 +135,52 @@ const Dashboard = ({ onLogout }) => {
         category: q.category,
         ...stats,
         moyenne: avg,
-        evaluators: new Set(questionRatings.map(r => r.user_id)).size
+        evaluators: new Set(questionRatings.map(r => r.user_id)).size,
+        commentsCount: allComments.filter(c => c.question_id === q.id && c.comment_text).length
       };
     });
+  };
+
+  // Obtenir les commentaires pour une question
+  const getQuestionComments = (questionId) => {
+    return allComments.filter(c => c.question_id === questionId && c.comment_text);
+  };
+
+  // Ouvrir le modal des commentaires
+  const openCommentsModal = (questionId) => {
+    const question = benchmarkData.results.find(q => q.id === questionId);
+    const comments = getQuestionComments(questionId);
+    setSelectedQuestionComments({ questionId, questionLabel: question?.label || '', comments });
+    setShowCommentsModal(true);
+  };
+
+  // Export des commentaires uniquement
+  const exportComments = () => {
+    const exportData = {
+      export_date: new Date().toISOString(),
+      total_comments: allComments.filter(c => c.comment_text).length,
+      comments_by_question: benchmarkData.results.map(q => {
+        const questionComments = allComments.filter(c => c.question_id === q.id && c.comment_text);
+        return {
+          question_id: q.id,
+          question_label: q.label,
+          category: q.category,
+          comments: questionComments.map(c => ({
+            user_id: c.user_id,
+            comment: c.comment_text,
+            created_at: c.created_at
+          }))
+        };
+      }).filter(q => q.comments.length > 0)
+    };
+
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `commentaires_evaluation_${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   // Comparaison entre utilisateurs
@@ -176,6 +226,9 @@ const Dashboard = ({ onLogout }) => {
           <span className="admin-badge">ID 1000</span>
         </div>
         <div className="dashboard-actions">
+          <button onClick={exportComments} className="btn btn-export">
+            Exporter Commentaires
+          </button>
           <button onClick={loadData} className="btn btn-refresh">
             Actualiser
           </button>
@@ -293,6 +346,7 @@ const Dashboard = ({ onLogout }) => {
                   <th>Clarte</th>
                   <th>Moyenne</th>
                   <th>Evaluateurs</th>
+                  <th>Commentaires</th>
                 </tr>
               </thead>
               <tbody>
@@ -310,6 +364,18 @@ const Dashboard = ({ onLogout }) => {
                     <td>{q.clarte}</td>
                     <td className="avg-cell">{q.moyenne}</td>
                     <td>{q.evaluators}</td>
+                    <td>
+                      {q.commentsCount > 0 ? (
+                        <button 
+                          className="comments-badge"
+                          onClick={() => openCommentsModal(q.id)}
+                        >
+                          {q.commentsCount} commentaire{q.commentsCount > 1 ? 's' : ''}
+                        </button>
+                      ) : (
+                        <span className="no-comments">-</span>
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -336,6 +402,36 @@ const Dashboard = ({ onLogout }) => {
           </div>
         </section>
       </main>
+
+      {/* Modal des commentaires */}
+      {showCommentsModal && selectedQuestionComments && (
+        <div className="modal-overlay" onClick={() => setShowCommentsModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Commentaires - Q{selectedQuestionComments.questionId}</h3>
+              <button className="modal-close" onClick={() => setShowCommentsModal(false)}>×</button>
+            </div>
+            <p className="modal-question-label">{selectedQuestionComments.questionLabel}</p>
+            <div className="modal-body">
+              {selectedQuestionComments.comments.length > 0 ? (
+                selectedQuestionComments.comments.map((c, index) => (
+                  <div key={index} className="comment-item">
+                    <div className="comment-header">
+                      <span className="comment-user">Evaluateur {c.user_id}</span>
+                      <span className="comment-date">
+                        {new Date(c.created_at).toLocaleDateString('fr-FR')}
+                      </span>
+                    </div>
+                    <p className="comment-text">{c.comment_text}</p>
+                  </div>
+                ))
+              ) : (
+                <p className="no-comments-message">Aucun commentaire pour cette question</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
