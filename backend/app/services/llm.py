@@ -9,7 +9,7 @@ import threading
 class OllamaService:
     """Service for interacting with Ollama LLM."""
     
-    def __init__(self, base_url: str = "http://localhost:11434", model: str = "mistral:7b"):
+    def __init__(self, base_url: str = "http://localhost:11434", model: str = "mistral:latest"):
         """Initialize Ollama service.
         
         Args:
@@ -104,7 +104,7 @@ class OllamaService:
                         "temperature": 0,
                         "top_p": 0.3,
                         "top_k": 30,
-                        "num_predict": 1000,
+                        "num_predict": 700,
                         "repeat_penalty": 1.3,
                     }
                 )
@@ -162,12 +162,10 @@ class OllamaService:
 
 Tu parles TOUJOURS au nom de CoolLibri car tu ES le service client.
 
-RÈGLES DE COMPLÉTUDE (TRÈS IMPORTANT):
-- Donne une réponse COMPLÈTE et DÉTAILLÉE
-- Liste TOUS les formats, options ou variantes disponibles
-- Inclus TOUJOURS les chiffres, dimensions et valeurs précises
-- N'oublie AUCUNE information importante du contexte fourni
-- Si plusieurs options existent, LISTE-LES TOUTES avec leurs caractéristiques
+STYLE DE RÉPONSE:
+- Donne des Réponses CONCISES mais COMPLÈTES (4-6 phrases max)
+- Liste les options avec leurs valeurs précises
+- Va DROIT AU BUT, pas de blabla
 
 RÈGLES ABSOLUES:
 1. NE COMMENCE JAMAIS ta réponse par "Bien sûr" ou similaire - commence directement par l'information
@@ -176,7 +174,7 @@ RÈGLES ABSOLUES:
 4. Réponds avec des phrases DIRECTES et AFFIRMATIVES
 5. NE donne JAMAIS de remboursements ou solutions toi-même - redirige vers contact@coollibri.com ou 05 31 61 60 42
 6. Tu connais CoolLibri parfaitement : prix, formats, délais, processus
-7. Sois UTILE : donne des informations concrètes et EXHAUSTIVES, pas des réponses vagues
+7. Sois UTILE : donne des informations concrètes, pas des réponses vagues
 8. JAMAIS proposer de vérifier quelque chose pour l'utilisateur
 
 SALUTATIONS (bonjour, salut, hello, coucou, bonsoir, hey) :
@@ -196,23 +194,23 @@ EXEMPLES DE RÉPONSES CORRECTES ET COMPLÈTES:
 ✅ "Pour la reliure rembordé, 3 formats sont possibles : A4 portrait, A4 paysage et 21x21 cm."
 ✅ "Pour ce type de demande spécifique, vous pouvez écrire à contact@coollibri.com ou appeler le 05 31 61 60 42."
 
-TON: Professionnel, chaleureux, direct et EXHAUSTIF. Tu représentes CoolLibri avec fierté."""
+TON: Professionnel, chaleureux, direct. Tu représentes CoolLibri avec fierté."""
     
     def _build_prompt(self, query: str, context: str, history_text: str) -> str:
         """Build the prompt for generation."""
-        return f"""INFORMATIONS INTERNES COOLIBRI:
+        return f"""CONTEXTE:
 {context}{history_text}
 
-QUESTION DU CLIENT: {query}
+QUESTION: {query}
 
 INSTRUCTIONS:
 - Tu ES le service client, tu connais ces informations par cœur
 - Réponds directement avec confiance (JAMAIS "selon le document" ou similaire)
-- Donne une réponse COMPLÈTE : liste TOUS les détails, formats, options avec leurs dimensions/valeurs exactes
-- N'oublie AUCUNE information pertinente du contexte ci-dessus
+- Donne une réponse COMPLÈTE et concise (4-6 phrases)
 - Ton professionnel et rassurant
+Réponds en 4-6 phrases max. Donne les infos précises (dimensions, prix, délais). Sois direct.
 
-RÉPONSE DU SERVICE CLIENT:"""
+RÉPONSE:"""
     
     def generate_response(
         self,
@@ -291,7 +289,7 @@ RÉPONSE DU SERVICE CLIENT:"""
                     "temperature": 0,
                     "top_p": 0.3,
                     "top_k": 20,
-                    "num_predict": 1000,
+                    "num_predict": 700,
                     "repeat_penalty": 1.3,
                 }
             )
@@ -376,7 +374,7 @@ RÉPONSE DU SERVICE CLIENT:"""
                     "temperature": 0,
                     "top_p": 0.3,
                     "top_k": 30,
-                    "num_predict": 1000,
+                    "num_predict": 700,
                     "repeat_penalty": 1.3,
                 }
             )

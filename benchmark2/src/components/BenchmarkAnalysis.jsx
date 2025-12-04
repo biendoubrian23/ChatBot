@@ -6,7 +6,7 @@ const BenchmarkAnalysis = () => {
   const [generating, setGenerating] = useState(false);
   const [expandedQuestions, setExpandedQuestions] = useState({});
 
-  // Données des 3 modèles du Deuxième Benchmark
+  // Données des 2 modèles du Benchmark (Llama 27/11 + Mistral 04/12)
   const modelsData = {
     'llama3.1:8b': {
       date: '2025-11-27T11:16',
@@ -21,302 +21,260 @@ const BenchmarkAnalysis = () => {
       colorLight: '#d1fae5'
     },
     'mistral:latest': {
-      date: '2025-11-27T11:48',
-      ttftMoyen: 6.45,
-      ttftMin: 4.51,
-      ttftMax: 7.33,
-      tempsTotal: 428.12,
-      tempsMoyen: 14.27,
-      tempsMin: 9.31,
-      tempsMax: 20.71,
+      date: '2025-12-04T10:54',
+      ttftMoyen: 6.86,
+      ttftMin: 6.13,
+      ttftMax: 8.96,
+      tempsTotal: 508.95,
+      tempsMoyen: 16.96,
+      tempsMin: 9.94,
+      tempsMax: 35.98,
       color: '#3b82f6',
       colorLight: '#dbeafe'
-    },
-    'neural-chat': {
-      date: '2025-11-27T12:03',
-      ttftMoyen: 6.15,
-      ttftMin: 4.48,
-      ttftMax: 6.78,
-      tempsTotal: 525.98,
-      tempsMoyen: 17.53,
-      tempsMin: 10.12,
-      tempsMax: 39.17,
-      color: '#8b5cf6',
-      colorLight: '#ede9fe'
     }
   };
 
-  // Données complètes des questions avec les réponses des 3 modèles
+  // Données complètes des questions avec les réponses des 2 modèles
   const questionsData = [
     {
       id: 1, category: 'Formats', label: 'Formats disponibles',
       question: "Quels formats de livre proposez-vous ?",
       expected_answer: "Coollibri propose 7 formats: 11x17 cm (poche), 16x24 cm (roman), 21x21 cm (livre photo carré), A4 portrait 21x29.7 cm, A4 paysage 29.7x21 cm, A5 portrait 14.8x21 cm, A5 paysage 21x14.8 cm.",
       llama_answer: "Nous proposons plusieurs formats de livres adaptés à différents types d'ouvrages. Vous pouvez choisir entre les formats A5 (148x210mm), A4 portrait ou paysage (21 x 29,7 cm et 29,7 x 21 cm) ainsi que le format 11 X 17 cm pour un livre de poche, 16 X 24 cm adapté au roman. Nous fournissons également des gabarits vierges pour chaque format sur notre site internet.",
-      mistral_answer: "Nous proposons plusieurs formats pour vos livres : A5 Portrait, A5 Paysage, A4 Portrait, A4 Paysage, et le format poche 11x17 cm. Chaque format est adapté à différents types de contenus.",
-      neural_answer: "Nous offrons différents formats selon vos besoins. Les formats disponibles incluent le A4, A5 et d'autres dimensions standards pour l'impression de livres.",
-      remarque: "🦙 Llama mentionne presque tous les formats avec dimensions précises. 🌀 Mistral oublie le 16x24 et 21x21 cm. 🧠 Neural donne une réponse trop vague sans détails précis."
+      mistral_answer: "Nous proposons sept formats de livre : 11x17 cm pour un livre de poche, 16x24 cm adapté au roman, 21x21 cm souvent utilisé pour des livres photos, A4 portrait et paysage ainsi qu'un format carré. Pour une reliure en rembordé (couverture cartonnée), seuls les formats A4 portrait, A4 paysage ou 21x21 sont techniquement possibles sur notre site.",
+      remarque: "✅ Mistral (nouveau) liste tous les formats avec dimensions. 🦙 Llama mentionne presque tous les formats. Mistral ajoute en bonus l'info sur les formats rembordé."
     },
     {
       id: 2, category: 'Formats', label: 'Format roman',
       question: "Quel format choisir pour imprimer mon roman ?",
       expected_answer: "Le format 16x24 cm est le plus adapté pour un roman. Le format 11x17 cm (poche) est aussi une option plus compacte et économique. Le format A5 portrait (14.8x21 cm) convient également aux romans et guides.",
       llama_answer: "Pour imprimer votre roman, je vous recommande de choisir un format A5 Portrait. C'est l'un des formats les plus classiques pour la littérature et convient parfaitement à une lecture prolongée. De plus, il est adapté avec nos papiers Standard 80g blanc ou Bouffant 90 g Blanc qui offrent un excellent rapport qualité/prix.",
-      mistral_answer: "Pour un roman, le format A5 Portrait est idéal. Il offre un bon confort de lecture et correspond aux standards de l'édition. Le format poche 11x17 cm est également une bonne option si vous cherchez quelque chose de plus compact.",
-      neural_answer: "Le format A5 est généralement recommandé pour les romans. C'est un format classique qui permet une bonne lisibilité et un confort de lecture optimal.",
-      remarque: "⚠️ Aucun modèle ne mentionne le format 16x24 cm qui est LE format recommandé pour les romans. Tous recommandent A5 qui est acceptable mais pas optimal. 🌀 Mistral ajoute le format poche en alternative."
+      mistral_answer: "Pour imprimer votre roman, nous recommandons le format A5 portrait ou Poche de 11x17 cm avec un papier Standard 80g blanc ou Bouffant 90g blanc pour une impression professionnelle et optimale. La reliure Dos Carré Collé est également idoine pour ce type d'ouvrage, offrant un rendu classique identique à celui des livres en librairie.",
+      remarque: "⚠️ Aucun ne mentionne le format 16x24 cm qui est LE format recommandé pour les romans. Tous recommandent A5. Mistral ajoute le format poche 11x17 en alternative et la reliure recommandée."
     },
     {
       id: 3, category: 'Formats', label: 'Format livre photo',
       question: "Quel est le meilleur format pour un livre photo ?",
       expected_answer: "Le format 21x21 cm (carré) est souvent utilisé pour les livres photos. Le format A4 portrait ou A4 paysage sont aussi recommandés pour les beaux livres et albums. Utilisez du papier satin 115g pour les photos.",
       llama_answer: "Le format A5 Paysage est idéal pour les livres photo en raison de ses dimensions atypiques qui permettent une mise en page créative. C'est également un choix populaire parmi nos clients, car il offre la possibilité d'afficher des images panoramiques et larges dans votre livre.",
-      mistral_answer: "Pour un livre photo, je recommande le format A4 Paysage qui permet de mettre en valeur vos images. Le format carré est également très apprécié pour ce type de projet.",
-      neural_answer: "Le format A4 paysage est souvent choisi pour les livres photo car il permet d'afficher les images en grand format. Le papier couché est recommandé pour une meilleure qualité d'image.",
-      remarque: "⚠️ Aucun ne mentionne clairement le 21x21 cm (format carré star pour les photos). 🦙 Llama recommande A5 Paysage (pas optimal). 🌀 Mistral et 🧠 Neural mentionnent A4 Paysage. Aucun ne précise le papier satin 115g recommandé sauf neural qui parle de 'papier couché'."
+      mistral_answer: "Le format A5 Paysage est souvent utilisé pour des livres photos car il offre une bonne qualité visuelle et esthétique avec ses dimensions de 21 cm x 14,8 cm. Ce format permet également d'avoir plus d'espace que le poche tout en restant maniable.",
+      remarque: "⚠️ Aucun ne mentionne le 21x21 cm (format carré star pour les photos). Les deux recommandent A5 Paysage. Aucun ne précise le papier satin 115g recommandé."
     },
     {
       id: 4, category: 'Formats', label: 'Emails automatiques',
       question: "Pourquoi je reçois des emails alors que j'ai déjà passé commande ?",
       expected_answer: "Le système envoie des emails automatiques si des projets sont encore 'en cours de préparation' dans votre espace. Cela arrive même si la commande est validée. Vous pouvez ignorer ces messages. Pour éviter cela, supprimez vos anciens projets non utilisés dans votre espace.",
       llama_answer: "Cela peut arriver même si une commande a déjà été validée. Pour vous assurer que votre commande est valide, nous recommandons de vérifier dans la section 'Mes commandes' de votre compte en ligne ou contactez le service client pour des précisions et débloquer la situation.",
-      mistral_answer: "Ces emails peuvent être envoyés automatiquement par notre système. Si vous avez déjà passé commande, vous pouvez les ignorer. N'hésitez pas à contacter notre service client si vous avez des questions.",
-      neural_answer: "Les emails automatiques font partie de notre système de notification. Vérifiez votre espace client pour voir l'état de votre commande.",
-      remarque: "❌ Aucun modèle n'explique la vraie raison : les projets 'en cours de préparation' déclenchent ces emails. Aucun ne mentionne la solution : supprimer les anciens projets non utilisés. Réponses superficielles."
+      mistral_answer: "Votre commande est bien validée. Si un numéro de commande apparaît dans l'email, cela signifie que la commande a été enregistrée correctement. Pour vérifier les détails de votre commande ou pour toute autre question concernant cette dernière, vous pouvez consulter le tableau des commandes sur Mon compte via notre site web CoolLibri.",
+      remarque: "❌ Aucun n'explique la vraie raison : les projets 'en cours de préparation' déclenchent ces emails. Aucun ne mentionne la solution : supprimer les anciens projets."
     },
     {
       id: 5, category: 'Formats', label: 'Format BD rembordé',
       question: "Quels formats sont disponibles pour la reliure rembordé ?",
       expected_answer: "Pour la reliure rembordé (couverture cartonnée type BD), seuls 3 formats sont possibles: A4 portrait, A4 paysage et 21x21 cm. Les autres formats ne sont pas disponibles pour cette reliure.",
       llama_answer: "Nos formats disponibles pour la reliure Rembordé sont : A4 portrait, A4 paysage et 21x21 cm. Ces dimensions permettent une couverture rigide cartonnée de haute qualité, idéal pour les bandes dessinées ou albums qui nécessitent protection renforcée.",
-      mistral_answer: "Pour la reliure rembordée, vous pouvez choisir entre les formats A4 portrait, A4 paysage, A5 et le format carré 21x21 cm. Cette reliure offre une finition premium pour vos projets.",
-      neural_answer: "Les formats disponibles pour la reliure rembordée sont A4 portrait, A4 paysage et 21x21 cm. Ce type de reliure est parfait pour les bandes dessinées et albums de qualité.",
-      remarque: "✅ Llama et Neural donnent les 3 bons formats. ❌ Mistral ajoute A5 qui N'EXISTE PAS pour le rembordé - ERREUR FACTUELLE. C'est une information cruciale car le client pourrait être déçu."
+      mistral_answer: "Nous proposons trois formats pour la reliure rembordée : A4 portrait, A4 paysage et 21x21 cm.",
+      remarque: "✅ Les deux donnent les 3 bons formats ! Mistral (nouveau) est concis et précis - CORRIGÉ par rapport à l'ancien benchmark où il ajoutait A5 (erreur)."
     },
     {
       id: 6, category: 'Formats', label: 'Annulation commande',
       question: "J'ai fait une erreur dans ma commande, puis-je l'annuler ?",
       expected_answer: "Si une commande a été validée avec une erreur (mauvais fichier, oubli, édition incorrecte), contactez IMMÉDIATEMENT le service client à contact@coollibri.com. Plus la demande est envoyée tôt, plus les chances d'annulation ou modification avant impression sont élevées.",
       llama_answer: "Je peux vous aider à annuler votre commande si elle n'a pas encore été traitée. Pour cela, il est préférable de contacter le service client par mail via contact@coollibri.com ou en appelant directement notre numéro 05 31 61 60 42 pour obtenir une intervention rapide et personnalisée sur votre commande.",
-      mistral_answer: "Si vous souhaitez annuler une commande, veuillez contacter rapidement notre service client à contactcoollibri.com. Plus vous agissez vite, plus nous aurons de chances de stopper la production.",
-      neural_answer: "Pour annuler une commande, contactez notre service client dès que possible. Selon l'avancement de la production, nous pourrons vous proposer une solution adaptée.",
-      remarque: "✅ Llama donne email ET téléphone (05 31 61 60 42) - réponse complète. ❌ Mistral a une FAUTE dans l'email : 'contactcoollibri.com' au lieu de 'contact@coollibri.com'. 🧠 Neural reste vague sans coordonnées précises."
+      mistral_answer: "Pour annuler une commande déjà validée, il faut contacter le service client immédiatement à contactcoollibri.com ou au 05 31 61 60 42. Plus la demande est envoyée tôt, plus les chances d'annulation sont élevées.",
+      remarque: "✅ Llama donne email ET téléphone. ⚠️ Mistral a une FAUTE dans l'email : 'contactcoollibri.com' au lieu de 'contact@coollibri.com'. Tous deux mentionnent l'urgence."
     },
     {
       id: 7, category: 'Reliures', label: 'Types de reliures',
       question: "Quelles sont les différentes reliures proposées par Coollibri ?",
       expected_answer: "4 types de reliure: Dos carré collé (romans, couverture souple), Rembordé (BD, couverture rigide cartonnée), Agrafé/Piqûre à cheval (magazines, brochures), Spirale (documents techniques, recettes).",
       llama_answer: "Nous proposons quatre types de reliures professionelles : Dos Carré Collé pour les romans et livres professionnels, Rembordé pour les bandes dessinées et albums de qualité, Agrafé (ou Piqûre à cheval) pour les magazines et brochures, ainsi que la Spirale pour les thèses et documents techniques. Chaque type est conçu pour offrir une finition haute gamme adaptée aux besoins spécifiques des projets d'impression de livres sur mesure chez CoolLibri.",
-      mistral_answer: "Coollibri propose 4 types de reliures : Dos carré collé (idéal pour les romans), Rembordé (pour les BD et albums premium), Agrafé (pour les magazines), et Spirale (pour les documents pratiques).",
-      neural_answer: "Nous proposons plusieurs types de reliures : Dos carré collé, Rembordé, Agrafé et Spirale. Chacune correspond à des besoins spécifiques selon votre projet.",
-      remarque: "✅ Excellent pour tous ! Llama est le plus détaillé avec les usages précis. Mistral est concis mais complet. Neural liste les 4 types mais sans détails d'usage."
+      mistral_answer: "Nous proposons quatre types de reliures : Dos carré collé, Rembordé, Agrafé et Spirale. Chaque type est adapté à des projets différents en fonction du résultat souhaité et du nombre de pages. Reliure en dos carré collé pour un livre roman avec une couverture épaisse mais souple. Rembordé pour des bandes dessinées et albums de qualité avec une couverture rigide cartonnée. Agrafé pour des magazines et brochures. Spirale pour les thèses et documents techniques.",
+      remarque: "✅ Excellent pour les deux ! Llama et Mistral listent les 4 types avec les usages détaillés. Mistral (nouveau) est très complet avec les caractéristiques de chaque reliure."
     },
     {
       id: 8, category: 'Reliures', label: 'Dos carré collé pages',
       question: "Combien de pages peut-on avoir avec une reliure dos carré collé ?",
       expected_answer: "Minimum 60-80 pages selon le papier. Maximum 500 à 700 pages selon le papier choisi. Papier 60g: 60-700 pages. Papier 80g: 80-500 pages. Papier 90g satiné: 90-500 pages.",
       llama_answer: "Vous pouvez avoir jusqu'à 500 à 700 pages en reliure dos carré collée, cela dépend du type de papier choisi. Pour les livres plus épais que ces limites, nous pouvons vous conseiller d'autres options telles qu'une séparation en deux tomes ou une reliure spirale pour des volumes jusqu'à 500 pages maximum.",
-      mistral_answer: "La reliure dos carré collé accepte de 60 à 700 pages selon le grammage du papier. Pour un papier standard 80g, la limite est d'environ 500 pages. Au-delà, nous recommandons de diviser en plusieurs volumes.",
-      neural_answer: "Le dos carré collé peut accueillir de nombreuses pages, généralement entre 100 et 500 pages selon le papier utilisé. Contactez-nous pour des projets plus volumineux.",
-      remarque: "✅ Mistral donne la fourchette exacte 60-700 pages et précise 500 pour 80g. 🦙 Llama mentionne 500-700 mais oublie le minimum. 🧠 Neural dit 100-500 pages, ce qui est imprécis (le min est 60-80, pas 100)."
+      mistral_answer: "Pour un livre dos carré collé avec du papier de 80g, il est possible d'avoir entre 500 et 700 pages selon le format choisi (A4 ou A5).",
+      remarque: "🦙 Llama mentionne 500-700 pages et propose des alternatives. ⚠️ Mistral donne 500-700 pour 80g mais oublie le minimum (60-80 pages). Les deux omettent le min."
     },
     {
       id: 9, category: 'Reliures', label: 'Reliure magazine',
       question: "Quelle reliure pour un magazine ou une brochure ?",
       expected_answer: "La reliure agrafée (piqûre à cheval) est idéale pour les magazines. Minimum 8 pages, maximum 60 pages. Le nombre de pages doit être un multiple de 4 (8, 12, 16, 20...).",
       llama_answer: "Nous proposons plusieurs types de reliures pour les magazines et brochures. Pour un magazine ou une brochure avec peu de pages (entre 8 et 60), la reliure Agrafée est idéale, car elle offre un rendu identique aux magazines que vous achetez en kiosque. C'est également l'option économique parmi nos quatre types de reliures proposés.",
-      mistral_answer: "Pour un magazine, la reliure agrafée (piqûre à cheval) est recommandée. Elle convient aux documents de 8 à 60 pages et offre un aspect professionnel.",
-      neural_answer: "La reliure agrafée est parfaite pour les magazines et brochures. Elle est économique et donne un rendu professionnel à vos publications.",
-      remarque: "✅ Llama mentionne 8-60 pages et la comparaison avec les magazines en kiosque. ⚠️ Aucun ne mentionne que le nombre de pages doit être un MULTIPLE DE 4 - information importante pour éviter les erreurs de mise en page."
+      mistral_answer: "Agrafée ou le Piqué à cheval est la reliure idoine pour un magazine ou une brochure. Cette reliure offre un rendu identique aux magazines que vous achetez en kiosque et peut être imprimée jusqu'à 60 pages maxi sur notre plateforme.",
+      remarque: "✅ Les deux recommandent correctement l'agrafée. Llama mentionne 8-60 pages. Mistral dit 60 pages max. ⚠️ Aucun ne mentionne que le nombre de pages doit être un MULTIPLE DE 4."
     },
     {
       id: 10, category: 'Reliures', label: 'Spirale avantages',
       question: "Quels sont les avantages de la reliure spirale ?",
       expected_answer: "La spirale permet une ouverture complète à 360°, pages parfaitement à plat. Idéal pour recettes, partitions, manuels techniques. De 1 à 290-500 pages selon le papier. Le livre ne comporte pas de dos.",
       llama_answer: "La reliure spirale est idéale pour les documents qui nécessitent une consultation fréquente. Elle permet un accès facile à toutes les pages du document en ouvrage complètement à plat, ce qui facilite la lecture et l'utilisation pratique au quotidien.",
-      mistral_answer: "La reliure spirale offre plusieurs avantages : ouverture à 360°, pages parfaitement à plat, résistance à l'usure. Idéale pour les livres de recettes, carnets de notes et documents de travail.",
-      neural_answer: "La spirale permet une ouverture à plat très pratique. C'est parfait pour les documents de travail, recettes ou partitions que vous consultez régulièrement.",
-      remarque: "✅ Tous mentionnent l'ouverture à plat. ⚠️ Aucun ne précise que le livre N'A PAS DE DOS (important pour le rangement en bibliothèque). Aucun ne donne la fourchette de pages (1 à 290-500)."
+      mistral_answer: "Les avantages de la reliure spirale sont multiples : elle permet une ouverture complète à 360 degrés pour une consultation optimale et pratique ; sa robustesse en fait un choix idéal pour des documents techniques, universitaires ou professionnels. Elle peut accueillir jusqu'à environ 500 pages selon l'épaisseur du papier choisi.",
+      remarque: "✅ Mistral (nouveau) est très complet : 360°, robustesse, usages, 500 pages max. Llama mentionne l'ouverture à plat. ⚠️ Aucun ne précise que le livre N'A PAS DE DOS."
     },
     {
       id: 11, category: 'Reliures', label: 'Rembordé pages max',
       question: "Combien de pages maximum pour une reliure rembordé ?",
       expected_answer: "Minimum 24 pages, maximum 100 à 150 pages selon le papier choisi. Pour un nombre de pages important, contacter l'équipe Coollibri pour une étude personnalisée.",
       llama_answer: "La reliure rembordée peut supporter jusqu'à 150 pages en fonction de l'épaisseur du papier choisi. C'est un format idéal pour les bandes dessinées ou albums illustrés qui nécessitent une protection renforcée et une couverture rigide.",
-      mistral_answer: "La reliure rembordée accepte entre 24 et 100-150 pages selon le grammage du papier. Pour des projets plus conséquents, contactez notre équipe.",
-      neural_answer: "La reliure rembordée peut contenir entre 24 et 150 pages environ. Elle est parfaite pour les albums et BD de qualité premium.",
-      remarque: "✅ Mistral et Neural donnent la fourchette complète 24-150 pages. 🦙 Llama mentionne seulement le maximum (150) et oublie le minimum de 24 pages."
+      mistral_answer: "Pour un reliure rembordée, le nombre de pages maximum est compris entre 100 et 150 selon l'épaisseur du papier choisi.",
+      remarque: "✅ Les deux mentionnent 100-150 pages max. ⚠️ Aucun ne mentionne le minimum de 24 pages."
     },
     {
       id: 12, category: 'Reliures', label: 'Livre cuisine reliure',
       question: "Quelle reliure pour un livre de recettes de cuisine ?",
       expected_answer: "La reliure spirale est recommandée car le livre peut s'ouvrir à plat à 360°. Pratique pour consulter une recette en cuisinant. Le dos carré collé ne permet pas une ouverture à plat et peut s'abîmer si on force.",
       llama_answer: "Pour un livre de recettes de cuisine, je vous recommande la reliure en Spirale. C'est l'option idéale pour les livres pratiques qui nécessitent une protection renforcée contre les taches et les manipulations fréquentes.",
-      mistral_answer: "La reliure spirale est parfaite pour un livre de recettes ! Elle permet de garder le livre ouvert à plat pendant que vous cuisinez, sans avoir à le maintenir.",
-      neural_answer: "Pour un livre de recettes, je recommande la reliure rembordée pour sa durabilité et son aspect premium. Elle résistera bien à une utilisation régulière en cuisine.",
-      remarque: "✅ Llama et Mistral recommandent correctement la spirale. ❌ Neural recommande le REMBORDÉ - ERREUR CRITIQUE car il ne s'ouvre pas à plat et est inadapté pour consulter des recettes en cuisinant."
+      mistral_answer: "Pour un livre de recettes de cuisine, nous recommandons la reliure spirale avec ouverture complète pour une utilisation pratique en cuisine et résistance aux taches grâce au papier satiné 90g choisi. Le format A4 portrait est adapté à ce type d'ouvrage.",
+      remarque: "✅ Les deux recommandent correctement la spirale. Mistral (nouveau) ajoute le papier satiné 90g et le format A4 - très complet !"
     },
     {
       id: 13, category: 'Papiers', label: 'Types de papiers',
       question: "Quels types de papier proposez-vous pour l'intérieur du livre ?",
       expected_answer: "4 types de papier: Standard 80g blanc (équivalent papier imprimante), Bouffant 90g blanc (cotonneux, doux), Bouffant 90g crème (rendu ancien), Couché satin 115g blanc (lisse, idéal photos couleur).",
       llama_answer: "Nous proposons deux types de papier pour l'intérieur du livre : STANDARD 80G BLANC et BOUFFANT 90G BLANC. Le Standard est équivalent au papier d'imprimante A4, idéal pour les romans ou livres de poche en noir et blanc. Le Bouffant a une texture légèrement cotonneuse, douce à toucher, mais il n'est pas adapté si votre livre contient des photos en couleur.",
-      mistral_answer: "Nous proposons plusieurs types de papier : Standard 80g (économique), Bouffant 90g (toucher doux), et Couché satin 115g (idéal pour les photos). Chaque papier a ses avantages selon votre projet.",
-      neural_answer: "Nos papiers disponibles incluent le papier standard blanc et le papier couché. Le choix dépend du type de contenu de votre livre (texte ou images).",
-      remarque: "⚠️ Aucun ne mentionne les 4 types : Llama cite seulement 2 (Standard et Bouffant blanc). Mistral cite 3 mais oublie le Bouffant crème. Neural reste très vague. ❌ Llama oublie le couché satin 115g."
+      mistral_answer: "Nous proposons deux types de papier pour l'intérieur du livre : Standard 80g blanc et Bouffant 90g blanc. Le premier est équivalent au papier d'imprimante A4, tandis que le second a une sensation douce à la touche. Nous ne proposons pas de papiers différents en passant par un devis sur mesure sans contact avec notre service client pour ce type de demande spécifique.",
+      remarque: "⚠️ Les deux ne mentionnent que 2 papiers sur 4. Ils oublient le Bouffant crème et le Couché satin 115g. Réponses incomplètes."
     },
     {
       id: 14, category: 'Papiers', label: 'Papier photos couleur',
       question: "Quel papier choisir pour un livre avec des photos en couleur ?",
       expected_answer: "Le papier couché satin 115g blanc est recommandé. Il a un toucher lisse et met en valeur les photos couleur. Le papier bouffant n'est PAS adapté aux photos couleur.",
       llama_answer: "Pour un livre contenant des photos en couleur, je vous recommande fortement d'utiliser notre papier Lisse Satin/Photo 115g blanc. C'est le meilleur choix pour une reproduction fidèle et de haute qualité des couleurs. Ce papier est spécialement conçu pour les photographies et illustrations en couleur, ce qui garantit un rendu exceptionnel avec netteté maximale.",
-      mistral_answer: "Pour les photos en couleur, le papier couché satin 115g est idéal. Il offre un excellent rendu des couleurs et une surface lisse parfaite pour l'impression photo.",
-      neural_answer: "Le papier couché satin 115g est recommandé pour les livres avec photos. Il garantit une reproduction fidèle des couleurs et une qualité professionnelle.",
-      remarque: "✅ Excellent pour tous les 3 ! Ils recommandent tous le bon papier (satin 115g). 🦙 Llama est le plus détaillé avec des termes marketing. ⚠️ Aucun ne précise que le bouffant N'EST PAS adapté aux photos couleur."
+      mistral_answer: "Pour un livre avec des photos en couleurs, nous recommandons le papier Lisse Satin/Photo 115g blanc pour obtenir un rendu optimal des nuances et des détails.",
+      remarque: "✅ Les deux recommandent correctement le papier satin 115g. Llama est plus détaillé. ⚠️ Aucun ne précise que le bouffant N'EST PAS adapté."
     },
     {
       id: 15, category: 'Papiers', label: 'Fichier Word refusé',
       question: "Mon fichier Word n'est pas accepté sur le site, que faire ?",
       expected_answer: "Le format PDF est fortement recommandé car il fige la mise en page, les polices et les marges. Convertissez votre Word en PDF via: Microsoft Word → Fichier > Exporter > PDF, ou Google Docs → Fichier > Télécharger > PDF. Le Word peut causer des décalages d'affichage entre ordinateurs.",
       llama_answer: "Votre fichier Word n'est pas accepté car il peut nécessiter des ajustements de mise en page. Nous recommandons d'importer votre manuscrit sous forme PDF pour un téléchargement plus stable.",
-      mistral_answer: "Le format PDF est recommandé pour éviter tout problème de mise en page. Vous pouvez convertir votre fichier Word en PDF facilement via Fichier > Enregistrer sous > PDF dans Word.",
-      neural_answer: "Votre fichier Word est peut-être trop volumineux. Essayez de réduire sa taille ou de le convertir en PDF avant de le télécharger.",
-      remarque: "✅ Mistral donne la procédure de conversion (Fichier > Enregistrer sous > PDF). 🦙 Llama explique sans donner les étapes. ❌ Neural invente une raison (taille) qui n'est pas la vraie raison du refus."
+      mistral_answer: "Nous acceptons des fichiers PDF pour l'impression de vos livres à la demande. Pour une meilleure stabilité et préservation de la mise en page exacte, nous recommandons ce format. Si vous avez un document Word (DOC/DOX), il peut nécessiter quelques ajustements de mise en page avant d'être accepté sur notre plateforme. Vous pouvez contacter le service client à contact@coollibri.com ou au 05 31 61 60 42 pour plus d'informations et assistance.",
+      remarque: "✅ Mistral (nouveau) est complet avec les contacts. Llama recommande PDF mais sans procédure de conversion. ⚠️ Aucun ne donne les étapes de conversion Word→PDF."
     },
     {
       id: 16, category: 'Papiers', label: 'Rendu 3D pas fidèle',
       question: "Le rendu 3D sur le site ne ressemble pas à ce que j'attends, est-ce normal ?",
       expected_answer: "Le rendu 3D et le livre virtuel sont des aperçus NON CONTRACTUELS. Ils ne matérialisent pas les marges de fabrication. Pour avoir une idée exacte du rendu final, imprimez une ou deux pages en taille réelle. Le rendu 3D sert à visualiser l'aspect général (couverture, dos, épaisseur).",
       llama_answer: "Le rendu 3D sur notre site est généré automatiquement une fois que votre couverture a été validée. Il s'agit d'une visualisation finale qui vous permet de voir comment votre livre sera présenté en trois dimensions, mais il peut ne pas correspondre exactement à la version imprimée si des modifications sont apportées ultérieurement.",
-      mistral_answer: "Le rendu 3D est une simulation qui donne un aperçu de votre livre. Il peut y avoir de légères différences avec le produit final, notamment au niveau des couleurs.",
-      neural_answer: "Le rendu 3D est une visualisation approximative. Le résultat final imprimé peut différer légèrement, notamment en termes de couleurs.",
-      remarque: "⚠️ Aucun ne mentionne que le rendu est 'NON CONTRACTUEL' - terme juridique important. Aucun ne suggère d'imprimer une page en taille réelle pour vérifier. Réponses trop vagues et non rassurantes."
+      mistral_answer: "Nous sommes désolés si le rendu 3D de votre livre ne ressemble pas à ce que vous attendez. Il est possible qu'il y ait des différences entre la visualisation en trois dimensions et l'impression finale, notamment pour les couleurs ou certaines détails. Pour une meilleure précision sur le résultat final de votre livre imprimé, nous vous recommandons d'utiliser notre outil de mise en page en ligne qui permettra à chaque utilisateur de personnaliser la maquette et ainsi avoir un aperçu plus réaliste.",
+      remarque: "⚠️ Aucun ne mentionne que le rendu est 'NON CONTRACTUEL' - terme juridique important. Mistral suggère l'outil de mise en page. ⚠️ Aucun ne suggère d'imprimer une page en taille réelle pour vérifier."
     },
     {
       id: 17, category: 'Papiers', label: 'Marges document',
       question: "Quelles marges dois-je laisser dans mon document ?",
       expected_answer: "2 cm de marges tout autour du document. Aucun élément important (texte, visage) ne doit se trouver dans cette zone de sécurité sous peine d'être coupé ou pris dans la reliure.",
       llama_answer: "Pour une impression de qualité, il est essentiel d'ajouter des marges suffisantes à votre fichier Word. Nous recommandons un minimum de 2 cm sur toutes les côtés pour éviter que le texte ou les images importantes ne soient coupées lors du façonnage.",
-      mistral_answer: "Nous recommandons des marges de 2 cm minimum tout autour de votre document pour éviter que le contenu ne soit rogné à l'impression.",
-      neural_answer: "Les marges recommandées sont d'environ 15 à 20 mm. Assurez-vous que le texte important soit bien éloigné des bords de la page.",
-      remarque: "✅ Llama et Mistral donnent la bonne valeur (2 cm). 🧠 Neural dit 15-20 mm au lieu de 20 mm minimum (2 cm) - imprécis et potentiellement risqué. ⚠️ Aucun ne mentionne le risque lié à la reliure."
+      mistral_answer: "Vous devez laisser 2 cm de marges tout autour du document pour éviter que des éléments importants ne soient coupés lors de l'impression et de la reliure. Nos gabarits vierges sont disponibles sur notre page \"Jimprime mon livre\" pour vous aider à créer votre fichier correctement formaté.",
+      remarque: "✅ Les deux donnent la bonne valeur (2 cm). Mistral (nouveau) mentionne en plus les gabarits vierges disponibles - très utile !"
     },
     {
       id: 18, category: 'Couverture', label: 'Créer couverture',
       question: "Comment créer ma couverture si je n'ai pas de logiciel ?",
       expected_answer: "Coollibri propose un outil gratuit de personnalisation en ligne avec de nombreux modèles gratuits. Vous pouvez personnaliser avec vos textes et photos. Rendez-vous sur la page 'Créer votre couverture'.",
       llama_answer: "Vous pouvez créer votre couverture en utilisant nos modèles gratuits proposés sur la page Créer votre couverture. Vous avez accès à un outil de personnalisation gratuit qui vous permettra d'ajuster les textes, photos et couleurs pour que votre couverture soit unique !",
-      mistral_answer: "Coollibri met à votre disposition un outil de création de couverture en ligne gratuit. Vous trouverez de nombreux modèles personnalisables avec vos textes et images.",
-      neural_answer: "Nous proposons un outil de création en ligne avec des modèles prêts à utiliser. Vous pouvez personnaliser les couleurs, textes et images selon vos goûts.",
-      remarque: "✅ Excellent pour tous les 3 ! Ils mentionnent tous l'outil gratuit et les modèles. Réponses équivalentes et complètes."
+      mistral_answer: "Pour créer votre couverture sans logiciel spécifique, vous pouvez utiliser notre outil de personnalisation en ligne gratuit disponible sur CoolLibri. Il offre 100 possibilités de personnalisation avec une bibliothèque de plus de 300 images libres de droits et des polices à choisir. Les dimensions requises sont respectées automatiquement, vous n'avez donc pas besoin d'avoir un logiciel professionnel pour créer votre couverture unique !",
+      remarque: "✅ Excellent pour les deux ! Mistral (nouveau) est très détaillé : 100 possibilités, 300 images, dimensions auto - très vendeur !"
     },
     {
       id: 19, category: 'Couverture', label: 'Pelliculage choix',
       question: "Faut-il choisir un pelliculage mat ou brillant pour ma couverture ?",
       expected_answer: "Mat: aspect sobre et élégant, toucher velouté, cache les traces de doigts. Brillant: couleurs éclatantes, reflets, mais traces de doigts visibles. Le mat est recommandé sauf pour les couvertures à fond foncé (préférer brillant).",
       llama_answer: "Pour votre couverture, je recommande fortement de choisir un pelliculage mat. Il offre une protection optimale contre les traces visibles et donne à la fois un aspect sobre et élégant au livre. De plus, il est particulièrement adapté pour des livres avec fond noir ou sombre car cela permet d'éviter que les reflets ne soient trop visibles sur la couverture claire.",
-      mistral_answer: "Le pelliculage mat donne un aspect élégant et sobre, tandis que le brillant fait ressortir les couleurs. Pour les couvertures sombres, le brillant est préférable pour éviter les traces. Le mat convient mieux aux couvertures claires.",
-      neural_answer: "Le mat offre un toucher doux et un aspect sobre. Le brillant met en valeur les couleurs vives. Le choix dépend du style que vous souhaitez pour votre livre.",
-      remarque: "❌ Llama donne un conseil INVERSE : dit que le mat est adapté aux fonds sombres, alors que c'est le BRILLANT qui est recommandé pour les fonds foncés. ✅ Mistral est le seul à donner le bon conseil. 🧠 Neural reste neutre sans recommandation."
+      mistral_answer: "Pour une couverture claire ou multicolore, nous recommandons fortement le pelliculage mat pour un aspect sobriquet et élégant. Si votre création est composée d'une couleur de fond foncée (noir, bleu marine, bordeaux, etc.), il serait préférable de privilégier le pelliculage brillant afin d'éviter que les traces de manipulation ne soient trop visibles sur la couverture sombre.",
+      remarque: "✅ Mistral (nouveau) donne le SEUL bon conseil : brillant pour les fonds foncés. ❌ Llama donne un conseil INVERSE (mat pour fonds sombres). AMÉLIORATION MAJEURE de Mistral !"
     },
     {
       id: 20, category: 'Couverture', label: 'Verso couverture',
       question: "Est-ce que le verso de la couverture est imprimé ?",
       expected_answer: "Non, les versos des couvertures ne sont pas imprimés. Exception: pour une brochure agrafée, l'intérieur des couvertures peut être imprimé sur demande.",
       llama_answer: "Le verso de la couverture n'est pas imprimé. Cependant, dans certains cas spécifiques comme une brochure agrafée, nous pouvons imprimer l'intérieur des couvertures sur demande si nécessaire.",
-      mistral_answer: "Non, le verso des couvertures n'est généralement pas imprimé. Cependant, pour les brochures agrafées, il est possible d'imprimer l'intérieur des couvertures.",
-      neural_answer: "Non, le verso de la couverture n'est pas imprimé. Seule la face extérieure est visible. Pour les brochures agrafées, une impression intérieure est possible.",
-      remarque: "✅ Excellent pour tous les 3 ! Réponses complètes avec la règle générale ET l'exception pour les brochures agrafées. Équivalent."
+      mistral_answer: "Les verso des couvertures ne sont pas imprimés à CoolLibri. Dans le cas d'une brochure agrafée nous pouvons imprimer lintérieur des couvertures sur demande.",
+      remarque: "✅ Excellent pour les deux ! Réponses complètes avec la règle générale ET l'exception pour les brochures agrafées."
     },
     {
       id: 21, category: 'Couverture', label: 'Délai remboursement',
       question: "J'ai reçu l'accord pour un remboursement mais je n'ai toujours rien reçu, c'est normal ?",
       expected_answer: "Oui, les délais normaux sont: accord service client (immédiat), traitement comptable (3-5 jours ouvrables), virement bancaire (3-5 jours). Total: 1-2 semaines. Si rien après 2 semaines, recontactez le service client avec votre numéro de commande ET la date de confirmation du remboursement.",
       llama_answer: "Je comprends votre inquiétude. Le délai total pour un remboursement est de 1 à 2 semaines en moyenne, il peut varier selon la banque que vous utilisez. Si cela dépasse les deux semaines et que le montant n'est toujours pas visible sur votre compte, nous pouvons vérifier avec notre équipe comptable pour accélérer le traitement si nécessaire. Pour ce faire, veuillez mentionner votre numéro de commande ET la date de confirmation du remboursement.",
-      mistral_answer: "Les remboursements peuvent prendre quelques jours ouvrables. Si vous n'avez rien reçu après une semaine, n'hésitez pas à contacter notre service client avec votre numéro de commande.",
-      neural_answer: "Le délai de remboursement varie selon les banques. Comptez généralement 5 à 10 jours ouvrables après l'accord. Contactez-nous si vous n'avez rien reçu après ce délai.",
-      remarque: "✅ Llama donne une réponse très complète avec les délais exacts et les infos à fournir pour relancer. 🌀 Mistral et Neural sont plus vagues et moins rassurants. Llama seul mentionne les 2 éléments nécessaires pour relancer (n° commande + date de confirmation)."
+      mistral_answer: "Nous sommes désolés pour l'inconvenient que vous avez rencontré avec votre remboursement. Il est possible qu'il y ait un retard dans le processus de paiement, mais nous allons vérifier la situation immédiatement et prendre les mesures nécessaires afin d'effectuer ce remboursement au plus tôt. Veuillez patienter quelques jours supplémentaires pour que votre solde soit réimburser correctement. Si vous avez des questions ou besoin de soutien, n'hésitez pas à nous contacter par courriel à contact@coollibri.com ou en appelant au 05 31 61 60 42.",
+      remarque: "✅ Llama donne les délais précis (1-2 semaines) et les infos à fournir. Mistral donne les contacts mais pas les délais exacts. Les deux sont empathiques."
     },
     {
       id: 22, category: 'ISBN-Vente', label: 'ISBN obligatoire',
       question: "Ai-je besoin d'un ISBN pour mon livre ?",
       expected_answer: "L'ISBN est obligatoire uniquement si vous souhaitez VENDRE votre livre. Si le livre n'est pas destiné à la vente, pas besoin d'ISBN. Coollibri fournit l'ISBN gratuitement si vous répondez 'oui' à 'Souhaitez-vous vendre votre livre ?'",
       llama_answer: "Vous avez besoin d'un ISBN si vous envisagez de vendre votre livre. C'est une condition obligatoire pour la vente en librairie. Nous fournissons gratuitement le numéro ISBN sur notre site si vous répondez oui à la question 'Souhaitez-vous vendre votre livre ?' posée lors du devis.",
-      mistral_answer: "L'ISBN n'est obligatoire que si vous souhaitez vendre votre livre. Pour un usage personnel ou limité, il n'est pas nécessaire. Coollibri peut vous fournir un ISBN gratuit.",
-      neural_answer: "L'ISBN est nécessaire si vous souhaitez commercialiser votre livre. Pour un usage privé, il n'est pas obligatoire. Nous pouvons vous en fournir un gratuitement.",
-      remarque: "✅ Tous donnent la bonne information sur l'obligation conditionnelle et la gratuité. 🦙 Llama précise la question exacte posée lors du devis - plus pratique pour l'utilisateur."
+      mistral_answer: "Oui, si vous souhaitez vendre votre livre ou y apposer un prix, il est obligatoire d'obtenir un numéro ISBN. Si votre livre n'est pas destiné à la vente, vous ne l'aurez pas besoin.",
+      remarque: "✅ Les deux donnent la bonne information sur l'obligation conditionnelle. Llama précise la question exacte posée lors du devis. Mistral ajoute 'y apposer un prix' - info utile."
     },
     {
       id: 23, category: 'ISBN-Vente', label: 'PDF refusé',
       question: "Mon fichier PDF est refusé par le site, que faire ?",
       expected_answer: "Si votre PDF est refusé (marges incorrectes, format non conforme, erreur de construction), contactez le service client à contact@coollibri.com. Ils analyseront votre fichier, identifieront le problème et vous indiqueront la correction à effectuer.",
       llama_answer: "Votre fichier PDF est refusé car il ne respecte pas les contraintes techniques d'impression. Il est possible que votre format soit incorrect ou qu'il y ait des erreurs de construction du fichier. Nous vous recommandons de contacter notre service client pour analyser précisément le problème et indiquer la correction à effectuer, nous sommes joignables au 05 31 61 60 42 ou par email via contact@coollibri.com",
-      mistral_answer: "Si votre PDF est refusé, vérifiez les marges et le format. Vous pouvez contacter notre service client qui analysera votre fichier et vous indiquera les corrections à apporter.",
-      neural_answer: "Votre PDF peut être refusé pour plusieurs raisons (format, résolution, polices). Contactez notre support technique pour une analyse détaillée de votre fichier.",
-      remarque: "✅ Llama donne email ET téléphone - réponse la plus complète et actionnable. 🌀 Mistral donne des pistes mais pas de contact. 🧠 Neural reste vague. Aucun ne donne l'adresse email explicitement sauf Llama."
+      mistral_answer: "Nous sommes désolés pour l'inconvenient rencontré avec votre fichier PDF. Pour garantir une impression de bonne qualité et éviter les défauts, il est important que vos documents respectent certaines contraintes techniques d'impression. Si votre document ne respecte pas ces contraintes techniques ou si malgré tout il est rejeté par la plateforme, nous recommandons de contacter notre service client pour obtenir une analyse précise du problème : contact@coollibri.com",
+      remarque: "✅ Llama donne email ET téléphone. Mistral (nouveau) explique les contraintes et donne l'email. Les deux sont complets et empathiques."
     },
     {
       id: 24, category: 'ISBN-Vente', label: 'Vendre via bibliothèque',
       question: "Comment vendre mon livre via Coollibri ?",
       expected_answer: "La bibliothèque commerciale Coollibri permet la vente en impression à la demande. Le lecteur achète, Coollibri fabrique et expédie. Frais: 1€ TTC par livre + coût fabrication. Bénéfice versé par virement dès 10€ cumulés.",
       llama_answer: "Vendre votre livre via Coollibri est simple ! Vous devez tout d'abord créer un compte sur notre site pour accéder à la Bibliothèque commerciale. Une fois connecté, vous pouvez renseigner les informations de vente et télécharger l'ISBN si nécessaire. Nous nous chargeons ensuite de fabriquer le livre en fonction des commandes reçues et d'en expédier directement au lecteur final. Nous facturons 1 TTC par commande pour nos frais administratifs, ainsi que le coût de fabrication du livre sur notre site Coollibri.",
-      mistral_answer: "Vous pouvez vendre votre livre via notre bibliothèque en ligne. Nous imprimons à la demande et expédions directement aux acheteurs. Vous recevez vos bénéfices par virement.",
-      neural_answer: "Notre plateforme de vente vous permet de commercialiser votre livre facilement. Les acheteurs commandent en ligne et nous nous occupons de l'impression et de l'expédition.",
-      remarque: "✅ Llama mentionne les frais de 1€ TTC. ⚠️ Aucun ne mentionne le seuil de 10€ minimum pour le versement des bénéfices - info importante pour les auteurs. 🌀 Mistral mentionne le virement mais sans seuil."
+      mistral_answer: "Pour vendre votre livre via Coollibri, vous devez tout d'abord créer un compte sur notre site et renseigner vos informations dans la rubrique \"Mon Compte\". Ensuite, vous pouvez rendre visible plusieurs pages de votre livre pour attiser l'intérêt des futurs lecteurs. Vous définirez ensuite le prix de vente que souhaitez-vous proposer et cliquez sur \"Continuer\" dans la rubrique \"Vendre mon livre\". Le service de mise en vente est facturé à 1 TTC par livre commandé.",
+      remarque: "✅ Les deux mentionnent les frais de 1€ TTC. Mistral (nouveau) détaille les étapes de mise en vente. ⚠️ Aucun ne mentionne le seuil de 10€ minimum pour le versement."
     },
     {
       id: 25, category: 'ISBN-Vente', label: 'Prix de vente',
       question: "À quel prix vendre mon livre ?",
       expected_answer: "C'est à l'auteur de définir le prix. Prenez en compte: coût de fabrication (devis sur Coollibri), autres coûts (relecture...), prix du marché, marge souhaitée, et 1€ de frais si vente via bibliothèque Coollibri. TVA livre: 5.5%.",
       llama_answer: "Le prix de vente de votre livre dépendra des facteurs que vous souhaitez prendre en compte : les coûts de fabrication du livre sur notre site Coollibri, d'autres coûts potentiels tels que le relecture ou la mise en page, ainsi que vos objectifs financiers. Vous pouvez obtenir un devis personnalisé pour déterminer votre prix optimal. Le taux de TVA applicable est généralement de 5,5% sur les ventes dans l'Union Européenne.",
-      mistral_answer: "Le prix de vente est libre, à vous de le définir. Tenez compte du coût de fabrication, de vos frais annexes et de la marge que vous souhaitez réaliser.",
-      neural_answer: "Vous êtes libre de fixer le prix de votre livre. Prenez en compte le coût de production et la marge que vous souhaitez obtenir sur chaque vente.",
-      remarque: "✅ Llama mentionne la TVA 5.5% - information utile et exacte. ⚠️ Aucun ne mentionne les 1€ de frais si vente via bibliothèque Coollibri. Mistral et Neural sont trop génériques."
+      mistral_answer: "Pour vendre votre livre sur CoolLibri, vous pouvez définir le prix de vente selon plusieurs facteurs : coût de fabrication du livre, frais administratifs (1 TTC par livre commandé), autres coûts que souhaitez-vous imputer au livre et la marge que vous souhaiteriez conserver. Le prix fixé est imprimé sur le livre qui doit être vendu à ce prix à tous vos clients, avec une remise maximale de 5 (le prix du livre est régi par la Loi sur le prix unique du livre en France).",
+      remarque: "✅ Llama mentionne la TVA 5.5%. Mistral (nouveau) mentionne la Loi sur le prix unique - très pertinent juridiquement ! Les deux sont complets."
     },
     {
       id: 26, category: 'ISBN-Vente', label: 'ISBN librairie auto',
       question: "Mon livre sera-t-il automatiquement en librairie avec un ISBN ?",
       expected_answer: "NON. L'ISBN est seulement un identifiant unique, il ne garantit pas le référencement en librairie. Pour apparaître dans les bases des libraires, il faut passer par des prestataires payants comme DILICOM.",
       llama_answer: "L'ISBN est une condition préalable pour que votre livre soit référencé dans les bases des libraires. Cependant, le simple fait d'avoir un ISBN ne suffit pas à ce qu'il apparaisse automatiquement en librairie. Pour être référencé par la chaîne du livre (librairies, éditeurs, distributeurs...), il faut passer par des prestataires payants comme DILICOM.",
-      mistral_answer: "Non, l'ISBN seul ne garantit pas une présence en librairie. C'est un identifiant unique pour votre livre. Pour être référencé, des démarches supplémentaires sont nécessaires.",
-      neural_answer: "L'ISBN identifie votre livre mais ne garantit pas sa présence en librairie. Des démarches complémentaires sont nécessaires pour le référencement.",
-      remarque: "✅ Llama mentionne DILICOM spécifiquement - information actionnable. 🌀 Mistral et Neural disent 'démarches nécessaires' mais sans préciser lesquelles - moins utile pour l'utilisateur."
+      mistral_answer: "Non, l'ISBN est seulement une condition préalable pour le référencement dans les bases des libraires. Le référencement dans ces bases constitue un autre service à solliciter séparément.",
+      remarque: "✅ Llama mentionne DILICOM spécifiquement. Mistral (nouveau) est concis et correct mais sans détail sur DILICOM."
     },
     {
       id: 27, category: 'Problèmes', label: 'Relecture orthographe',
       question: "Est-ce que vous corrigez les fautes d'orthographe de mon livre ?",
       expected_answer: "NON. Coollibri n'effectue aucune relecture orthographique, ni correction, ni contrôle de mise en page ou de centrage. Le livre est imprimé tel quel. Des correcteurs indépendants sont listés sur le blog Coollibri.",
       llama_answer: "Non, nous ne corrigeons pas les fautes d'orthographe. Nous listons sur notre site des correcteurs qui se sont spontanément présentés à nous pour vous aider avec ces prestations spécifiques. Vous pouvez trouver leurs coordonnées dans la section 'Correcteur/Relecteur' de notre blog et contacter directement l'un d'entre eux si nécessaire.",
-      mistral_answer: "Non, Coollibri ne propose pas de service de correction. Votre livre est imprimé tel que vous le fournissez. Nous listons cependant des correcteurs indépendants sur notre blog.",
-      neural_answer: "Nous n'effectuons pas de corrections orthographiques. Le contenu est imprimé tel quel. Nous pouvons vous recommander des correcteurs professionnels si besoin.",
-      remarque: "✅ Tous donnent la bonne réponse. 🦙 Llama précise la section exacte ('Correcteur/Relecteur' du blog) - plus pratique. ⚠️ Aucun ne précise qu'il n'y a pas non plus de contrôle de mise en page/centrage."
+      mistral_answer: "Nous ne relisons pas les ouvrages à CoolLibri. Cependant, nous listons sur notre site des correcteurs qui se sont spontanément présentés à nous et donnons leurs coordonnées pour information. Votre livre peut être corrigé avant d'être imprimé en utilisant ces services externes.",
+      remarque: "✅ Les deux sont corrects et mentionnent les correcteurs listés. Llama précise la section exacte du blog."
     },
     {
       id: 28, category: 'Problèmes', label: 'Retard livraison',
       question: "Ma commande est en retard, que faire ?",
       expected_answer: "Un retard peut être dû à un problème d'impression, volume important de commandes, incident logistique ou retard transporteur. Contactez le service client à contact@coollibri.com avec votre numéro de commande, date de commande et adresse. Ils pourront débloquer la situation.",
       llama_answer: "Nous sommes désolés d'apprendre que votre commande est en retard. Le délai de production dépend vraiment des commandes en cours, mais nous pouvons vous aider à résoudre ce problème rapidement. Pour cela, veuillez contacter le service client par email à contact@coollibri.com ou appelez-nous au 05 31 61 60 42 avec votre numéro de commande et la date de passage de commande pour que nous puissions donner des précisions sur l'état actuel de vos commandes.",
-      mistral_answer: "Si votre commande est en retard, contactez notre service client avec votre numéro de commande. Nous vérifierons l'état de votre commande et vous tiendrons informé.",
-      neural_answer: "En cas de retard, contactez notre service client. Nous vérifierons le statut de votre commande et vous informerons des délais prévus.",
-      remarque: "✅ Llama donne email ET téléphone + les infos à fournir - réponse la plus complète et empathique ('Nous sommes désolés'). 🌀 Mistral et Neural sont trop génériques sans coordonnées précises."
+      mistral_answer: "Nous sommes désolés pour le retard de votre commande. Le retard peut être dû à un problème d'impression ou au volume important des commandes en cours. Pour plus d'informations, veuillez contacter notre service client : contact@coollibri.com En indiquant le numéro de votre commande et l'adresse éventuellement concernée. Nous vous donnerons les précisions sur la situation.",
+      remarque: "✅ Les deux sont complets et empathiques. Llama donne email + téléphone. Mistral (nouveau) explique les causes possibles."
     },
     {
       id: 29, category: 'Problèmes', label: 'Demande remboursement',
       question: "Comment demander un remboursement ?",
       expected_answer: "Contactez le service client à contact@coollibri.com avec OBLIGATOIREMENT: numéro de commande, description précise du problème, photos si applicable. Le service client évaluera et proposera la meilleure solution (renvoi, correction, remplacement OU remboursement). Aucune promesse ne peut être faite par le chatbot.",
       llama_answer: "Pour demander un remboursement, veuillez envoyer un email à contact@coollibri.com avec votre numéro de commande ainsi qu'une description claire des problèmes rencontrés. Vous pouvez également joindre des photos détaillées du problème si nécessaire. N'hésitez pas à contacter le numéro suivant si vous avez besoin de plus amples informations : 05 31 61 60 42, du lundi au vendredi de 8h30 à 18h.",
-      mistral_answer: "Pour un remboursement, envoyez un email à notre service client avec votre numéro de commande et la description du problème. Des photos peuvent accélérer le traitement.",
-      neural_answer: "Contactez notre service client par email en précisant votre numéro de commande et le motif de votre demande. Nous traiterons votre demande dans les meilleurs délais.",
-      remarque: "✅ Llama donne email + téléphone + horaires (8h30-18h) - réponse très complète. 🌀 Mistral mentionne les photos. ⚠️ Aucun ne précise que le remboursement n'est pas automatique et que d'autres solutions existent (renvoi, remplacement)."
+      mistral_answer: "Pour demander un remboursement ou renvoi de votre commande, vous pouvez contacter le service client CoolLibri en envoyant un email à contactcoollibri.com avec : Votre numéro de commande indispensable pour retrouver votre dossier. Une description claire et détaillée des problèmes rencontrés. Vous pouvez également nous appeler au 05 31 61 60 42.",
+      remarque: "✅ Llama est très complet avec email, téléphone et horaires. ⚠️ Mistral a une faute dans l'email (contactcoollibri.com). Les deux mentionnent renvoi/remboursement."
     },
     {
       id: 30, category: 'Problèmes', label: 'Droit rétractation',
       question: "Puis-je annuler ma commande après validation, j'ai 14 jours de rétractation ?",
       expected_answer: "Le droit de rétractation de 14 jours NE S'APPLIQUE PAS car les livres sont des produits personnalisés fabriqués selon vos spécifications (article L221-28 du Code de la consommation). Une fois validée, la commande ne peut pas être annulée. Cependant, vous disposez d'un DÉLAI DE RÉCLAMATION de 3 jours ouvrables APRÈS LIVRAISON pour signaler tout problème (qualité, défaut, erreur). Passé ce délai de 3 jours, aucune réclamation n'est acceptée. En cas d'erreur avant impression, contactez rapidement contact@coollibri.com.",
       llama_answer: "Je comprends votre inquiétude. Vous pouvez annuler une commande après validation si elle est encore en cours de traitement. Cependant, il faut contacter notre service client le plus rapidement possible pour éviter toute perte de temps et optimiser les chances d'annulation avant impression.",
-      mistral_answer: "Le droit de rétractation ne s'applique pas aux produits personnalisés. Une fois la commande validée, nous lançons la production. Contactez-nous rapidement en cas d'erreur.",
-      neural_answer: "Oui, vous bénéficiez d'un délai de rétractation de 14 jours. Contactez notre service client pour initier la procédure d'annulation.",
-      remarque: "❌ ERREURS CRITIQUES : 🦙 Llama laisse entendre qu'on peut annuler facilement (trompeur). ❌ Neural affirme que le droit de rétractation de 14 jours s'applique - FAUX et DANGEREUX juridiquement ! ✅ Seul Mistral donne la bonne réponse légale. ⚠️ AUCUN ne mentionne le délai de réclamation de 3 jours ouvrables après livraison - information cruciale pour les clients !"
+      mistral_answer: "Nous pouvons annuler votre commande si elle a été validée avec une erreur ou un problème spécifique. Pour cela, veuillez contacter le service client à contactcoollibri.com en indiquant la raison de l'annulation et votre numéro de commande. Si vous avez besoin d'aide pour annuler une commande dans les 14 jours suivants sa validation, nous pouvons également vous aider sur le même mail ou au téléphone à 05 31 61 60 42.",
+      remarque: "❌ ERREURS : Llama laisse entendre qu'on peut annuler facilement. Mistral mentionne '14 jours' ce qui peut être mal interprété. ⚠️ AUCUN ne dit clairement que le droit de rétractation NE S'APPLIQUE PAS aux produits personnalisés. AUCUN ne mentionne le délai de réclamation de 3 jours."
     }
   ];
 
@@ -324,36 +282,36 @@ const BenchmarkAnalysis = () => {
   const [scores, setScores] = useState(() => {
     const initialScores = {};
     const defaultScores = [
-      { llama: { exactitude: 4, completude: 4, clarte: 5 }, mistral: { exactitude: 3, completude: 3, clarte: 4 }, neural: { exactitude: 2, completude: 2, clarte: 3 } },
-      { llama: { exactitude: 3, completude: 3, clarte: 5 }, mistral: { exactitude: 3, completude: 3, clarte: 4 }, neural: { exactitude: 3, completude: 3, clarte: 4 } },
-      { llama: { exactitude: 2, completude: 2, clarte: 4 }, mistral: { exactitude: 2, completude: 2, clarte: 4 }, neural: { exactitude: 2, completude: 2, clarte: 4 } },
-      { llama: { exactitude: 2, completude: 1, clarte: 3 }, mistral: { exactitude: 1, completude: 1, clarte: 3 }, neural: { exactitude: 1, completude: 1, clarte: 3 } },
-      { llama: { exactitude: 5, completude: 5, clarte: 3 }, mistral: { exactitude: 3, completude: 3, clarte: 4 }, neural: { exactitude: 5, completude: 5, clarte: 5 } },
-      { llama: { exactitude: 5, completude: 4, clarte: 5 }, mistral: { exactitude: 4, completude: 3, clarte: 4 }, neural: { exactitude: 4, completude: 3, clarte: 4 } },
-      { llama: { exactitude: 5, completude: 5, clarte: 5 }, mistral: { exactitude: 5, completude: 4, clarte: 5 }, neural: { exactitude: 5, completude: 4, clarte: 5 } },
-      { llama: { exactitude: 4, completude: 4, clarte: 4 }, mistral: { exactitude: 5, completude: 4, clarte: 4 }, neural: { exactitude: 4, completude: 3, clarte: 4 } },
-      { llama: { exactitude: 4, completude: 4, clarte: 5 }, mistral: { exactitude: 4, completude: 3, clarte: 4 }, neural: { exactitude: 4, completude: 3, clarte: 4 } },
-      { llama: { exactitude: 4, completude: 3, clarte: 4 }, mistral: { exactitude: 4, completude: 4, clarte: 4 }, neural: { exactitude: 4, completude: 3, clarte: 5 } },
-      { llama: { exactitude: 4, completude: 3, clarte: 5 }, mistral: { exactitude: 5, completude: 4, clarte: 4 }, neural: { exactitude: 5, completude: 4, clarte: 5 } },
-      { llama: { exactitude: 5, completude: 3, clarte: 4 }, mistral: { exactitude: 5, completude: 4, clarte: 5 }, neural: { exactitude: 2, completude: 2, clarte: 4 } },
-      { llama: { exactitude: 2, completude: 2, clarte: 4 }, mistral: { exactitude: 2, completude: 2, clarte: 4 }, neural: { exactitude: 3, completude: 3, clarte: 3 } },
-      { llama: { exactitude: 5, completude: 5, clarte: 5 }, mistral: { exactitude: 5, completude: 5, clarte: 5 }, neural: { exactitude: 5, completude: 5, clarte: 5 } },
-      { llama: { exactitude: 4, completude: 3, clarte: 4 }, mistral: { exactitude: 5, completude: 4, clarte: 5 }, neural: { exactitude: 2, completude: 1, clarte: 3 } },
-      { llama: { exactitude: 3, completude: 2, clarte: 4 }, mistral: { exactitude: 3, completude: 2, clarte: 4 }, neural: { exactitude: 3, completude: 2, clarte: 4 } },
-      { llama: { exactitude: 5, completude: 4, clarte: 5 }, mistral: { exactitude: 5, completude: 4, clarte: 4 }, neural: { exactitude: 2, completude: 2, clarte: 2 } },
-      { llama: { exactitude: 5, completude: 5, clarte: 5 }, mistral: { exactitude: 5, completude: 5, clarte: 5 }, neural: { exactitude: 5, completude: 4, clarte: 4 } },
-      { llama: { exactitude: 4, completude: 3, clarte: 4 }, mistral: { exactitude: 5, completude: 4, clarte: 5 }, neural: { exactitude: 4, completude: 3, clarte: 4 } },
-      { llama: { exactitude: 5, completude: 5, clarte: 5 }, mistral: { exactitude: 5, completude: 5, clarte: 5 }, neural: { exactitude: 5, completude: 5, clarte: 5 } },
-      { llama: { exactitude: 5, completude: 5, clarte: 5 }, mistral: { exactitude: 4, completude: 4, clarte: 4 }, neural: { exactitude: 3, completude: 2, clarte: 3 } },
-      { llama: { exactitude: 5, completude: 5, clarte: 5 }, mistral: { exactitude: 5, completude: 4, clarte: 4 }, neural: { exactitude: 5, completude: 4, clarte: 4 } },
-      { llama: { exactitude: 5, completude: 5, clarte: 5 }, mistral: { exactitude: 4, completude: 4, clarte: 4 }, neural: { exactitude: 4, completude: 4, clarte: 4 } },
-      { llama: { exactitude: 4, completude: 4, clarte: 5 }, mistral: { exactitude: 4, completude: 4, clarte: 4 }, neural: { exactitude: 3, completude: 3, clarte: 3 } },
-      { llama: { exactitude: 5, completude: 5, clarte: 5 }, mistral: { exactitude: 4, completude: 4, clarte: 4 }, neural: { exactitude: 4, completude: 4, clarte: 4 } },
-      { llama: { exactitude: 5, completude: 5, clarte: 5 }, mistral: { exactitude: 5, completude: 4, clarte: 4 }, neural: { exactitude: 4, completude: 4, clarte: 4 } },
-      { llama: { exactitude: 5, completude: 5, clarte: 5 }, mistral: { exactitude: 5, completude: 5, clarte: 4 }, neural: { exactitude: 5, completude: 4, clarte: 4 } },
-      { llama: { exactitude: 5, completude: 5, clarte: 5 }, mistral: { exactitude: 5, completude: 5, clarte: 5 }, neural: { exactitude: 5, completude: 4, clarte: 4 } },
-      { llama: { exactitude: 5, completude: 5, clarte: 5 }, mistral: { exactitude: 4, completude: 4, clarte: 4 }, neural: { exactitude: 4, completude: 3, clarte: 4 } },
-      { llama: { exactitude: 2, completude: 2, clarte: 4 }, mistral: { exactitude: 3, completude: 3, clarte: 4 }, neural: { exactitude: 1, completude: 1, clarte: 3 } }
+      { llama: { exactitude: 4, completude: 4, clarte: 5 }, mistral: { exactitude: 5, completude: 5, clarte: 4 } },
+      { llama: { exactitude: 3, completude: 3, clarte: 5 }, mistral: { exactitude: 3, completude: 4, clarte: 4 } },
+      { llama: { exactitude: 2, completude: 2, clarte: 4 }, mistral: { exactitude: 2, completude: 2, clarte: 4 } },
+      { llama: { exactitude: 2, completude: 1, clarte: 3 }, mistral: { exactitude: 2, completude: 2, clarte: 3 } },
+      { llama: { exactitude: 5, completude: 5, clarte: 4 }, mistral: { exactitude: 5, completude: 5, clarte: 5 } },
+      { llama: { exactitude: 5, completude: 4, clarte: 5 }, mistral: { exactitude: 4, completude: 4, clarte: 4 } },
+      { llama: { exactitude: 5, completude: 5, clarte: 5 }, mistral: { exactitude: 5, completude: 5, clarte: 5 } },
+      { llama: { exactitude: 4, completude: 4, clarte: 4 }, mistral: { exactitude: 3, completude: 3, clarte: 4 } },
+      { llama: { exactitude: 4, completude: 4, clarte: 5 }, mistral: { exactitude: 4, completude: 4, clarte: 4 } },
+      { llama: { exactitude: 4, completude: 3, clarte: 4 }, mistral: { exactitude: 5, completude: 5, clarte: 5 } },
+      { llama: { exactitude: 4, completude: 3, clarte: 5 }, mistral: { exactitude: 4, completude: 3, clarte: 4 } },
+      { llama: { exactitude: 5, completude: 3, clarte: 4 }, mistral: { exactitude: 5, completude: 5, clarte: 5 } },
+      { llama: { exactitude: 2, completude: 2, clarte: 4 }, mistral: { exactitude: 2, completude: 2, clarte: 3 } },
+      { llama: { exactitude: 5, completude: 5, clarte: 5 }, mistral: { exactitude: 5, completude: 4, clarte: 4 } },
+      { llama: { exactitude: 4, completude: 3, clarte: 4 }, mistral: { exactitude: 4, completude: 4, clarte: 4 } },
+      { llama: { exactitude: 3, completude: 2, clarte: 4 }, mistral: { exactitude: 3, completude: 3, clarte: 4 } },
+      { llama: { exactitude: 5, completude: 4, clarte: 5 }, mistral: { exactitude: 5, completude: 5, clarte: 5 } },
+      { llama: { exactitude: 5, completude: 5, clarte: 5 }, mistral: { exactitude: 5, completude: 5, clarte: 5 } },
+      { llama: { exactitude: 2, completude: 2, clarte: 4 }, mistral: { exactitude: 5, completude: 5, clarte: 5 } },
+      { llama: { exactitude: 5, completude: 5, clarte: 5 }, mistral: { exactitude: 5, completude: 5, clarte: 5 } },
+      { llama: { exactitude: 5, completude: 5, clarte: 5 }, mistral: { exactitude: 4, completude: 4, clarte: 4 } },
+      { llama: { exactitude: 5, completude: 5, clarte: 5 }, mistral: { exactitude: 5, completude: 4, clarte: 4 } },
+      { llama: { exactitude: 5, completude: 5, clarte: 5 }, mistral: { exactitude: 5, completude: 4, clarte: 4 } },
+      { llama: { exactitude: 4, completude: 4, clarte: 5 }, mistral: { exactitude: 4, completude: 5, clarte: 4 } },
+      { llama: { exactitude: 5, completude: 5, clarte: 5 }, mistral: { exactitude: 5, completude: 5, clarte: 5 } },
+      { llama: { exactitude: 5, completude: 5, clarte: 5 }, mistral: { exactitude: 4, completude: 4, clarte: 4 } },
+      { llama: { exactitude: 5, completude: 5, clarte: 5 }, mistral: { exactitude: 5, completude: 5, clarte: 4 } },
+      { llama: { exactitude: 5, completude: 5, clarte: 5 }, mistral: { exactitude: 5, completude: 5, clarte: 5 } },
+      { llama: { exactitude: 5, completude: 5, clarte: 5 }, mistral: { exactitude: 4, completude: 4, clarte: 4 } },
+      { llama: { exactitude: 2, completude: 2, clarte: 4 }, mistral: { exactitude: 3, completude: 2, clarte: 4 } }
     ];
     
     questionsData.forEach((q, index) => {
@@ -381,8 +339,7 @@ const BenchmarkAnalysis = () => {
   const modelScores = useMemo(() => {
     const scoresList = {
       'llama3.1:8b': { exactitude: 0, completude: 0, clarte: 0 },
-      'mistral:latest': { exactitude: 0, completude: 0, clarte: 0 },
-      'neural-chat': { exactitude: 0, completude: 0, clarte: 0 }
+      'mistral:latest': { exactitude: 0, completude: 0, clarte: 0 }
     };
 
     questionsData.forEach(q => {
@@ -393,9 +350,6 @@ const BenchmarkAnalysis = () => {
       scoresList['mistral:latest'].exactitude += s.mistral.exactitude;
       scoresList['mistral:latest'].completude += s.mistral.completude;
       scoresList['mistral:latest'].clarte += s.mistral.clarte;
-      scoresList['neural-chat'].exactitude += s.neural.exactitude;
-      scoresList['neural-chat'].completude += s.neural.completude;
-      scoresList['neural-chat'].clarte += s.neural.clarte;
     });
 
     const n = questionsData.length;
@@ -420,15 +374,13 @@ const BenchmarkAnalysis = () => {
 
       result[cat] = {
         'llama3.1:8b': 0,
-        'mistral:latest': 0,
-        'neural-chat': 0
+        'mistral:latest': 0
       };
 
       catQuestions.forEach(q => {
         const s = scores[q.id];
         result[cat]['llama3.1:8b'] += (s.llama.exactitude + s.llama.completude + s.llama.clarte) / 3;
         result[cat]['mistral:latest'] += (s.mistral.exactitude + s.mistral.completude + s.mistral.clarte) / 3;
-        result[cat]['neural-chat'] += (s.neural.exactitude + s.neural.completude + s.neural.clarte) / 3;
       });
 
       Object.keys(result[cat]).forEach(model => {
@@ -461,8 +413,8 @@ const BenchmarkAnalysis = () => {
 
       // Feuille 1: Résumé
       const summaryData = [
-        ['BENCHMARK 2 - ANALYSE COMPARATIVE 3 MODÈLES LLM'],
-        ['Date', '27 novembre 2025'],
+        ['BENCHMARK 2 - ANALYSE COMPARATIVE 2 MODÈLES LLM'],
+        ['Date', '4 décembre 2025'],
         ['Questions testées', '30'],
         ['Catégories', '6 (Formats, Reliures, Papiers, Couverture, ISBN-Vente, Problèmes)'],
         [],
@@ -485,8 +437,7 @@ const BenchmarkAnalysis = () => {
       // Feuille 2: Détail par question
       const detailData = [
         ['ID', 'Catégorie', 'Question', 'llama3.1 Exact', 'llama3.1 Compl', 'llama3.1 Clarté', 'llama3.1 Moy',
-         'mistral Exact', 'mistral Compl', 'mistral Clarté', 'mistral Moy',
-         'neural Exact', 'neural Compl', 'neural Clarté', 'neural Moy'],
+         'mistral Exact', 'mistral Compl', 'mistral Clarté', 'mistral Moy'],
         ...questionsData.map(q => {
           const s = scores[q.id];
           return [
@@ -496,9 +447,7 @@ const BenchmarkAnalysis = () => {
             s.llama.exactitude, s.llama.completude, s.llama.clarte,
             ((s.llama.exactitude + s.llama.completude + s.llama.clarte) / 3).toFixed(2),
             s.mistral.exactitude, s.mistral.completude, s.mistral.clarte,
-            ((s.mistral.exactitude + s.mistral.completude + s.mistral.clarte) / 3).toFixed(2),
-            s.neural.exactitude, s.neural.completude, s.neural.clarte,
-            ((s.neural.exactitude + s.neural.completude + s.neural.clarte) / 3).toFixed(2)
+            ((s.mistral.exactitude + s.mistral.completude + s.mistral.clarte) / 3).toFixed(2)
           ];
         })
       ];
@@ -507,9 +456,9 @@ const BenchmarkAnalysis = () => {
 
       // Feuille 3: Scores par catégorie
       const catData = [
-        ['Catégorie', 'llama3.1:8b', 'mistral:latest', 'neural-chat'],
+        ['Catégorie', 'llama3.1:8b', 'mistral:latest'],
         ...Object.entries(categoryScores).map(([cat, scores]) => [
-          cat, scores['llama3.1:8b'], scores['mistral:latest'], scores['neural-chat']
+          cat, scores['llama3.1:8b'], scores['mistral:latest']
         ])
       ];
       const ws3 = XLSX.utils.aoa_to_sheet(catData);
@@ -526,7 +475,7 @@ const BenchmarkAnalysis = () => {
       const ws4 = XLSX.utils.aoa_to_sheet(tempsData);
       XLSX.utils.book_append_sheet(wb, ws4, 'Temps Réponse');
 
-      XLSX.writeFile(wb, 'Benchmark2_Analyse_3Modeles.xlsx');
+      XLSX.writeFile(wb, 'Benchmark2_Analyse_2Modeles.xlsx');
       setGenerating(false);
     }, 1000);
   };
@@ -561,7 +510,7 @@ const BenchmarkAnalysis = () => {
               <FileSpreadsheet className="w-12 h-12" />
               <div>
                 <h1 className="text-3xl font-bold">Benchmark 2 - Analyse Comparative</h1>
-                <p className="text-indigo-100">3 modèles LLM • 30 questions • 6 catégories • 27 novembre 2025</p>
+                <p className="text-indigo-100">2 modèles LLM • 30 questions • 6 catégories • 4 décembre 2025</p>
               </div>
             </div>
             <button
@@ -581,21 +530,21 @@ const BenchmarkAnalysis = () => {
             <Award className="w-6 h-6 text-yellow-500" />
             🏆 Classement Final
           </h2>
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 gap-6">
             {ranking.map((model, index) => (
               <div
                 key={model.name}
-                className={`rounded-xl p-6 border-2 ${index === 0 ? 'border-yellow-400 bg-yellow-50' : index === 1 ? 'border-gray-300 bg-gray-50' : 'border-orange-300 bg-orange-50'}`}
+                className={`rounded-xl p-6 border-2 ${index === 0 ? 'border-yellow-400 bg-yellow-50' : 'border-gray-300 bg-gray-50'}`}
               >
                 <div className="flex items-center gap-3 mb-4">
                   <div
-                    className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-xl ${index === 0 ? 'bg-yellow-500' : index === 1 ? 'bg-gray-500' : 'bg-orange-500'}`}
+                    className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-xl ${index === 0 ? 'bg-yellow-500' : 'bg-gray-500'}`}
                   >
                     {index + 1}
                   </div>
                   <div>
                     <h3 className="font-bold text-lg text-gray-800">{model.name}</h3>
-                    <p className="text-sm text-gray-500">{index === 0 ? '🥇 Champion' : index === 1 ? '🥈 Second' : '🥉 Troisième'}</p>
+                    <p className="text-sm text-gray-500">{index === 0 ? '🥇 Champion' : '🥈 Second'}</p>
                   </div>
                 </div>
                 <div className="space-y-2">
@@ -784,7 +733,6 @@ const BenchmarkAnalysis = () => {
               const s = scores[q.id];
               const llamaAvg = ((s.llama.exactitude + s.llama.completude + s.llama.clarte) / 3).toFixed(1);
               const mistralAvg = ((s.mistral.exactitude + s.mistral.completude + s.mistral.clarte) / 3).toFixed(1);
-              const neuralAvg = ((s.neural.exactitude + s.neural.completude + s.neural.clarte) / 3).toFixed(1);
 
               return (
                 <div key={q.id} className="border border-gray-200 rounded-xl overflow-hidden">
@@ -811,10 +759,6 @@ const BenchmarkAnalysis = () => {
                         {getScoreIcon(parseFloat(mistralAvg))}
                         <span className="text-sm font-bold" style={{ color: modelsData['mistral:latest'].color }}>{mistralAvg}</span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        {getScoreIcon(parseFloat(neuralAvg))}
-                        <span className="text-sm font-bold" style={{ color: modelsData['neural-chat'].color }}>{neuralAvg}</span>
-                      </div>
                       {expandedQuestions[q.id] ? <ChevronUp className="w-5 h-5 text-gray-400" /> : <ChevronDown className="w-5 h-5 text-gray-400" />}
                     </div>
                   </div>
@@ -834,8 +778,8 @@ const BenchmarkAnalysis = () => {
                         <p className="text-green-900">{q.expected_answer}</p>
                       </div>
 
-                      {/* Réponses des 3 modèles avec inputs de notation */}
-                      <div className="grid md:grid-cols-3 gap-4">
+                      {/* Réponses des 2 modèles avec inputs de notation */}
+                      <div className="grid md:grid-cols-2 gap-4">
                         {/* llama3.1:8b */}
                         <div className="bg-white p-4 rounded-lg border-2" style={{ borderColor: modelsData['llama3.1:8b'].color }}>
                           <h5 className="font-bold text-sm mb-3 flex items-center gap-2" style={{ color: modelsData['llama3.1:8b'].color }}>
@@ -937,57 +881,6 @@ const BenchmarkAnalysis = () => {
                             </div>
                           </div>
                         </div>
-
-                        {/* neural-chat */}
-                        <div className="bg-white p-4 rounded-lg border-2" style={{ borderColor: modelsData['neural-chat'].color }}>
-                          <h5 className="font-bold text-sm mb-3 flex items-center gap-2" style={{ color: modelsData['neural-chat'].color }}>
-                            🧠 neural-chat
-                            <span className={`ml-auto px-2 py-0.5 rounded text-xs ${getScoreColor(parseFloat(neuralAvg))}`}>
-                              Moy: {neuralAvg}
-                            </span>
-                          </h5>
-                          <div className="bg-gray-50 p-3 rounded mb-3 max-h-40 overflow-y-auto text-sm text-gray-700">
-                            {q.neural_answer}
-                          </div>
-                          <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                              <label className="text-sm text-gray-600">Exactitude:</label>
-                              <input
-                                type="number"
-                                min="1"
-                                max="5"
-                                value={s.neural.exactitude}
-                                onChange={(e) => updateScore(q.id, 'neural', 'exactitude', e.target.value)}
-                                onClick={(e) => e.stopPropagation()}
-                                className="w-14 px-2 py-1 border border-gray-300 rounded text-center font-bold focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                              />
-                            </div>
-                            <div className="flex items-center justify-between">
-                              <label className="text-sm text-gray-600">Complétude:</label>
-                              <input
-                                type="number"
-                                min="1"
-                                max="5"
-                                value={s.neural.completude}
-                                onChange={(e) => updateScore(q.id, 'neural', 'completude', e.target.value)}
-                                onClick={(e) => e.stopPropagation()}
-                                className="w-14 px-2 py-1 border border-gray-300 rounded text-center font-bold focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                              />
-                            </div>
-                            <div className="flex items-center justify-between">
-                              <label className="text-sm text-gray-600">Clarté:</label>
-                              <input
-                                type="number"
-                                min="1"
-                                max="5"
-                                value={s.neural.clarte}
-                                onChange={(e) => updateScore(q.id, 'neural', 'clarte', e.target.value)}
-                                onClick={(e) => e.stopPropagation()}
-                                className="w-14 px-2 py-1 border border-gray-300 rounded text-center font-bold focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                              />
-                            </div>
-                          </div>
-                        </div>
                       </div>
 
                       {/* Section Remarque/NB */}
@@ -1023,10 +916,10 @@ const BenchmarkAnalysis = () => {
             <div>
               <h3 className="font-bold text-lg mb-2">⚡ Plus Rapide: mistral:latest</h3>
               <ul className="space-y-1 text-green-100">
-                <li>✅ Temps total le plus court (428s)</li>
+                <li>✅ Temps total le plus court ({modelsData['mistral:latest'].tempsTotal}s)</li>
                 <li>✅ Bon équilibre qualité/vitesse</li>
                 <li>✅ Score actuel: {modelScores['mistral:latest'].global}/5</li>
-                <li>⚠️ Quelques erreurs possibles</li>
+                <li>✅ TTFT moyen: {modelsData['mistral:latest'].ttftMoyen}s</li>
               </ul>
             </div>
           </div>

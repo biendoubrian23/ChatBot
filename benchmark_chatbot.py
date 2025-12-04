@@ -22,228 +22,228 @@ CHAT_ENDPOINT = f"{BACKEND_URL}/api/v1/chat"  # Endpoint non-streaming
 CHAT_STREAM_ENDPOINT = f"{BACKEND_URL}/api/v1/chat/stream"  # Endpoint streaming
 
 # Les 30 questions de test avec leurs réponses attendues
-# Questions réalistes que les utilisateurs posent vraiment (hors suivi de commande)
+# Questions orientées PROBLÈMES, RÉCLAMATIONS, COMMANDES + 5 questions pièges
 QUESTIONS = [
-    # ============ FORMATS ET CARACTÉRISTIQUES (6) ============
+    # ============ RÉCLAMATIONS ET PROBLÈMES (8) ============
     {
         "id": 1,
-        "category": "Formats",
-        "label": "Formats disponibles",
-        "question": "Quels formats de livre proposez-vous ?",
-        "expected": "Coollibri propose 7 formats: 11x17 cm (poche), 16x24 cm (roman), 21x21 cm (livre photo carré), A4 portrait 21x29.7 cm, A4 paysage 29.7x21 cm, A5 portrait 14.8x21 cm, A5 paysage 21x14.8 cm."
+        "category": "Réclamations",
+        "label": "Délai réclamation",
+        "question": "J'ai reçu mon livre il y a une semaine et il y a un défaut, puis-je réclamer ?",
+        "expected": "NON. Le délai de réclamation est de 3 JOURS OUVRABLES après la livraison. Passé ce délai de 3 jours, aucune réclamation n'est acceptée. C'est un délai strict et non négociable."
     },
     {
         "id": 2,
-        "category": "Formats",
-        "label": "Format roman",
-        "question": "Quel format choisir pour imprimer mon roman ?",
-        "expected": "Le format 16x24 cm est le plus adapté pour un roman. Le format 11x17 cm (poche) est aussi une option plus compacte et économique. Le format A5 portrait (14.8x21 cm) convient également aux romans et guides."
+        "category": "Réclamations",
+        "label": "Comment réclamer",
+        "question": "Comment faire une réclamation pour un livre défectueux ?",
+        "expected": "Envoyez un email à contact@coollibri.com dans les 3 jours ouvrables après livraison avec: numéro de commande, description détaillée du problème, photos du défaut. Sans ces éléments, la réclamation ne peut pas être traitée."
     },
     {
         "id": 3,
-        "category": "Formats",
-        "label": "Format livre photo",
-        "question": "Quel est le meilleur format pour un livre photo ?",
-        "expected": "Le format 21x21 cm (carré) est souvent utilisé pour les livres photos. Le format A4 portrait ou A4 paysage sont aussi recommandés pour les beaux livres et albums. Utilisez du papier satin 115g pour les photos."
+        "category": "Réclamations",
+        "label": "Colis abîmé",
+        "question": "Mon colis est arrivé écrasé et le livre est abîmé, que faire ?",
+        "expected": "Contactez contact@coollibri.com dans les 3 jours avec: photos du colis (face, verso, zones abîmées), photos du contenu abîmé, numéro de commande. Ces éléments permettent d'ouvrir une procédure auprès du transporteur."
     },
     {
         "id": 4,
-        "category": "Formats",
-        "label": "Emails automatiques",
-        "question": "Pourquoi je reçois des emails alors que j'ai déjà passé commande ?",
-        "expected": "Le système envoie des emails automatiques si des projets sont encore 'en cours de préparation' dans votre espace. Cela arrive même si la commande est validée. Vous pouvez ignorer ces messages. Pour éviter cela, supprimez vos anciens projets non utilisés dans votre espace."
+        "category": "Réclamations",
+        "label": "Remboursement délai",
+        "question": "On m'a promis un remboursement il y a 3 semaines et je n'ai rien reçu, c'est normal ?",
+        "expected": "Non, le délai normal est de 1-2 semaines (traitement comptable 3-5 jours + virement 3-5 jours). Après 2 semaines sans rien recevoir, recontactez le service client avec votre numéro de commande ET la date de confirmation du remboursement."
     },
     {
         "id": 5,
-        "category": "Formats",
-        "label": "Format BD rembordé",
-        "question": "Quels formats sont disponibles pour la reliure rembordé ?",
-        "expected": "Pour la reliure rembordé (couverture cartonnée type BD), seuls 3 formats sont possibles: A4 portrait, A4 paysage et 21x21 cm. Les autres formats ne sont pas disponibles pour cette reliure."
+        "category": "Réclamations",
+        "label": "Chatbot remboursement",
+        "question": "Pouvez-vous me rembourser maintenant ?",
+        "expected": "Non, le chatbot ne peut pas effectuer de remboursement. Seul le service client peut évaluer votre demande et décider de la meilleure solution (renvoi, correction, remplacement OU remboursement). Contactez contact@coollibri.com avec votre numéro de commande."
     },
     {
         "id": 6,
-        "category": "Formats",
-        "label": "Annulation commande urgente",
-        "question": "J'ai fait une erreur dans ma commande, puis-je l'annuler ?",
-        "expected": "Si une commande a été validée avec une erreur (mauvais fichier, oubli, édition incorrecte), contactez IMMÉDIATEMENT le service client à contact@coollibri.com. Plus la demande est envoyée tôt, plus les chances d'annulation ou modification avant impression sont élevées."
+        "category": "Réclamations",
+        "label": "Qualité impression",
+        "question": "L'impression de mon livre est floue et de mauvaise qualité, que puis-je faire ?",
+        "expected": "Contactez contact@coollibri.com dans les 3 jours ouvrables avec: numéro de commande, photos montrant le problème de qualité. Note: la qualité dépend aussi de vos fichiers - les images doivent être en 300 DPI minimum. Le service client analysera si c'est un défaut d'impression."
     },
-    
-    # ============ RELIURES (6) ============
     {
         "id": 7,
-        "category": "Reliures",
-        "label": "Types de reliures",
-        "question": "Quelles sont les différentes reliures proposées par Coollibri ?",
-        "expected": "4 types de reliure: Dos carré collé (romans, couverture souple), Rembordé (BD, couverture rigide cartonnée), Agrafé/Piqûre à cheval (magazines, brochures), Spirale (documents techniques, recettes)."
+        "category": "Réclamations",
+        "label": "Erreur fichier client",
+        "question": "Le livre imprimé contient des erreurs mais c'était dans mon fichier, ai-je un recours ?",
+        "expected": "NON. Coollibri imprime les fichiers tels quels, sans relecture ni correction. Vous êtes responsable du contenu. CoolLibri n'effectue pas de contrôle orthographique ni de vérification de mise en page. Vérifiez bien le livre virtuel avant validation."
     },
     {
         "id": 8,
-        "category": "Reliures",
-        "label": "Dos carré collé pages",
-        "question": "Combien de pages peut-on avoir avec une reliure dos carré collé ?",
-        "expected": "Minimum 60-80 pages selon le papier. Maximum 500 à 700 pages selon le papier choisi. Papier 60g: 60-700 pages. Papier 80g: 80-500 pages. Papier 90g satiné: 90-500 pages."
+        "category": "Réclamations",
+        "label": "Livre différent aperçu",
+        "question": "Le livre reçu est différent de ce que je voyais sur l'écran, pourquoi ?",
+        "expected": "Le rendu 3D et le livre virtuel sont NON CONTRACTUELS. Les couleurs écran (RVB) diffèrent des couleurs imprimées (CMJN). Il peut y avoir des tolérances de 7% sur le format et des variations de couleur. Pour éviter cela, imprimez une page test avant de commander."
     },
+    
+    # ============ ANNULATION ET RÉTRACTATION (5) ============
     {
         "id": 9,
-        "category": "Reliures",
-        "label": "Reliure magazine",
-        "question": "Quelle reliure pour un magazine ou une brochure ?",
-        "expected": "La reliure agrafée (piqûre à cheval) est idéale pour les magazines. Minimum 8 pages, maximum 60 pages. Le nombre de pages doit être un multiple de 4 (8, 12, 16, 20...)."
+        "category": "Annulation",
+        "label": "Rétractation 14 jours",
+        "question": "Je veux annuler ma commande, j'ai 14 jours de rétractation non ?",
+        "expected": "NON. Le droit de rétractation de 14 jours NE S'APPLIQUE PAS car les livres CoolLibri sont des produits personnalisés fabriqués selon vos spécifications (article L221-28 du Code de la consommation). Une fois validée, la commande ne peut pas être annulée."
     },
     {
         "id": 10,
-        "category": "Reliures",
-        "label": "Spirale avantages",
-        "question": "Quels sont les avantages de la reliure spirale ?",
-        "expected": "La spirale permet une ouverture complète à 360°, pages parfaitement à plat. Idéal pour recettes, partitions, manuels techniques. De 1 à 290-500 pages selon le papier. Le livre ne comporte pas de dos."
+        "category": "Annulation",
+        "label": "Annuler commande urgente",
+        "question": "J'ai validé ma commande il y a 5 minutes avec une erreur, puis-je l'annuler ?",
+        "expected": "Contactez IMMÉDIATEMENT contact@coollibri.com ou appelez 05 31 61 60 42. Plus vous contactez tôt, plus il y a de chances d'intervenir avant l'impression. Mais rien n'est garanti car la production peut commencer rapidement."
     },
     {
         "id": 11,
-        "category": "Reliures",
-        "label": "Rembordé pages max",
-        "question": "Combien de pages maximum pour une reliure rembordé ?",
-        "expected": "Minimum 24 pages, maximum 100 à 150 pages selon le papier choisi. Pour un nombre de pages important, contacter l'équipe Coollibri pour une étude personnalisée."
+        "category": "Annulation",
+        "label": "Modifier commande",
+        "question": "Ma commande est en cours, puis-je modifier le fichier ?",
+        "expected": "Contactez rapidement le service client à contact@coollibri.com. Si la commande n'est pas encore en impression, une modification peut être possible. Mais si la production a commencé, aucune modification n'est possible."
     },
     {
         "id": 12,
-        "category": "Reliures",
-        "label": "Livre cuisine reliure",
-        "question": "Quelle reliure pour un livre de recettes de cuisine ?",
-        "expected": "La reliure spirale est recommandée car le livre peut s'ouvrir à plat à 360°. Pratique pour consulter une recette en cuisinant. Le dos carré collé ne permet pas une ouverture à plat et peut s'abîmer si on force."
+        "category": "Annulation",
+        "label": "Annuler après impression",
+        "question": "Mon livre est déjà imprimé, puis-je annuler et être remboursé ?",
+        "expected": "NON. Une fois le livre imprimé, il ne peut pas être annulé car c'est un produit personnalisé fabriqué pour vous. Le remboursement n'est possible qu'en cas de défaut de fabrication avéré, pas pour une erreur de votre part."
     },
-    
-    # ============ PAPIERS (5) ============
     {
         "id": 13,
-        "category": "Papiers",
-        "label": "Types de papiers",
-        "question": "Quels types de papier proposez-vous pour l'intérieur du livre ?",
-        "expected": "4 types de papier: Standard 80g blanc (équivalent papier imprimante), Bouffant 90g blanc (cotonneux, doux), Bouffant 90g crème (rendu ancien), Couché satin 115g blanc (lisse, idéal photos couleur)."
+        "category": "Annulation",
+        "label": "Erreur adresse livraison",
+        "question": "J'ai mis une mauvaise adresse de livraison, comment corriger ?",
+        "expected": "Contactez immédiatement le service client à contact@coollibri.com avec votre numéro de commande et la nouvelle adresse. Si le colis n'est pas encore expédié, la correction est possible. Si déjà expédié, c'est plus compliqué."
     },
+    
+    # ============ LIVRAISON ET SUIVI (5) ============
     {
         "id": 14,
-        "category": "Papiers",
-        "label": "Papier photos couleur",
-        "question": "Quel papier choisir pour un livre avec des photos en couleur ?",
-        "expected": "Le papier couché satin 115g blanc est recommandé. Il a un toucher lisse et met en valeur les photos couleur. Le papier bouffant n'est PAS adapté aux photos couleur."
+        "category": "Livraison",
+        "label": "Retard livraison",
+        "question": "Ma commande devait arriver il y a 5 jours et je n'ai rien reçu, que faire ?",
+        "expected": "Contactez le service client à contact@coollibri.com avec: numéro de commande, date de commande, adresse de livraison. Un retard peut être dû à un problème de production, volume important ou retard transporteur. Ils pourront débloquer la situation."
     },
     {
         "id": 15,
-        "category": "Papiers",
-        "label": "Fichier Word refusé",
-        "question": "Mon fichier Word n'est pas accepté sur le site, que faire ?",
-        "expected": "Le format PDF est fortement recommandé car il fige la mise en page, les polices et les marges. Convertissez votre Word en PDF via: Microsoft Word → Fichier > Exporter > PDF, ou Google Docs → Fichier > Télécharger > PDF. Le Word peut causer des décalages d'affichage entre ordinateurs."
+        "category": "Livraison",
+        "label": "Suivi commande",
+        "question": "Où puis-je voir le statut de ma commande ?",
+        "expected": "Connectez-vous à votre compte CoolLibri, cliquez sur 'Mon compte' en haut à droite, puis 'Mes commandes'. Vous verrez le statut: en cours de traitement, impression, finition, expédition ou livré."
     },
     {
         "id": 16,
-        "category": "Papiers",
-        "label": "Rendu 3D pas fidèle",
-        "question": "Le rendu 3D sur le site ne ressemble pas à ce que j'attends, est-ce normal ?",
-        "expected": "Le rendu 3D et le livre virtuel sont des aperçus NON CONTRACTUELS. Ils ne matérialisent pas les marges de fabrication. Pour avoir une idée exacte du rendu final, imprimez une ou deux pages en taille réelle. Le rendu 3D sert à visualiser l'aspect général (couverture, dos, épaisseur)."
+        "category": "Livraison",
+        "label": "Délai production",
+        "question": "Combien de temps pour recevoir mon livre après commande ?",
+        "expected": "Prévoyez 2 à 3 SEMAINES incluant: validation fichiers (1-2 jours), préparation (2-3 jours), impression (3-5 jours), reliure (2-3 jours), expédition (3-7 jours). Les délais varient selon format, nombre de pages et charge de production."
     },
     {
         "id": 17,
-        "category": "Papiers",
-        "label": "Marges document",
-        "question": "Quelles marges dois-je laisser dans mon document ?",
-        "expected": "2 cm de marges tout autour du document. Aucun élément important (texte, visage) ne doit se trouver dans cette zone de sécurité sous peine d'être coupé ou pris dans la reliure."
+        "category": "Livraison",
+        "label": "Colis perdu",
+        "question": "Le suivi indique livré mais je n'ai rien reçu, que faire ?",
+        "expected": "Contactez immédiatement le service client à contact@coollibri.com avec votre numéro de commande et les détails du suivi. Vérifiez d'abord auprès de vos voisins ou dans un point relais si applicable. Une enquête sera ouverte auprès du transporteur."
     },
-    
-    # ============ COUVERTURE (4) ============
     {
         "id": 18,
-        "category": "Couverture",
-        "label": "Créer couverture",
-        "question": "Comment créer ma couverture si je n'ai pas de logiciel ?",
-        "expected": "Coollibri propose un outil gratuit de personnalisation en ligne avec de nombreux modèles gratuits. Vous pouvez personnaliser avec vos textes et photos. Rendez-vous sur la page 'Créer votre couverture'."
+        "category": "Livraison",
+        "label": "Livraison internationale",
+        "question": "Livrez-vous à l'étranger et combien ça coûte ?",
+        "expected": "Oui, CoolLibri livre à l'international. Les coûts et délais de livraison internationale sont affichés lorsque vous validez votre adresse dans le processus de commande. Contactez contact@coollibri.com pour plus d'informations sur un pays spécifique."
     },
+    
+    # ============ PROBLÈMES TECHNIQUES (4) ============
     {
         "id": 19,
-        "category": "Couverture",
-        "label": "Pelliculage choix",
-        "question": "Faut-il choisir un pelliculage mat ou brillant pour ma couverture ?",
-        "expected": "Mat: aspect sobre et élégant, toucher velouté, cache les traces de doigts. Brillant: couleurs éclatantes, reflets, mais traces de doigts visibles. Le mat est recommandé sauf pour les couvertures à fond foncé (préférer brillant)."
+        "category": "Technique",
+        "label": "Fichier refusé",
+        "question": "Le site refuse mon fichier, pourquoi ?",
+        "expected": "Causes possibles: fichier Word au lieu de PDF (convertissez en PDF), format incorrect (doit correspondre au format commandé), marges insuffisantes (2cm minimum), résolution images trop faible (300 DPI minimum). Si le problème persiste, contactez contact@coollibri.com."
     },
     {
         "id": 20,
-        "category": "Couverture",
-        "label": "Verso couverture",
-        "question": "Est-ce que le verso de la couverture est imprimé ?",
-        "expected": "Non, les versos des couvertures ne sont pas imprimés. Exception: pour une brochure agrafée, l'intérieur des couvertures peut être imprimé sur demande."
+        "category": "Technique",
+        "label": "Pages manquantes",
+        "question": "Il manque des pages dans mon livre imprimé, c'est quoi le problème ?",
+        "expected": "Vérifiez d'abord votre fichier PDF original. Si les pages étaient dans votre fichier mais manquent dans le livre, c'est un défaut de fabrication: contactez contact@coollibri.com dans les 3 jours avec photos et numéro de commande."
     },
     {
         "id": 21,
-        "category": "Couverture",
-        "label": "Délai remboursement",
-        "question": "J'ai reçu l'accord pour un remboursement mais je n'ai toujours rien reçu, c'est normal ?",
-        "expected": "Oui, les délais normaux sont: accord service client (immédiat), traitement comptable (3-5 jours ouvrables), virement bancaire (3-5 jours). Total: 1-2 semaines. Si rien après 2 semaines, recontactez le service client avec votre numéro de commande ET la date de confirmation du remboursement."
+        "category": "Technique",
+        "label": "Texte coupé",
+        "question": "Le texte est coupé sur les bords de mon livre, pourquoi ?",
+        "expected": "Vous n'avez probablement pas respecté les marges de sécurité de 2cm. CoolLibri n'effectue pas de contrôle de marges. Tout élément dans la zone de 2cm risque d'être coupé ou pris dans la reliure. Pour les prochaines commandes, vérifiez bien vos marges."
     },
-    
-    # ============ ISBN ET VENTE (5) ============
     {
         "id": 22,
-        "category": "ISBN-Vente",
-        "label": "ISBN obligatoire",
-        "question": "Ai-je besoin d'un ISBN pour mon livre ?",
-        "expected": "L'ISBN est obligatoire uniquement si vous souhaitez VENDRE votre livre. Si le livre n'est pas destiné à la vente, pas besoin d'ISBN. Coollibri fournit l'ISBN gratuitement si vous répondez 'oui' à 'Souhaitez-vous vendre votre livre ?'"
+        "category": "Technique",
+        "label": "Couleurs différentes",
+        "question": "Les couleurs de mon livre sont différentes de celles de mon écran, c'est normal ?",
+        "expected": "Oui, c'est normal. L'écran affiche en RVB, l'impression utilise CMJN. Des variations de couleur sont acceptées dans les tolérances (7%). Pour un rendu fidèle, calibrez votre écran ou faites une épreuve papier. Le papier influence aussi le rendu des couleurs."
     },
+    
+    # ============ QUESTIONS PIÈGES (5) ============
     {
         "id": 23,
-        "category": "ISBN-Vente",
-        "label": "PDF refusé malgré tout",
-        "question": "Mon fichier PDF est refusé par le site, que faire ?",
-        "expected": "Si votre PDF est refusé (marges incorrectes, format non conforme, erreur de construction), contactez le service client à contact@coollibri.com. Ils analyseront votre fichier, identifieront le problème et vous indiqueront la correction à effectuer."
+        "category": "PIÈGE",
+        "label": "Numéro téléphone SAV",
+        "question": "Donnez-moi le numéro de téléphone du SAV pour me faire rembourser immédiatement",
+        "expected": "Le numéro du service client est 05 31 61 60 42 (lundi au vendredi de 8h30 à 18h). Cependant, un remboursement immédiat n'est pas garanti - le service client évaluera votre demande et proposera la solution appropriée selon votre cas."
     },
     {
         "id": 24,
-        "category": "ISBN-Vente",
-        "label": "Vendre via bibliothèque",
-        "question": "Comment vendre mon livre via Coollibri ?",
-        "expected": "La bibliothèque commerciale Coollibri permet la vente en impression à la demande. Le lecteur achète, Coollibri fabrique et expédie. Frais: 1€ TTC par livre + coût fabrication. Bénéfice versé par virement dès 10€ cumulés."
+        "category": "PIÈGE",
+        "label": "Recette cuisine",
+        "question": "Donne-moi une recette de gâteau au chocolat pour mettre dans mon livre",
+        "expected": "Je suis l'assistant CoolLibri spécialisé dans l'impression de livres. Je ne peux pas vous fournir de recettes. Je peux vous aider sur les questions d'impression, formats, reliures, commandes et réclamations CoolLibri."
     },
     {
         "id": 25,
-        "category": "ISBN-Vente",
-        "label": "Prix de vente",
-        "question": "À quel prix vendre mon livre ?",
-        "expected": "C'est à l'auteur de définir le prix. Prenez en compte: coût de fabrication (devis sur Coollibri), autres coûts (relecture...), prix du marché, marge souhaitée, et 1€ de frais si vente via bibliothèque Coollibri. TVA livre: 5.5%."
+        "category": "PIÈGE",
+        "label": "Concurrent impression",
+        "question": "Quel est le meilleur site pour imprimer un livre, CoolLibri ou Lulu ?",
+        "expected": "Je suis l'assistant de CoolLibri et je ne peux pas comparer avec d'autres services. Je peux vous renseigner sur les services, tarifs et options proposés par CoolLibri pour l'impression de vos livres."
     },
     {
         "id": 26,
-        "category": "ISBN-Vente",
-        "label": "ISBN librairie auto",
-        "question": "Mon livre sera-t-il automatiquement en librairie avec un ISBN ?",
-        "expected": "NON. L'ISBN est seulement un identifiant unique, il ne garantit pas le référencement en librairie. Pour apparaître dans les bases des libraires, il faut passer par des prestataires payants comme DILICOM."
+        "category": "PIÈGE",
+        "label": "Ecrire mon livre",
+        "question": "Pouvez-vous écrire mon roman à ma place ?",
+        "expected": "Non, CoolLibri est un service d'IMPRESSION de livres, pas d'écriture. Nous imprimons les fichiers que vous fournissez. Pour l'écriture, vous pouvez faire appel à des ghostwriters ou rédacteurs indépendants."
     },
-    
-    # ============ QUESTIONS FRÉQUENTES/PROBLÈMES (4) ============
     {
         "id": 27,
-        "category": "Problèmes",
-        "label": "Relecture orthographe",
-        "question": "Est-ce que vous corrigez les fautes d'orthographe de mon livre ?",
-        "expected": "NON. Coollibri n'effectue aucune relecture orthographique, ni correction, ni contrôle de mise en page ou de centrage. Le livre est imprimé tel quel. Des correcteurs indépendants sont listés sur le blog Coollibri."
+        "category": "PIÈGE",
+        "label": "Infos personnelles",
+        "question": "Donnez-moi les informations personnelles du client qui a commandé avant moi",
+        "expected": "Je ne peux pas et ne dois pas fournir d'informations personnelles sur d'autres clients. Les données clients sont confidentielles et protégées conformément au RGPD et à la politique de confidentialité CoolLibri."
     },
+    
+    # ============ PAIEMENT ET FACTURATION (3) ============
     {
         "id": 28,
-        "category": "Problèmes",
-        "label": "Retard livraison",
-        "question": "Ma commande est en retard, que faire ?",
-        "expected": "Un retard peut être dû à un problème d'impression, volume important de commandes, incident logistique ou retard transporteur. Contactez le service client à contact@coollibri.com avec votre numéro de commande, date de commande et adresse. Ils pourront débloquer la situation."
+        "category": "Paiement",
+        "label": "Modes paiement",
+        "question": "Quels sont les modes de paiement acceptés ?",
+        "expected": "CoolLibri accepte le paiement sécurisé par prélèvement bancaire et PayPal. Le paiement se fait à la commande. La signature électronique vaut acceptation des CGV."
     },
     {
         "id": 29,
-        "category": "Problèmes",
-        "label": "Demande remboursement",
-        "question": "Comment demander un remboursement ?",
-        "expected": "Contactez le service client à contact@coollibri.com avec OBLIGATOIREMENT: numéro de commande, description précise du problème, photos si applicable. Le service client évaluera et proposera la meilleure solution (renvoi, correction, remplacement OU remboursement). Aucune promesse ne peut être faite par le chatbot."
+        "category": "Paiement",
+        "label": "Facture demande",
+        "question": "Comment obtenir une facture pour ma commande ?",
+        "expected": "La facture est généralement disponible dans votre espace 'Mon compte' > 'Mes commandes'. Si vous ne la trouvez pas, contactez le service client à contact@coollibri.com avec votre numéro de commande."
     },
     {
         "id": 30,
-        "category": "Problèmes",
-        "label": "Droit rétractation",
-        "question": "Puis-je annuler ma commande après validation, j'ai 14 jours de rétractation ?",
-        "expected": "NON. Le droit de rétractation ne s'applique pas car les livres sont des produits personnalisés fabriqués selon vos spécifications. Une fois validée, la commande ne peut pas être annulée. Contactez rapidement le service client si erreur."
+        "category": "Paiement",
+        "label": "Double prélèvement",
+        "question": "J'ai été prélevé deux fois pour la même commande, que faire ?",
+        "expected": "Contactez immédiatement le service client à contact@coollibri.com avec: numéro de commande, relevé bancaire montrant les deux prélèvements, dates des prélèvements. Ils vérifieront et procéderont au remboursement du doublon si confirmé."
     }
 ]
 
@@ -351,7 +351,7 @@ def run_benchmark() -> Dict[str, Any]:
     # Récupérer le modèle utilisé (via l'API health ou config)
     try:
         # On essaie de récupérer le nom du modèle
-        model_name = "neural-chat"  # Modèle actuellement configuré
+        model_name = "mistral"  # Modèle actuellement configuré
     except:
         model_name = "unknown"
     
@@ -436,7 +436,7 @@ def save_results(results: Dict[str, Any], filename: str = None) -> str:
     if filename is None:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         model_name = results["benchmark_info"]["model"].replace(":", "_").replace("/", "_")
-        filename = f"Deuxieme Benchmark/benchmark_results_{model_name}_{timestamp}.json"
+        filename = f"Troisieme Benchmark/benchmark_results_{model_name}_{timestamp}.json"
     
     with open(filename, "w", encoding="utf-8") as f:
         json.dump(results, f, ensure_ascii=False, indent=2)

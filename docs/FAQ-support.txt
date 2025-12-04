@@ -110,6 +110,11 @@ Cela peut arriver même si :
 • Le projet concerné n’a finalement pas été utilisé
 • Plusieurs versions du projet ont été créées avant la commande finale
 ➡ Vous pouvez ignorer ces messages, ils sont générés automatiquement.
+
+CAUSE PRINCIPALE : LES PROJETS "EN COURS DE PRÉPARATION" DÉCLENCHENT CES EMAILS.
+Le système détecte automatiquement les projets non finalisés dans votre espace et envoie des rappels.
+Pour éviter ces emails : SUPPRIMEZ VOS ANCIENS PROJETS NON UTILISÉS depuis votre espace projet.
+
 Vérifier si la commande est bien enregistrée
 Pour vous assurer que votre commande est valide :
 1. Connectez-vous à votre compte

@@ -31,8 +31,8 @@ class Settings(BaseSettings):
     # RAG Configuration
     chunk_size: int = 900  # Augmenté pour meilleure couverture contextuelle
     chunk_overlap: int = 150  # 18.75% overlap - équilibre contexte/performance
-    top_k_results: int = 12  # Augmenté pour plus de contexte
-    rerank_top_n: int = 6  # Augmenté pour meilleure précision
+    top_k_results: int = 10  # Réduit pour améliorer le TTFT
+    rerank_top_n: int = 5  # Réduit pour améliorer le TTFT
     
     # Embedding Model
     embedding_model: str = "intfloat/multilingual-e5-large"  # +25% précision vs mpnet, 1024 dims

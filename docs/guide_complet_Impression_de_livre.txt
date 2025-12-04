@@ -686,3 +686,38 @@ Les demandes de formats personnalisés
 Les questions sur les délais
 Le suivi de commande
 Les conseils de mise en page
+
+
+APERÇU 3D ET LIVRE VIRTUEL - INFORMATIONS IMPORTANTES
+=====================================================
+
+LE RENDU 3D ET LE LIVRE VIRTUEL SONT DES APERÇUS NON CONTRACTUELS
+
+Le rendu 3D sur le site ne ressemble pas exactement à ce que vous attendez ? C'est normal.
+
+Voici ce qu'il faut savoir sur le rendu 3D CoolLibri :
+
+1. LE RENDU 3D EST NON CONTRACTUEL
+   - C'est un aperçu indicatif seulement
+   - Il ne matérialise PAS les marges de fabrication exactes
+   - Des différences peuvent exister entre l'aperçu 3D et l'impression finale
+   - Les couleurs affichées à l'écran peuvent différer des couleurs imprimées
+   - Certains détails peuvent apparaître différemment une fois imprimés
+
+2. CE QUE LE RENDU 3D PERMET DE VISUALISER :
+   - L'aspect général du livre (couverture, dos, épaisseur)
+   - L'enchaînement des pages
+   - Le positionnement global des éléments
+
+3. POUR AVOIR UNE IDÉE EXACTE DU RENDU FINAL :
+   - CONSEIL : Imprimez une ou deux pages en taille réelle sur votre imprimante personnelle pour vérifier
+   - Utilisez notre outil de mise en page en ligne pour personnaliser la maquette
+   - Cela permet d'avoir un aperçu plus réaliste avant la commande
+
+4. POURQUOI DES DIFFÉRENCES ENTRE L'ÉCRAN ET L'IMPRESSION ?
+   - Le rendu écran dépend de la calibration de votre moniteur
+   - Les couleurs varient selon l'écran utilisé (chaque écran affiche différemment)
+   - L'impression physique utilise des encres CMJN différentes des couleurs RVB de l'écran
+   - Les marges de fabrication et tolérances d'impression ne sont pas visibles sur l'aperçu
+
+CONSEIL IMPORTANT : Pour une meilleure précision sur le résultat final de votre livre imprimé, nous vous recommandons d'imprimer une page test en taille réelle sur votre imprimante personnelle avant de valider la commande.
