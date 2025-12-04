@@ -21,7 +21,12 @@ class Settings(BaseSettings):
         "https://libriassist.netlify.app",
         "https://*.ngrok-free.app",
         "https://*.ngrok.io",
-        "https://*.ngrok.app"
+        "https://*.ngrok.app",
+        "https://*.vercel.app",
+        "https://chat-bot-lyart-nine.vercel.app",
+        "https://chat-bot-sigma-murex.vercel.app",
+        "https://chat-bot-git-main-biendou-brians-projects.vercel.app",
+        "https://chat-3knuvx750-biendou-brians-projects.vercel.app"
     ]
     
     # Ollama Configuration
