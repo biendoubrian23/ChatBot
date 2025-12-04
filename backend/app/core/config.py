@@ -26,13 +26,13 @@ class Settings(BaseSettings):
     
     # Ollama Configuration
     ollama_base_url: str = "http://localhost:11434"  # Ollama local
-    ollama_model: str = "zephyr"
+    ollama_model: str = "mistral:latest"
     
     # RAG Configuration
-    chunk_size: int = 800  # Optimal pour FAQ et guides techniques
+    chunk_size: int = 900  # Augmenté pour meilleure couverture contextuelle
     chunk_overlap: int = 150  # 18.75% overlap - équilibre contexte/performance
-    top_k_results: int = 10  # Increased from 4 for better context
-    rerank_top_n: int = 5  # Increased from 2 for better precision
+    top_k_results: int = 12  # Augmenté pour plus de contexte
+    rerank_top_n: int = 6  # Augmenté pour meilleure précision
     
     # Embedding Model
     embedding_model: str = "intfloat/multilingual-e5-large"  # +25% précision vs mpnet, 1024 dims

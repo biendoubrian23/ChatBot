@@ -1,9 +1,16 @@
 FAQ enrichie – Support CoolLibri
  Réclamations clients
+
+DÉLAI DE RÉCLAMATION : 3 JOURS OUVRABLES APRÈS LIVRAISON
+=========================================================
+Attention : Vous avez uniquement 3 jours ouvrables après la livraison pour faire une réclamation.
+Ce délai de 3 jours ouvrables est strict et ne peut pas être prolongé.
+Passé ce délai de 3 jours, aucune réclamation ne sera prise en compte.
+
 Comment faire une réclamation ?
-En cas de problème avec votre commande (qualité d’impression, défaut produit, erreur,
+En cas de problème avec votre commande (qualité d'impression, défaut produit, erreur,
 problème sur le fichier, etc.), il est nécessaire de transmettre une réclamation au service client
-CoolLibri par email à :
+CoolLibri dans un délai de 3 jours ouvrables après la livraison par email à :
  contact@coollibri.com
 L’email doit contenir :
 • Votre numéro de commande, indispensable pour retrouver votre dossier.

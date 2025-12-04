@@ -1,353 +1,263 @@
-# 🧪 Benchmark de Test - Chatbot Coollibri
+# 🧪 Tests d'Évaluation du Chatbot Coollibri
 
-## Objectif
-Évaluer la rapidité et la qualité des réponses du chatbot avec différents modèles d'IA :
-- **Mistral 7B**
-- **Ollama 3.2**
-- **Neural Chat 7B**
+## Description
+Ce document contient **30 questions réalistes** que les utilisateurs posent vraiment sur le site Coollibri (hors suivi de commande). Les questions sont organisées par catégorie thématique pour tester la qualité du RAG.
 
 ---
 
-## 📊 Grille d'évaluation suggérée
+## 📊 Catégories de Questions
 
-| Critère | Note /5 |
-|---------|---------|
-| **Exactitude** | La réponse est-elle correcte ? |
-| **Complétude** | Tous les éléments sont-ils mentionnés ? |
-| **Clarté** | La réponse est-elle bien formulée ? |
-| **Temps de réponse** | Rapidité (en secondes) |
-
----
-
-## 1️⃣ QUESTIONS FACILES / DIRECTES (6 questions)
-*Questions simples nécessitant une réponse courte et factuelle*
-
-### Q1 - Contact
-**Question :** Comment puis-je contacter le service client de Coollibri ?
-
-**Réponse attendue :** Par téléphone au 05 31 61 60 42 ou par email à contact@coollibri.com, du lundi au vendredi de 8h30 à 18h.
+| Catégorie | Nombre | Description |
+|-----------|--------|-------------|
+| Formats | 6 | Formats, emails automatiques, annulation urgente |
+| Reliures | 6 | Types de reliures, limites de pages |
+| Papiers | 5 | Papiers, fichiers Word/PDF, rendu 3D |
+| Couverture | 4 | Création, pelliculage, remboursement |
+| ISBN-Vente | 5 | ISBN, vente en ligne, PDF refusé |
+| Problèmes | 4 | Retard, remboursement, rétractation |
 
 ---
 
-### Q2 - Entreprise
-**Question :** Où se situe l'imprimerie Coollibri ?
+## 📋 Liste des 30 Questions
 
-**Réponse attendue :** À Toulouse (111 rue Nicolas Vauquelin, 31100 Toulouse). L'imprimerie appartient à la société Messages SAS.
+### 🔷 FORMATS ET CARACTÉRISTIQUES (6 questions)
 
----
+**Q1 - Formats disponibles**
+> Quels formats de livre proposez-vous ?
 
-### Q3 - ISBN
-**Question :** Est-ce que Coollibri fournit un numéro ISBN gratuitement ?
-
-**Réponse attendue :** Oui, Coollibri fournit gratuitement un ISBN si vous répondez "oui" à la question "Souhaitez-vous vendre votre livre ?".
+*Réponse attendue :* Coollibri propose 7 formats: 11x17 cm (poche), 16x24 cm (roman), 21x21 cm (livre photo carré), A4 portrait 21x29.7 cm, A4 paysage 29.7x21 cm, A5 portrait 14.8x21 cm, A5 paysage 21x14.8 cm.
 
 ---
 
-### Q4 - Certification
-**Question :** Quelles certifications environnementales possède Coollibri ?
+**Q2 - Format roman**
+> Quel format choisir pour imprimer mon roman ?
 
-**Réponse attendue :** Coollibri est certifié ISO 14001 (environnement), Imprim'Vert et PEFC.
-
----
-
-### Q5 - eBook
-**Question :** Dans quel format est livré un ebook chez Coollibri ?
-
-**Réponse attendue :** Le format ePub 3.
+*Réponse attendue :* Le format 16x24 cm est le plus adapté pour un roman. Le format 11x17 cm (poche) est aussi une option plus compacte et économique. Le format A5 portrait (14.8x21 cm) convient également aux romans et guides.
 
 ---
 
-### Q6 - Réclamation
-**Question :** Quel est le délai pour faire une réclamation après livraison ?
+**Q3 - Format livre photo**
+> Quel est le meilleur format pour un livre photo ?
 
-**Réponse attendue :** 3 jours ouvrables après la livraison, en envoyant un email à contact@coollibri.com avec photos et numéro de commande.
-
----
-
-## 2️⃣ QUESTIONS AVEC CHIFFRES PRÉCIS (8 questions)
-*Questions nécessitant des données numériques exactes pour évaluer la précision*
-
-### Q7 - Pages reliure agrafé
-**Question :** Quel est le nombre minimum et maximum de pages pour une reliure agrafée ?
-
-**Réponse attendue :** Minimum 8 pages, maximum 60 pages. Le nombre de pages doit être un multiple de 4.
+*Réponse attendue :* Le format 21x21 cm (carré) est souvent utilisé pour les livres photos. Le format A4 portrait ou A4 paysage sont aussi recommandés pour les beaux livres et albums. Utilisez du papier satin 115g pour les photos.
 
 ---
 
-### Q8 - Pages dos carré collé
-**Question :** Combien de pages maximum peut avoir un livre en dos carré collé avec du papier 80g ?
+**Q4 - Emails automatiques** ⭐
+> Pourquoi je reçois des emails alors que j'ai déjà passé commande ?
 
-**Réponse attendue :** Maximum 500 pages avec le papier 80g. (Minimum 80 pages)
-
----
-
-### Q9 - Tarif eBook
-**Question :** Quel est le prix pour obtenir uniquement un eBook sans impression papier ?
-
-**Réponse attendue :** 50€ pour l'eBook seul, ou 15€ si vous avez aussi une commande papier.
+*Réponse attendue :* Le système envoie des emails automatiques si des projets sont encore 'en cours de préparation' dans votre espace. Cela arrive même si la commande est validée. Vous pouvez ignorer ces messages. Pour éviter cela, supprimez vos anciens projets non utilisés dans votre espace.
 
 ---
 
-### Q10 - Format poche
-**Question :** Quelles sont les dimensions exactes du format poche ?
+**Q5 - Format BD rembordé**
+> Quels formats sont disponibles pour la reliure rembordé ?
 
-**Réponse attendue :** 11 x 17 cm (11 centimètres de largeur × 17 centimètres de hauteur).
-
----
-
-### Q11 - Reliure rembordé
-**Question :** Combien de pages maximum peut contenir un livre avec reliure rembordé ?
-
-**Réponse attendue :** Entre 100 et 150 pages maximum selon le papier choisi. Minimum 24 pages.
+*Réponse attendue :* Pour la reliure rembordé (couverture cartonnée type BD), seuls 3 formats sont possibles: A4 portrait, A4 paysage et 21x21 cm. Les autres formats ne sont pas disponibles pour cette reliure.
 
 ---
 
-### Q12 - Grammage papier satin
-**Question :** Quel est le grammage du papier lisse satin pour les photos ?
+**Q6 - Annulation commande urgente** ⭐
+> J'ai fait une erreur dans ma commande, puis-je l'annuler ?
 
-**Réponse attendue :** 115g/m² (papier couché satin 115g blanc).
-
----
-
-### Q13 - Résolution images
-**Question :** Quelle résolution minimum est recommandée pour les images dans un livre ?
-
-**Réponse attendue :** 300 ppp (pixels par pouce) minimum pour une impression de qualité.
+*Réponse attendue :* Si une commande a été validée avec une erreur (mauvais fichier, oubli, édition incorrecte), contactez IMMÉDIATEMENT le service client à contact@coollibri.com. Plus la demande est envoyée tôt, plus les chances d'annulation ou modification avant impression sont élevées.
 
 ---
 
-### Q14 - Spirale pages
-**Question :** Quel est le nombre maximum de pages pour une reliure spirale ?
+### 🔷 RELIURES (6 questions)
 
-**Réponse attendue :** Entre 290 et 500 pages selon l'épaisseur du papier choisi.
+**Q7 - Types de reliures**
+> Quelles sont les différentes reliures proposées par Coollibri ?
 
----
-
-## 3️⃣ QUESTIONS COMPARATIVES (6 questions)
-*Questions demandant de comparer deux ou plusieurs options*
-
-### Q15 - Pelliculage
-**Question :** Quelle est la différence entre le pelliculage mat et brillant ? Lequel est recommandé ?
-
-**Réponse attendue :** 
-- **Brillant** : effet glossy, reflets lumineux, couleurs éclatantes, mais les traces de doigts sont très visibles
-- **Mat** : aspect sobre et élégant, toucher velouté, protection contre les traces de doigts
-- **Recommandation** : Le mat est recommandé par Coollibri, SAUF pour les couvertures à fond foncé où le brillant est préférable
+*Réponse attendue :* 4 types de reliure: Dos carré collé (romans, couverture souple), Rembordé (BD, couverture rigide cartonnée), Agrafé/Piqûre à cheval (magazines, brochures), Spirale (documents techniques, recettes).
 
 ---
 
-### Q16 - Papiers
-**Question :** Quelle est la différence entre le papier standard 90g et le papier satin 115g ? Lequel choisir pour un livre photo ?
+**Q8 - Dos carré collé pages**
+> Combien de pages peut-on avoir avec une reliure dos carré collé ?
 
-**Réponse attendue :**
-- **Standard 90g** : équivalent papier imprimante, adapté aux textes, NON adapté aux photos couleur
-- **Satin 115g** : papier plus épais, lisse, finition satinée, rendu couleur exceptionnel
-- **Recommandation** : Le papier satin 115g est OBLIGATOIRE pour les livres avec photos couleur
+*Réponse attendue :* Minimum 60-80 pages selon le papier. Maximum 500 à 700 pages selon le papier choisi. Papier 60g: 60-700 pages. Papier 80g: 80-500 pages. Papier 90g satiné: 90-500 pages.
 
 ---
 
-### Q17 - Reliures
-**Question :** Quelle reliure choisir entre le dos carré collé et le rembordé pour une bande dessinée ?
+**Q9 - Reliure magazine**
+> Quelle reliure pour un magazine ou une brochure ?
 
-**Réponse attendue :**
-- **Dos carré collé** : couverture souple, adapté aux romans, jusqu'à 700 pages
-- **Rembordé** : couverture rigide cartonnée, aspect luxueux, adapté aux BD et albums
-- **Recommandation** : Le rembordé est recommandé pour les BD car il offre une protection maximale et un aspect professionnel type album BD
+*Réponse attendue :* La reliure agrafée (piqûre à cheval) est idéale pour les magazines. Minimum 8 pages, maximum 60 pages. Le nombre de pages doit être un multiple de 4 (8, 12, 16, 20...).
 
 ---
 
-### Q18 - Formats romans
-**Question :** Quel format choisir entre le 11x17 cm et le 16x24 cm pour un roman ?
+**Q10 - Spirale avantages**
+> Quels sont les avantages de la reliure spirale ?
 
-**Réponse attendue :**
-- **11x17 cm** : format poche, compact, économique, transport facile
-- **16x24 cm** : format grand livre, plus d'espace, confort de lecture supérieur
-- Le choix dépend du style souhaité : poche économique vs édition plus qualitative
+*Réponse attendue :* La spirale permet une ouverture complète à 360°, pages parfaitement à plat. Idéal pour recettes, partitions, manuels techniques. De 1 à 290-500 pages selon le papier. Le livre ne comporte pas de dos.
 
 ---
 
-### Q19 - Spirale vs Dos carré
-**Question :** Pourquoi choisir une reliure spirale plutôt qu'un dos carré collé pour un livre de recettes ?
+**Q11 - Rembordé pages max**
+> Combien de pages maximum pour une reliure rembordé ?
 
-**Réponse attendue :**
-- La spirale permet une ouverture complète à 360°, les pages restent parfaitement à plat
-- Idéal en cuisine pour consulter la recette les mains occupées
-- Le dos carré collé ne s'ouvre jamais complètement à plat et la reliure peut être fragilisée si on force
+*Réponse attendue :* Minimum 24 pages, maximum 100 à 150 pages selon le papier choisi. Pour un nombre de pages important, contacter l'équipe Coollibri pour une étude personnalisée.
 
 ---
 
-### Q20 - ISBN vs ISSN
-**Question :** Quelle est la différence entre ISBN et ISSN ?
+**Q12 - Livre cuisine reliure**
+> Quelle reliure pour un livre de recettes de cuisine ?
 
-**Réponse attendue :**
-- **ISBN** : numéro unique pour identifier un livre (obligatoire pour vendre un livre)
-- **ISSN** : numéro pour les publications périodiques (magazines, revues)
-- Contacter Coollibri pour plus d'informations sur l'ISSN
+*Réponse attendue :* La reliure spirale est recommandée car le livre peut s'ouvrir à plat à 360°. Pratique pour consulter une recette en cuisinant. Le dos carré collé ne permet pas une ouverture à plat et peut s'abîmer si on force.
 
 ---
 
-## 4️⃣ QUESTIONS COMPLEXES (6 questions)
-*Questions nécessitant une synthèse de plusieurs informations*
+### 🔷 PAPIERS (5 questions)
 
-### Q21 - Projet complet
-**Question :** Je veux créer un album photo de mariage de 80 pages. Quelle reliure, quel format et quel papier me recommandez-vous ?
+**Q13 - Types de papiers**
+> Quels types de papier proposez-vous pour l'intérieur du livre ?
 
-**Réponse attendue :**
-- **Reliure** : Rembordé (couverture rigide, aspect luxueux, adapté aux albums photos)
-- **Format** : 21x21 cm (format carré, idéal pour les photos) ou A4 portrait/paysage
-- **Papier** : Satin 115g blanc (obligatoire pour les photos couleur, rendu exceptionnel)
-- **Pelliculage** : Mat (sauf si fond foncé → brillant)
+*Réponse attendue :* 4 types de papier: Standard 80g blanc (équivalent papier imprimante), Bouffant 90g blanc (cotonneux, doux), Bouffant 90g crème (rendu ancien), Couché satin 115g blanc (lisse, idéal photos couleur).
 
 ---
 
-### Q22 - Vente de livre
-**Question :** Expliquez-moi comment fonctionne la vente de mon livre via la bibliothèque commerciale de Coollibri.
+**Q14 - Papier photos couleur**
+> Quel papier choisir pour un livre avec des photos en couleur ?
 
-**Réponse attendue :**
-- Le lecteur achète le livre sur la bibliothèque Coollibri
-- Coollibri fabrique et expédie directement au lecteur (impression à la demande)
-- Frais : 1€ TTC par livre vendu + coût de fabrication
-- Bénéfice = Prix de vente - Coût fabrication - 1€
-- Paiement par virement dès 10€ de bénéfice cumulé, une fois par mois
-- L'auteur doit renseigner son IBAN dans son compte
+*Réponse attendue :* Le papier couché satin 115g blanc est recommandé. Il a un toucher lisse et met en valeur les photos couleur. Le papier bouffant n'est PAS adapté aux photos couleur.
 
 ---
 
-### Q23 - Protection œuvre
-**Question :** Comment puis-je protéger mon œuvre avant de la publier sur Coollibri ?
+**Q15 - Fichier Word refusé** ⭐
+> Mon fichier Word n'est pas accepté sur le site, que faire ?
 
-**Réponse attendue :**
-- **Protection implicite** : S'envoyer le manuscrit en recommandé sans ouvrir l'enveloppe (le cachet poste fait foi)
-- **Protection explicite** : Dépôt chez un notaire, huissier, SGDL (Société des Gens de Lettres) ou copyright via copyrightdepot.com
-- L'ISBN est aussi une première protection du contenu
-- Le dépôt légal à la BNF protège le contenu intellectuel
+*Réponse attendue :* Le format PDF est fortement recommandé car il fige la mise en page, les polices et les marges. Convertissez votre Word en PDF via: Microsoft Word → Fichier > Exporter > PDF, ou Google Docs → Fichier > Télécharger > PDF. Le Word peut causer des décalages d'affichage entre ordinateurs.
 
 ---
 
-### Q24 - Statut juridique
-**Question :** Je vends quelques livres par an, quel statut juridique dois-je adopter ?
+**Q16 - Rendu 3D pas fidèle** ⭐
+> Le rendu 3D sur le site ne ressemble pas à ce que j'attends, est-ce normal ?
 
-**Réponse attendue :**
-- **Micro-entrepreneur** : statut idéal pour débuter, formalités simplifiées, pas de TVA
-- Pour des recettes très faibles : tolérance possible en déclarant avec les autres revenus
-- Si l'activité prend de l'importance : envisager une SARL ou SAS
-- Consulter un professionnel (avocat, expert-comptable) pour des conseils personnalisés
+*Réponse attendue :* Le rendu 3D et le livre virtuel sont des aperçus NON CONTRACTUELS. Ils ne matérialisent pas les marges de fabrication. Pour avoir une idée exacte du rendu final, imprimez une ou deux pages en taille réelle. Le rendu 3D sert à visualiser l'aspect général (couverture, dos, épaisseur).
 
 ---
 
-### Q25 - Fichier couverture
-**Question :** Quelles sont les différentes façons de fournir mon fichier couverture à Coollibri ?
+**Q17 - Marges document**
+> Quelles marges dois-je laisser dans mon document ?
 
-**Réponse attendue :**
-- **Cas 1 - Fichier combiné** : Intérieur + couverture dans un seul PDF (page 1 = 1ère couv, page 2 = vierge, pages 3+ = intérieur, avant-dernière = vierge, dernière = 4ème couv)
-- **Cas 2a - Fichier séparé 2 pages** : Un PDF avec page 1 = 1ère couv et page 2 = 4ème couv (Coollibri place le dos)
-- **Cas 2b - Fichier maquetté** : Un PDF 1 page avec couverture à plat (4ème à gauche, dos au centre, 1ère à droite) avec 3mm de fonds perdus
-- Ou utiliser l'outil gratuit de création de couverture en ligne avec +300 photos libres de droits
+*Réponse attendue :* 2 cm de marges tout autour du document. Aucun élément important (texte, visage) ne doit se trouver dans cette zone de sécurité sous peine d'être coupé ou pris dans la reliure.
 
 ---
 
-### Q26 - Compte Pro
-**Question :** Quels sont les avantages du compte Coollibri Pro pour les professionnels ?
+### 🔷 COUVERTURE (4 questions)
 
-**Réponse attendue :**
-- Achevé d'imprimer personnalisé
-- Livraison en marque blanche (sans référence à Coollibri)
-- Remises avec système de points (plus on commande, plus on économise)
-- Tableau de bord professionnel
-- Contrôle PAO gratuit pour commandes > 50 exemplaires
-- Facture mensuelle regroupée
-- Paiement à 30 jours
-- Adhésion gratuite
+**Q18 - Créer couverture**
+> Comment créer ma couverture si je n'ai pas de logiciel ?
+
+*Réponse attendue :* Coollibri propose un outil gratuit de personnalisation en ligne avec de nombreux modèles gratuits. Vous pouvez personnaliser avec vos textes et photos. Rendez-vous sur la page 'Créer votre couverture'.
 
 ---
 
-## 5️⃣ QUESTIONS PIÈGES (4 questions)
-*Questions pouvant induire en erreur ou contenant des pièges*
+**Q19 - Pelliculage choix**
+> Faut-il choisir un pelliculage mat ou brillant pour ma couverture ?
 
-### Q27 - Piège relecture
-**Question :** Est-ce que Coollibri va corriger les fautes d'orthographe de mon livre avant l'impression ?
-
-**Réponse attendue :** 
-**NON** - Coollibri n'effectue AUCUNE relecture orthographique, ni correction d'erreurs, ni contrôle du contenu. Le livre est imprimé tel quel. Des correcteurs indépendants sont listés sur le blog pour information (https://www.coollibri.com/blog/correcteur-relecteur/).
+*Réponse attendue :* Mat: aspect sobre et élégant, toucher velouté, cache les traces de doigts. Brillant: couleurs éclatantes, reflets, mais traces de doigts visibles. Le mat est recommandé sauf pour les couvertures à fond foncé (préférer brillant).
 
 ---
 
-### Q28 - Piège rétractation
-**Question :** J'ai commandé mon livre mais je veux annuler, j'ai 14 jours de rétractation légale n'est-ce pas ?
+**Q20 - Verso couverture**
+> Est-ce que le verso de la couverture est imprimé ?
 
-**Réponse attendue :**
-**NON** - Le droit de rétractation ne s'applique PAS car les livres sont des produits personnalisés fabriqués selon vos spécifications. Une fois la commande validée, elle ne peut pas être annulée.
-
----
-
-### Q29 - Piège image double page
-**Question :** Je veux mettre une grande photo sur deux pages en vis-à-vis avec une reliure dos carré collé, c'est possible ?
-
-**Réponse attendue :**
-**Déconseillé** - Avec une reliure dos carré collé ou rembordé, le livre ne s'ouvre jamais complètement à plat. Une partie de l'image sera prise dans la reliure et invisible. Si on force, la reliure sera fragilisée. Pour une image panoramique, privilégier la reliure spirale qui s'ouvre à 360°.
+*Réponse attendue :* Non, les versos des couvertures ne sont pas imprimés. Exception: pour une brochure agrafée, l'intérieur des couvertures peut être imprimé sur demande.
 
 ---
 
-### Q30 - Piège référencement librairie
-**Question :** Mon livre aura un ISBN donc il sera automatiquement référencé dans toutes les librairies de France ?
+**Q21 - Délai remboursement** ⭐
+> J'ai reçu l'accord pour un remboursement mais je n'ai toujours rien reçu, c'est normal ?
 
-**Réponse attendue :**
-**NON** - L'ISBN ne garantit PAS le référencement en librairie. L'ISBN est seulement un identifiant unique. Pour être référencé dans les bases des librairies et bibliothèques, il faut passer par des prestataires payants comme DILICOM. L'auteur peut aussi démarcher directement les librairies locales.
-
----
-
-## 📈 Tableau récapitulatif des tests
-
-| # | Catégorie | Question | Temps (s) | Exactitude /5 | Complétude /5 | Clarté /5 |
-|---|-----------|----------|-----------|---------------|---------------|-----------|
-| 1 | Facile | Contact service client | | | | |
-| 2 | Facile | Localisation imprimerie | | | | |
-| 3 | Facile | ISBN gratuit | | | | |
-| 4 | Facile | Certifications environnement | | | | |
-| 5 | Facile | Format eBook | | | | |
-| 6 | Facile | Délai réclamation | | | | |
-| 7 | Chiffres | Pages reliure agrafé | | | | |
-| 8 | Chiffres | Pages dos carré collé 80g | | | | |
-| 9 | Chiffres | Tarif eBook | | | | |
-| 10 | Chiffres | Dimensions format poche | | | | |
-| 11 | Chiffres | Pages reliure rembordé | | | | |
-| 12 | Chiffres | Grammage papier satin | | | | |
-| 13 | Chiffres | Résolution images | | | | |
-| 14 | Chiffres | Pages reliure spirale | | | | |
-| 15 | Comparative | Pelliculage mat vs brillant | | | | |
-| 16 | Comparative | Papier standard vs satin | | | | |
-| 17 | Comparative | Dos carré vs rembordé (BD) | | | | |
-| 18 | Comparative | Format 11x17 vs 16x24 | | | | |
-| 19 | Comparative | Spirale vs dos carré (recettes) | | | | |
-| 20 | Comparative | ISBN vs ISSN | | | | |
-| 21 | Complexe | Album photo mariage | | | | |
-| 22 | Complexe | Vente bibliothèque commerciale | | | | |
-| 23 | Complexe | Protection œuvre | | | | |
-| 24 | Complexe | Statut juridique vente | | | | |
-| 25 | Complexe | Fichier couverture options | | | | |
-| 26 | Complexe | Avantages compte Pro | | | | |
-| 27 | Piège | Correction orthographe | | | | |
-| 28 | Piège | Droit de rétractation | | | | |
-| 29 | Piège | Image double page | | | | |
-| 30 | Piège | Référencement librairie ISBN | | | | |
+*Réponse attendue :* Oui, les délais normaux sont: accord service client (immédiat), traitement comptable (3-5 jours ouvrables), virement bancaire (3-5 jours). Total: 1-2 semaines. Si rien après 2 semaines, recontactez le service client avec votre numéro de commande ET la date de confirmation du remboursement.
 
 ---
 
-## 🏆 Score final par modèle
+### 🔷 ISBN ET VENTE (5 questions)
 
-| Modèle | Temps moyen (s) | Score moyen Exactitude | Score moyen Complétude | Score moyen Clarté | Score Global |
-|--------|-----------------|------------------------|------------------------|--------------------|--------------| 
-| Mistral 7B | | | | | |
-| Ollama 3.2 | | | | | |
-| Neural Chat 7B | | | | | |
+**Q22 - ISBN obligatoire**
+> Ai-je besoin d'un ISBN pour mon livre ?
+
+*Réponse attendue :* L'ISBN est obligatoire uniquement si vous souhaitez VENDRE votre livre. Si le livre n'est pas destiné à la vente, pas besoin d'ISBN. Coollibri fournit l'ISBN gratuitement si vous répondez 'oui' à 'Souhaitez-vous vendre votre livre ?'
 
 ---
 
-## 💡 Notes pour l'évaluation
+**Q23 - PDF refusé** ⭐
+> Mon fichier PDF est refusé par le site, que faire ?
 
-1. **Chronométrer** chaque réponse du premier caractère au dernier
-2. **Comparer** la réponse obtenue avec la réponse attendue
-3. **Pénaliser** les hallucinations (informations inventées)
-4. **Bonifier** les réponses qui ajoutent du contexte utile
-5. **Tester** dans les mêmes conditions (même prompt système, même température)
+*Réponse attendue :* Si votre PDF est refusé (marges incorrectes, format non conforme, erreur de construction), contactez le service client à contact@coollibri.com. Ils analyseront votre fichier, identifieront le problème et vous indiqueront la correction à effectuer.
+
+---
+
+**Q24 - Vendre via bibliothèque**
+> Comment vendre mon livre via Coollibri ?
+
+*Réponse attendue :* La bibliothèque commerciale Coollibri permet la vente en impression à la demande. Le lecteur achète, Coollibri fabrique et expédie. Frais: 1€ TTC par livre + coût fabrication. Bénéfice versé par virement dès 10€ cumulés.
+
+---
+
+**Q25 - Prix de vente**
+> À quel prix vendre mon livre ?
+
+*Réponse attendue :* C'est à l'auteur de définir le prix. Prenez en compte: coût de fabrication (devis sur Coollibri), autres coûts (relecture...), prix du marché, marge souhaitée, et 1€ de frais si vente via bibliothèque Coollibri. TVA livre: 5.5%.
+
+---
+
+**Q26 - ISBN librairie auto**
+> Mon livre sera-t-il automatiquement en librairie avec un ISBN ?
+
+*Réponse attendue :* NON. L'ISBN est seulement un identifiant unique, il ne garantit pas le référencement en librairie. Pour apparaître dans les bases des libraires, il faut passer par des prestataires payants comme DILICOM.
+
+---
+
+### 🔷 PROBLÈMES FRÉQUENTS (4 questions)
+
+**Q27 - Relecture orthographe**
+> Est-ce que vous corrigez les fautes d'orthographe de mon livre ?
+
+*Réponse attendue :* NON. Coollibri n'effectue aucune relecture orthographique, ni correction, ni contrôle de mise en page ou de centrage. Le livre est imprimé tel quel. Des correcteurs indépendants sont listés sur le blog Coollibri.
+
+---
+
+**Q28 - Retard livraison** ⭐
+> Ma commande est en retard, que faire ?
+
+*Réponse attendue :* Un retard peut être dû à un problème d'impression, volume important de commandes, incident logistique ou retard transporteur. Contactez le service client à contact@coollibri.com avec votre numéro de commande, date de commande et adresse. Ils pourront débloquer la situation.
+
+---
+
+**Q29 - Demande remboursement** ⭐
+> Comment demander un remboursement ?
+
+*Réponse attendue :* Contactez le service client à contact@coollibri.com avec OBLIGATOIREMENT: numéro de commande, description précise du problème, photos si applicable. Le service client évaluera et proposera la meilleure solution (renvoi, correction, remplacement OU remboursement). Aucune promesse ne peut être faite par le chatbot.
+
+---
+
+**Q30 - Droit rétractation** ⭐
+> Puis-je annuler ma commande après validation, j'ai 14 jours de rétractation ?
+
+*Réponse attendue :* NON. Le droit de rétractation ne s'applique pas car les livres sont des produits personnalisés fabriqués selon vos spécifications. Une fois validée, la commande ne peut pas être annulée. Contactez rapidement le service client si erreur.
+
+---
+
+## 📈 Grille d'Évaluation
+
+Pour chaque réponse du chatbot, évaluer sur ces critères :
+
+| Critère | Pondération | Description |
+|---------|-------------|-------------|
+| **Exactitude** | 40% | La réponse contient-elle les informations correctes ? |
+| **Complétude** | 25% | Tous les éléments clés sont-ils présents ? |
+| **Clarté** | 20% | La réponse est-elle bien structurée et compréhensible ? |
+| **Pertinence** | 15% | La réponse est-elle ciblée sans informations parasites ? |
+
+### Échelle de notation
+- **5/5** : Réponse parfaite
+- **4/5** : Bonne réponse, détail mineur manquant
+- **3/5** : Réponse acceptable, informations incomplètes
+- **2/5** : Réponse partielle, erreurs mineures
+- **1/5** : Réponse incorrecte ou hors sujet
+- **0/5** : Pas de réponse ou totalement faux
 

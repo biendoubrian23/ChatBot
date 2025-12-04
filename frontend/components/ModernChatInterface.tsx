@@ -52,6 +52,13 @@ export default function ChatInterface({ onMetricsUpdate }: ChatInterfaceProps) {
     scrollToBottom()
   }, [messages])
 
+  // Propager les métriques au parent via useEffect pour éviter setState pendant le rendu
+  useEffect(() => {
+    if (onMetricsUpdate && metricsHistory.length > 0) {
+      onMetricsUpdate(metricsHistory)
+    }
+  }, [metricsHistory, onMetricsUpdate])
+
   // Message d'accueil automatique quand le chat s'ouvre
   useEffect(() => {
     if (isChatOpen && messages.length === 0) {
@@ -468,13 +475,7 @@ export default function ChatInterface({ onMetricsUpdate }: ChatInterfaceProps) {
             }))
           }
           
-          setMetricsHistory((prev) => {
-            const updated = [...prev, newMetric]
-            if (onMetricsUpdate) {
-              onMetricsUpdate(updated)
-            }
-            return updated
-          })
+          setMetricsHistory((prev) => [...prev, newMetric])
           setIsLoading(false)
         },
         // onError

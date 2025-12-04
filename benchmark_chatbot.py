@@ -22,225 +22,228 @@ CHAT_ENDPOINT = f"{BACKEND_URL}/api/v1/chat"  # Endpoint non-streaming
 CHAT_STREAM_ENDPOINT = f"{BACKEND_URL}/api/v1/chat/stream"  # Endpoint streaming
 
 # Les 30 questions de test avec leurs réponses attendues
+# Questions réalistes que les utilisateurs posent vraiment (hors suivi de commande)
 QUESTIONS = [
-    # ============ QUESTIONS FACILES (6) ============
+    # ============ FORMATS ET CARACTÉRISTIQUES (6) ============
     {
         "id": 1,
-        "category": "Facile",
-        "label": "Contact service client",
-        "question": "Comment puis-je contacter le service client de Coollibri ?",
-        "expected": "Par téléphone au 05 31 61 60 42 ou par email à contact@coollibri.com, du lundi au vendredi de 8h30 à 18h."
+        "category": "Formats",
+        "label": "Formats disponibles",
+        "question": "Quels formats de livre proposez-vous ?",
+        "expected": "Coollibri propose 7 formats: 11x17 cm (poche), 16x24 cm (roman), 21x21 cm (livre photo carré), A4 portrait 21x29.7 cm, A4 paysage 29.7x21 cm, A5 portrait 14.8x21 cm, A5 paysage 21x14.8 cm."
     },
     {
         "id": 2,
-        "category": "Facile",
-        "label": "Localisation imprimerie",
-        "question": "Où se situe l'imprimerie Coollibri ?",
-        "expected": "À Toulouse (111 rue Nicolas Vauquelin, 31100 Toulouse). L'imprimerie appartient à la société Messages SAS."
+        "category": "Formats",
+        "label": "Format roman",
+        "question": "Quel format choisir pour imprimer mon roman ?",
+        "expected": "Le format 16x24 cm est le plus adapté pour un roman. Le format 11x17 cm (poche) est aussi une option plus compacte et économique. Le format A5 portrait (14.8x21 cm) convient également aux romans et guides."
     },
     {
         "id": 3,
-        "category": "Facile",
-        "label": "ISBN gratuit",
-        "question": "Est-ce que Coollibri fournit un numéro ISBN gratuitement ?",
-        "expected": "Oui, Coollibri fournit gratuitement un ISBN si vous répondez 'oui' à la question 'Souhaitez-vous vendre votre livre ?'."
+        "category": "Formats",
+        "label": "Format livre photo",
+        "question": "Quel est le meilleur format pour un livre photo ?",
+        "expected": "Le format 21x21 cm (carré) est souvent utilisé pour les livres photos. Le format A4 portrait ou A4 paysage sont aussi recommandés pour les beaux livres et albums. Utilisez du papier satin 115g pour les photos."
     },
     {
         "id": 4,
-        "category": "Facile",
-        "label": "Certifications environnement",
-        "question": "Quelles certifications environnementales possède Coollibri ?",
-        "expected": "Coollibri est certifié ISO 14001 (environnement), Imprim'Vert et PEFC."
+        "category": "Formats",
+        "label": "Emails automatiques",
+        "question": "Pourquoi je reçois des emails alors que j'ai déjà passé commande ?",
+        "expected": "Le système envoie des emails automatiques si des projets sont encore 'en cours de préparation' dans votre espace. Cela arrive même si la commande est validée. Vous pouvez ignorer ces messages. Pour éviter cela, supprimez vos anciens projets non utilisés dans votre espace."
     },
     {
         "id": 5,
-        "category": "Facile",
-        "label": "Format eBook",
-        "question": "Dans quel format est livré un ebook chez Coollibri ?",
-        "expected": "Le format ePub 3."
+        "category": "Formats",
+        "label": "Format BD rembordé",
+        "question": "Quels formats sont disponibles pour la reliure rembordé ?",
+        "expected": "Pour la reliure rembordé (couverture cartonnée type BD), seuls 3 formats sont possibles: A4 portrait, A4 paysage et 21x21 cm. Les autres formats ne sont pas disponibles pour cette reliure."
     },
     {
         "id": 6,
-        "category": "Facile",
-        "label": "Délai réclamation",
-        "question": "Quel est le délai pour faire une réclamation après livraison ?",
-        "expected": "3 jours ouvrables après la livraison, en envoyant un email à contact@coollibri.com avec photos et numéro de commande."
+        "category": "Formats",
+        "label": "Annulation commande urgente",
+        "question": "J'ai fait une erreur dans ma commande, puis-je l'annuler ?",
+        "expected": "Si une commande a été validée avec une erreur (mauvais fichier, oubli, édition incorrecte), contactez IMMÉDIATEMENT le service client à contact@coollibri.com. Plus la demande est envoyée tôt, plus les chances d'annulation ou modification avant impression sont élevées."
     },
     
-    # ============ QUESTIONS CHIFFRES (8) ============
+    # ============ RELIURES (6) ============
     {
         "id": 7,
-        "category": "Chiffres",
-        "label": "Pages reliure agrafé",
-        "question": "Quel est le nombre minimum et maximum de pages pour une reliure agrafée ?",
-        "expected": "Minimum 8 pages, maximum 60 pages. Le nombre de pages doit être un multiple de 4."
+        "category": "Reliures",
+        "label": "Types de reliures",
+        "question": "Quelles sont les différentes reliures proposées par Coollibri ?",
+        "expected": "4 types de reliure: Dos carré collé (romans, couverture souple), Rembordé (BD, couverture rigide cartonnée), Agrafé/Piqûre à cheval (magazines, brochures), Spirale (documents techniques, recettes)."
     },
     {
         "id": 8,
-        "category": "Chiffres",
-        "label": "Pages dos carré collé 80g",
-        "question": "Combien de pages maximum peut avoir un livre en dos carré collé avec du papier 80g ?",
-        "expected": "Maximum 500 pages avec le papier 80g. (Minimum 80 pages)"
+        "category": "Reliures",
+        "label": "Dos carré collé pages",
+        "question": "Combien de pages peut-on avoir avec une reliure dos carré collé ?",
+        "expected": "Minimum 60-80 pages selon le papier. Maximum 500 à 700 pages selon le papier choisi. Papier 60g: 60-700 pages. Papier 80g: 80-500 pages. Papier 90g satiné: 90-500 pages."
     },
     {
         "id": 9,
-        "category": "Chiffres",
-        "label": "Tarif eBook",
-        "question": "Quel est le prix pour obtenir uniquement un eBook sans impression papier ?",
-        "expected": "50€ pour l'eBook seul, ou 15€ si vous avez aussi une commande papier."
+        "category": "Reliures",
+        "label": "Reliure magazine",
+        "question": "Quelle reliure pour un magazine ou une brochure ?",
+        "expected": "La reliure agrafée (piqûre à cheval) est idéale pour les magazines. Minimum 8 pages, maximum 60 pages. Le nombre de pages doit être un multiple de 4 (8, 12, 16, 20...)."
     },
     {
         "id": 10,
-        "category": "Chiffres",
-        "label": "Dimensions format poche",
-        "question": "Quelles sont les dimensions exactes du format poche ?",
-        "expected": "11 x 17 cm (11 centimètres de largeur × 17 centimètres de hauteur)."
+        "category": "Reliures",
+        "label": "Spirale avantages",
+        "question": "Quels sont les avantages de la reliure spirale ?",
+        "expected": "La spirale permet une ouverture complète à 360°, pages parfaitement à plat. Idéal pour recettes, partitions, manuels techniques. De 1 à 290-500 pages selon le papier. Le livre ne comporte pas de dos."
     },
     {
         "id": 11,
-        "category": "Chiffres",
-        "label": "Pages reliure rembordé",
-        "question": "Combien de pages maximum peut contenir un livre avec reliure rembordé ?",
-        "expected": "Entre 100 et 150 pages maximum selon le papier choisi. Minimum 24 pages."
+        "category": "Reliures",
+        "label": "Rembordé pages max",
+        "question": "Combien de pages maximum pour une reliure rembordé ?",
+        "expected": "Minimum 24 pages, maximum 100 à 150 pages selon le papier choisi. Pour un nombre de pages important, contacter l'équipe Coollibri pour une étude personnalisée."
     },
     {
         "id": 12,
-        "category": "Chiffres",
-        "label": "Grammage papier satin",
-        "question": "Quel est le grammage du papier lisse satin pour les photos ?",
-        "expected": "115g/m² (papier couché satin 115g blanc)."
+        "category": "Reliures",
+        "label": "Livre cuisine reliure",
+        "question": "Quelle reliure pour un livre de recettes de cuisine ?",
+        "expected": "La reliure spirale est recommandée car le livre peut s'ouvrir à plat à 360°. Pratique pour consulter une recette en cuisinant. Le dos carré collé ne permet pas une ouverture à plat et peut s'abîmer si on force."
     },
+    
+    # ============ PAPIERS (5) ============
     {
         "id": 13,
-        "category": "Chiffres",
-        "label": "Résolution images",
-        "question": "Quelle résolution minimum est recommandée pour les images dans un livre ?",
-        "expected": "300 ppp (pixels par pouce) minimum pour une impression de qualité."
+        "category": "Papiers",
+        "label": "Types de papiers",
+        "question": "Quels types de papier proposez-vous pour l'intérieur du livre ?",
+        "expected": "4 types de papier: Standard 80g blanc (équivalent papier imprimante), Bouffant 90g blanc (cotonneux, doux), Bouffant 90g crème (rendu ancien), Couché satin 115g blanc (lisse, idéal photos couleur)."
     },
     {
         "id": 14,
-        "category": "Chiffres",
-        "label": "Pages reliure spirale",
-        "question": "Quel est le nombre maximum de pages pour une reliure spirale ?",
-        "expected": "Entre 290 et 500 pages selon l'épaisseur du papier choisi."
+        "category": "Papiers",
+        "label": "Papier photos couleur",
+        "question": "Quel papier choisir pour un livre avec des photos en couleur ?",
+        "expected": "Le papier couché satin 115g blanc est recommandé. Il a un toucher lisse et met en valeur les photos couleur. Le papier bouffant n'est PAS adapté aux photos couleur."
     },
-    
-    # ============ QUESTIONS COMPARATIVES (6) ============
     {
         "id": 15,
-        "category": "Comparative",
-        "label": "Pelliculage mat vs brillant",
-        "question": "Quelle est la différence entre le pelliculage mat et brillant ? Lequel est recommandé ?",
-        "expected": "Brillant: effet glossy, reflets lumineux, couleurs éclatantes, mais traces de doigts visibles. Mat: aspect sobre et élégant, toucher velouté, protection contre les traces. Le mat est recommandé SAUF pour couvertures à fond foncé où le brillant est préférable."
+        "category": "Papiers",
+        "label": "Fichier Word refusé",
+        "question": "Mon fichier Word n'est pas accepté sur le site, que faire ?",
+        "expected": "Le format PDF est fortement recommandé car il fige la mise en page, les polices et les marges. Convertissez votre Word en PDF via: Microsoft Word → Fichier > Exporter > PDF, ou Google Docs → Fichier > Télécharger > PDF. Le Word peut causer des décalages d'affichage entre ordinateurs."
     },
     {
         "id": 16,
-        "category": "Comparative",
-        "label": "Papier standard vs satin",
-        "question": "Quelle est la différence entre le papier standard 90g et le papier satin 115g ? Lequel choisir pour un livre photo ?",
-        "expected": "Standard 90g: équivalent papier imprimante, adapté aux textes, NON adapté aux photos couleur. Satin 115g: papier plus épais, lisse, finition satinée, rendu couleur exceptionnel. Le papier satin 115g est OBLIGATOIRE pour les livres avec photos couleur."
+        "category": "Papiers",
+        "label": "Rendu 3D pas fidèle",
+        "question": "Le rendu 3D sur le site ne ressemble pas à ce que j'attends, est-ce normal ?",
+        "expected": "Le rendu 3D et le livre virtuel sont des aperçus NON CONTRACTUELS. Ils ne matérialisent pas les marges de fabrication. Pour avoir une idée exacte du rendu final, imprimez une ou deux pages en taille réelle. Le rendu 3D sert à visualiser l'aspect général (couverture, dos, épaisseur)."
     },
     {
         "id": 17,
-        "category": "Comparative",
-        "label": "Dos carré vs rembordé (BD)",
-        "question": "Quelle reliure choisir entre le dos carré collé et le rembordé pour une bande dessinée ?",
-        "expected": "Dos carré collé: couverture souple, adapté aux romans, jusqu'à 700 pages. Rembordé: couverture rigide cartonnée, aspect luxueux, adapté aux BD et albums. Le rembordé est recommandé pour les BD car il offre une protection maximale et un aspect professionnel type album BD."
+        "category": "Papiers",
+        "label": "Marges document",
+        "question": "Quelles marges dois-je laisser dans mon document ?",
+        "expected": "2 cm de marges tout autour du document. Aucun élément important (texte, visage) ne doit se trouver dans cette zone de sécurité sous peine d'être coupé ou pris dans la reliure."
     },
+    
+    # ============ COUVERTURE (4) ============
     {
         "id": 18,
-        "category": "Comparative",
-        "label": "Format 11x17 vs 16x24",
-        "question": "Quel format choisir entre le 11x17 cm et le 16x24 cm pour un roman ?",
-        "expected": "11x17 cm: format poche, compact, économique, transport facile. 16x24 cm: format grand livre, plus d'espace, confort de lecture supérieur. Le choix dépend du style souhaité: poche économique vs édition plus qualitative."
+        "category": "Couverture",
+        "label": "Créer couverture",
+        "question": "Comment créer ma couverture si je n'ai pas de logiciel ?",
+        "expected": "Coollibri propose un outil gratuit de personnalisation en ligne avec de nombreux modèles gratuits. Vous pouvez personnaliser avec vos textes et photos. Rendez-vous sur la page 'Créer votre couverture'."
     },
     {
         "id": 19,
-        "category": "Comparative",
-        "label": "Spirale vs dos carré (recettes)",
-        "question": "Pourquoi choisir une reliure spirale plutôt qu'un dos carré collé pour un livre de recettes ?",
-        "expected": "La spirale permet une ouverture complète à 360°, les pages restent parfaitement à plat. Idéal en cuisine pour consulter la recette les mains occupées. Le dos carré collé ne s'ouvre jamais complètement à plat et la reliure peut être fragilisée si on force."
+        "category": "Couverture",
+        "label": "Pelliculage choix",
+        "question": "Faut-il choisir un pelliculage mat ou brillant pour ma couverture ?",
+        "expected": "Mat: aspect sobre et élégant, toucher velouté, cache les traces de doigts. Brillant: couleurs éclatantes, reflets, mais traces de doigts visibles. Le mat est recommandé sauf pour les couvertures à fond foncé (préférer brillant)."
     },
     {
         "id": 20,
-        "category": "Comparative",
-        "label": "ISBN vs ISSN",
-        "question": "Quelle est la différence entre ISBN et ISSN ?",
-        "expected": "ISBN: numéro unique pour identifier un livre (obligatoire pour vendre un livre). ISSN: numéro pour les publications périodiques (magazines, revues). Contacter Coollibri pour plus d'informations sur l'ISSN."
+        "category": "Couverture",
+        "label": "Verso couverture",
+        "question": "Est-ce que le verso de la couverture est imprimé ?",
+        "expected": "Non, les versos des couvertures ne sont pas imprimés. Exception: pour une brochure agrafée, l'intérieur des couvertures peut être imprimé sur demande."
     },
-    
-    # ============ QUESTIONS COMPLEXES (6) ============
     {
         "id": 21,
-        "category": "Complexe",
-        "label": "Album photo mariage",
-        "question": "Je veux créer un album photo de mariage de 80 pages. Quelle reliure, quel format et quel papier me recommandez-vous ?",
-        "expected": "Reliure: Rembordé (couverture rigide, aspect luxueux). Format: 21x21 cm (format carré, idéal pour les photos) ou A4 portrait/paysage. Papier: Satin 115g blanc (obligatoire pour les photos couleur). Pelliculage: Mat (sauf si fond foncé → brillant)."
+        "category": "Couverture",
+        "label": "Délai remboursement",
+        "question": "J'ai reçu l'accord pour un remboursement mais je n'ai toujours rien reçu, c'est normal ?",
+        "expected": "Oui, les délais normaux sont: accord service client (immédiat), traitement comptable (3-5 jours ouvrables), virement bancaire (3-5 jours). Total: 1-2 semaines. Si rien après 2 semaines, recontactez le service client avec votre numéro de commande ET la date de confirmation du remboursement."
     },
+    
+    # ============ ISBN ET VENTE (5) ============
     {
         "id": 22,
-        "category": "Complexe",
-        "label": "Vente bibliothèque commerciale",
-        "question": "Expliquez-moi comment fonctionne la vente de mon livre via la bibliothèque commerciale de Coollibri.",
-        "expected": "Le lecteur achète le livre sur la bibliothèque Coollibri. Coollibri fabrique et expédie directement au lecteur (impression à la demande). Frais: 1€ TTC par livre vendu + coût de fabrication. Bénéfice = Prix de vente - Coût fabrication - 1€. Paiement par virement dès 10€ de bénéfice cumulé, une fois par mois. L'auteur doit renseigner son IBAN."
+        "category": "ISBN-Vente",
+        "label": "ISBN obligatoire",
+        "question": "Ai-je besoin d'un ISBN pour mon livre ?",
+        "expected": "L'ISBN est obligatoire uniquement si vous souhaitez VENDRE votre livre. Si le livre n'est pas destiné à la vente, pas besoin d'ISBN. Coollibri fournit l'ISBN gratuitement si vous répondez 'oui' à 'Souhaitez-vous vendre votre livre ?'"
     },
     {
         "id": 23,
-        "category": "Complexe",
-        "label": "Protection œuvre",
-        "question": "Comment puis-je protéger mon œuvre avant de la publier sur Coollibri ?",
-        "expected": "Protection implicite: S'envoyer le manuscrit en recommandé sans ouvrir l'enveloppe (le cachet poste fait foi). Protection explicite: Dépôt chez un notaire, huissier, SGDL ou copyright via copyrightdepot.com. L'ISBN est aussi une première protection. Le dépôt légal à la BNF protège le contenu intellectuel."
+        "category": "ISBN-Vente",
+        "label": "PDF refusé malgré tout",
+        "question": "Mon fichier PDF est refusé par le site, que faire ?",
+        "expected": "Si votre PDF est refusé (marges incorrectes, format non conforme, erreur de construction), contactez le service client à contact@coollibri.com. Ils analyseront votre fichier, identifieront le problème et vous indiqueront la correction à effectuer."
     },
     {
         "id": 24,
-        "category": "Complexe",
-        "label": "Statut juridique vente",
-        "question": "Je vends quelques livres par an, quel statut juridique dois-je adopter ?",
-        "expected": "Micro-entrepreneur: statut idéal pour débuter, formalités simplifiées, pas de TVA. Pour des recettes très faibles: tolérance possible en déclarant avec les autres revenus. Si l'activité prend de l'importance: envisager une SARL ou SAS. Consulter un professionnel (avocat, expert-comptable) pour des conseils personnalisés."
+        "category": "ISBN-Vente",
+        "label": "Vendre via bibliothèque",
+        "question": "Comment vendre mon livre via Coollibri ?",
+        "expected": "La bibliothèque commerciale Coollibri permet la vente en impression à la demande. Le lecteur achète, Coollibri fabrique et expédie. Frais: 1€ TTC par livre + coût fabrication. Bénéfice versé par virement dès 10€ cumulés."
     },
     {
         "id": 25,
-        "category": "Complexe",
-        "label": "Fichier couverture options",
-        "question": "Quelles sont les différentes façons de fournir mon fichier couverture à Coollibri ?",
-        "expected": "Cas 1 - Fichier combiné: Intérieur + couverture dans un seul PDF. Cas 2a - Fichier séparé 2 pages: Un PDF avec 1ère et 4ème couv. Cas 2b - Fichier maquetté: Un PDF 1 page avec couverture à plat avec 3mm de fonds perdus. Ou utiliser l'outil gratuit de création de couverture en ligne avec +300 photos libres de droits."
+        "category": "ISBN-Vente",
+        "label": "Prix de vente",
+        "question": "À quel prix vendre mon livre ?",
+        "expected": "C'est à l'auteur de définir le prix. Prenez en compte: coût de fabrication (devis sur Coollibri), autres coûts (relecture...), prix du marché, marge souhaitée, et 1€ de frais si vente via bibliothèque Coollibri. TVA livre: 5.5%."
     },
     {
         "id": 26,
-        "category": "Complexe",
-        "label": "Avantages compte Pro",
-        "question": "Quels sont les avantages du compte Coollibri Pro pour les professionnels ?",
-        "expected": "Achevé d'imprimer personnalisé. Livraison en marque blanche. Remises avec système de points. Tableau de bord professionnel. Contrôle PAO gratuit pour commandes > 50 exemplaires. Facture mensuelle regroupée. Paiement à 30 jours. Adhésion gratuite."
+        "category": "ISBN-Vente",
+        "label": "ISBN librairie auto",
+        "question": "Mon livre sera-t-il automatiquement en librairie avec un ISBN ?",
+        "expected": "NON. L'ISBN est seulement un identifiant unique, il ne garantit pas le référencement en librairie. Pour apparaître dans les bases des libraires, il faut passer par des prestataires payants comme DILICOM."
     },
     
-    # ============ QUESTIONS PIÈGES (4) ============
+    # ============ QUESTIONS FRÉQUENTES/PROBLÈMES (4) ============
     {
         "id": 27,
-        "category": "Piège",
-        "label": "Correction orthographe",
-        "question": "Est-ce que Coollibri va corriger les fautes d'orthographe de mon livre avant l'impression ?",
-        "expected": "NON - Coollibri n'effectue AUCUNE relecture orthographique, ni correction d'erreurs, ni contrôle du contenu. Le livre est imprimé tel quel. Des correcteurs indépendants sont listés sur le blog."
+        "category": "Problèmes",
+        "label": "Relecture orthographe",
+        "question": "Est-ce que vous corrigez les fautes d'orthographe de mon livre ?",
+        "expected": "NON. Coollibri n'effectue aucune relecture orthographique, ni correction, ni contrôle de mise en page ou de centrage. Le livre est imprimé tel quel. Des correcteurs indépendants sont listés sur le blog Coollibri."
     },
     {
         "id": 28,
-        "category": "Piège",
-        "label": "Droit de rétractation",
-        "question": "J'ai commandé mon livre mais je veux annuler, j'ai 14 jours de rétractation légale n'est-ce pas ?",
-        "expected": "NON - Le droit de rétractation ne s'applique PAS car les livres sont des produits personnalisés fabriqués selon vos spécifications. Une fois la commande validée, elle ne peut pas être annulée."
+        "category": "Problèmes",
+        "label": "Retard livraison",
+        "question": "Ma commande est en retard, que faire ?",
+        "expected": "Un retard peut être dû à un problème d'impression, volume important de commandes, incident logistique ou retard transporteur. Contactez le service client à contact@coollibri.com avec votre numéro de commande, date de commande et adresse. Ils pourront débloquer la situation."
     },
     {
         "id": 29,
-        "category": "Piège",
-        "label": "Image double page",
-        "question": "Je veux mettre une grande photo sur deux pages en vis-à-vis avec une reliure dos carré collé, c'est possible ?",
-        "expected": "Déconseillé - Avec une reliure dos carré collé ou rembordé, le livre ne s'ouvre jamais complètement à plat. Une partie de l'image sera prise dans la reliure. Pour une image panoramique, privilégier la reliure spirale qui s'ouvre à 360°."
+        "category": "Problèmes",
+        "label": "Demande remboursement",
+        "question": "Comment demander un remboursement ?",
+        "expected": "Contactez le service client à contact@coollibri.com avec OBLIGATOIREMENT: numéro de commande, description précise du problème, photos si applicable. Le service client évaluera et proposera la meilleure solution (renvoi, correction, remplacement OU remboursement). Aucune promesse ne peut être faite par le chatbot."
     },
     {
         "id": 30,
-        "category": "Piège",
-        "label": "Référencement librairie ISBN",
-        "question": "Mon livre aura un ISBN donc il sera automatiquement référencé dans toutes les librairies de France ?",
-        "expected": "NON - L'ISBN ne garantit PAS le référencement en librairie. L'ISBN est seulement un identifiant unique. Pour être référencé dans les bases des librairies et bibliothèques, il faut passer par des prestataires payants comme DILICOM. L'auteur peut aussi démarcher directement les librairies locales."
+        "category": "Problèmes",
+        "label": "Droit rétractation",
+        "question": "Puis-je annuler ma commande après validation, j'ai 14 jours de rétractation ?",
+        "expected": "NON. Le droit de rétractation ne s'applique pas car les livres sont des produits personnalisés fabriqués selon vos spécifications. Une fois validée, la commande ne peut pas être annulée. Contactez rapidement le service client si erreur."
     }
 ]
 
@@ -348,7 +351,7 @@ def run_benchmark() -> Dict[str, Any]:
     # Récupérer le modèle utilisé (via l'API health ou config)
     try:
         # On essaie de récupérer le nom du modèle
-        model_name = "zephyr"  # Modèle actuellement configuré
+        model_name = "neural-chat"  # Modèle actuellement configuré
     except:
         model_name = "unknown"
     
@@ -433,7 +436,7 @@ def save_results(results: Dict[str, Any], filename: str = None) -> str:
     if filename is None:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         model_name = results["benchmark_info"]["model"].replace(":", "_").replace("/", "_")
-        filename = f"benchmark_results_{model_name}_{timestamp}.json"
+        filename = f"Deuxieme Benchmark/benchmark_results_{model_name}_{timestamp}.json"
     
     with open(filename, "w", encoding="utf-8") as f:
         json.dump(results, f, ensure_ascii=False, indent=2)
