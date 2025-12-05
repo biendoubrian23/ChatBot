@@ -98,10 +98,12 @@ const QuestionCard = ({ question, ratings, onRatingChange, comment, onCommentCha
           </div>
 
           <div className="answers-container">
+            {/* Réponse attendue masquée temporairement
             <div className="answer expected">
               <h4>Reponse attendue</h4>
               <p>{question.expected_answer}</p>
             </div>
+            */}
 
             <div className="answer actual">
               <h4>Reponse du chatbot</h4>
@@ -132,12 +134,12 @@ const QuestionCard = ({ question, ratings, onRatingChange, comment, onCommentCha
           {/* Zone de commentaire */}
           <div className="comment-section">
             <h4>
-              Commentaire (optionnel)
+              Quelle serait la meilleure réponse à donner ?
               {isSaving && <span className="saving-indicator"> Enregistrement...</span>}
             </h4>
             <textarea
               className="comment-input"
-              placeholder="Ajoutez vos remarques ou observations sur cette question..."
+              placeholder="Proposez la réponse idéale que le chatbot aurait dû donner..."
               value={localComment}
               onChange={handleCommentChange}
               rows={3}

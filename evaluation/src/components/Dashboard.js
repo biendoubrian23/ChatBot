@@ -150,7 +150,12 @@ const Dashboard = ({ onLogout }) => {
   const openCommentsModal = (questionId) => {
     const question = benchmarkData.results.find(q => q.id === questionId);
     const comments = getQuestionComments(questionId);
-    setSelectedQuestionComments({ questionId, questionLabel: question?.label || '', comments });
+    setSelectedQuestionComments({ 
+      questionId, 
+      questionLabel: question?.label || '', 
+      questionText: question?.question || '',
+      comments 
+    });
     setShowCommentsModal(true);
   };
 
@@ -164,6 +169,7 @@ const Dashboard = ({ onLogout }) => {
         return {
           question_id: q.id,
           question_label: q.label,
+          question: q.question,
           category: q.category,
           comments: questionComments.map(c => ({
             user_id: c.user_id,
@@ -340,7 +346,6 @@ const Dashboard = ({ onLogout }) => {
                 <tr>
                   <th>ID</th>
                   <th>Question</th>
-                  <th>Categorie</th>
                   <th>Exactitude</th>
                   <th>Completude</th>
                   <th>Clarte</th>
@@ -353,12 +358,7 @@ const Dashboard = ({ onLogout }) => {
                 {questionStats.map(q => (
                   <tr key={q.id}>
                     <td>{q.id}</td>
-                    <td>{q.label}</td>
-                    <td>
-                      <span className={`category-badge cat-${q.category.toLowerCase()}`}>
-                        {q.category}
-                      </span>
-                    </td>
+                    <td>{benchmarkData.results.find(bq => bq.id === q.id)?.question || q.label}</td>
                     <td>{q.exactitude}</td>
                     <td>{q.completude}</td>
                     <td>{q.clarte}</td>
@@ -411,7 +411,10 @@ const Dashboard = ({ onLogout }) => {
               <h3>Commentaires - Q{selectedQuestionComments.questionId}</h3>
               <button className="modal-close" onClick={() => setShowCommentsModal(false)}>×</button>
             </div>
-            <p className="modal-question-label">{selectedQuestionComments.questionLabel}</p>
+            <div className="modal-question-info">
+              <p className="modal-question-label"><strong>{selectedQuestionComments.questionLabel}</strong></p>
+              <p className="modal-question-text">{selectedQuestionComments.questionText}</p>
+            </div>
             <div className="modal-body">
               {selectedQuestionComments.comments.length > 0 ? (
                 selectedQuestionComments.comments.map((c, index) => (

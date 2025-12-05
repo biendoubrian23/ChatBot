@@ -440,12 +440,23 @@
   color: #111827;
 }
 
+.modal-question-info {
+  padding: 16px 24px;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
 .modal-question-label {
-  padding: 12px 24px;
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: #111827;
+}
+
+.modal-question-text {
   margin: 0;
   font-size: 14px;
   color: #6b7280;
-  background: #f9fafb;
+  line-height: 1.5;
 }
 
 .modal-body {
