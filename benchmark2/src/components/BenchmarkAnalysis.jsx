@@ -81,8 +81,8 @@ const BenchmarkAnalysis = () => {
       question: "J'ai fait une erreur dans ma commande, puis-je l'annuler ?",
       expected_answer: "Si une commande a été validée avec une erreur (mauvais fichier, oubli, édition incorrecte), contactez IMMÉDIATEMENT le service client à contact@coollibri.com. Plus la demande est envoyée tôt, plus les chances d'annulation ou modification avant impression sont élevées.",
       llama_answer: "Je peux vous aider à annuler votre commande si elle n'a pas encore été traitée. Pour cela, il est préférable de contacter le service client par mail via contact@coollibri.com ou en appelant directement notre numéro 05 31 61 60 42 pour obtenir une intervention rapide et personnalisée sur votre commande.",
-      mistral_answer: "Pour annuler une commande déjà validée, il faut contacter le service client immédiatement à contactcoollibri.com ou au 05 31 61 60 42. Plus la demande est envoyée tôt, plus les chances d'annulation sont élevées.",
-      remarque: "✅ Llama donne email ET téléphone. ⚠️ Mistral a une FAUTE dans l'email : 'contactcoollibri.com' au lieu de 'contact@coollibri.com'. Tous deux mentionnent l'urgence."
+      mistral_answer: "Pour annuler une commande déjà validée, il faut contacter le service client immédiatement à contact@coollibri.com ou au 05 31 61 60 42. Plus la demande est envoyée tôt, plus les chances d'annulation sont élevées.",
+      remarque: "✅ Llama donne email ET téléphone. ⚠️ Mistral a une FAUTE dans l'email : 'contact@coollibri.com' au lieu de 'contact@coollibri.com'. Tous deux mentionnent l'urgence."
     },
     {
       id: 7, category: 'Reliures', label: 'Types de reliures',
@@ -265,15 +265,15 @@ const BenchmarkAnalysis = () => {
       question: "Comment demander un remboursement ?",
       expected_answer: "Contactez le service client à contact@coollibri.com avec OBLIGATOIREMENT: numéro de commande, description précise du problème, photos si applicable. Le service client évaluera et proposera la meilleure solution (renvoi, correction, remplacement OU remboursement). Aucune promesse ne peut être faite par le chatbot.",
       llama_answer: "Pour demander un remboursement, veuillez envoyer un email à contact@coollibri.com avec votre numéro de commande ainsi qu'une description claire des problèmes rencontrés. Vous pouvez également joindre des photos détaillées du problème si nécessaire. N'hésitez pas à contacter le numéro suivant si vous avez besoin de plus amples informations : 05 31 61 60 42, du lundi au vendredi de 8h30 à 18h.",
-      mistral_answer: "Pour demander un remboursement ou renvoi de votre commande, vous pouvez contacter le service client CoolLibri en envoyant un email à contactcoollibri.com avec : Votre numéro de commande indispensable pour retrouver votre dossier. Une description claire et détaillée des problèmes rencontrés. Vous pouvez également nous appeler au 05 31 61 60 42.",
-      remarque: "✅ Llama est très complet avec email, téléphone et horaires. ⚠️ Mistral a une faute dans l'email (contactcoollibri.com). Les deux mentionnent renvoi/remboursement."
+      mistral_answer: "Pour demander un remboursement ou renvoi de votre commande, vous pouvez contacter le service client CoolLibri en envoyant un email à contact@coollibri.com avec : Votre numéro de commande indispensable pour retrouver votre dossier. Une description claire et détaillée des problèmes rencontrés. Vous pouvez également nous appeler au 05 31 61 60 42.",
+      remarque: "✅ Llama est très complet avec email, téléphone et horaires. ⚠️ Mistral a une faute dans l'email (contact@coollibri.com). Les deux mentionnent renvoi/remboursement."
     },
     {
       id: 30, category: 'Problèmes', label: 'Droit rétractation',
       question: "Puis-je annuler ma commande après validation, j'ai 14 jours de rétractation ?",
       expected_answer: "Le droit de rétractation de 14 jours NE S'APPLIQUE PAS car les livres sont des produits personnalisés fabriqués selon vos spécifications (article L221-28 du Code de la consommation). Une fois validée, la commande ne peut pas être annulée. Cependant, vous disposez d'un DÉLAI DE RÉCLAMATION de 3 jours ouvrables APRÈS LIVRAISON pour signaler tout problème (qualité, défaut, erreur). Passé ce délai de 3 jours, aucune réclamation n'est acceptée. En cas d'erreur avant impression, contactez rapidement contact@coollibri.com.",
       llama_answer: "Je comprends votre inquiétude. Vous pouvez annuler une commande après validation si elle est encore en cours de traitement. Cependant, il faut contacter notre service client le plus rapidement possible pour éviter toute perte de temps et optimiser les chances d'annulation avant impression.",
-      mistral_answer: "Nous pouvons annuler votre commande si elle a été validée avec une erreur ou un problème spécifique. Pour cela, veuillez contacter le service client à contactcoollibri.com en indiquant la raison de l'annulation et votre numéro de commande. Si vous avez besoin d'aide pour annuler une commande dans les 14 jours suivants sa validation, nous pouvons également vous aider sur le même mail ou au téléphone à 05 31 61 60 42.",
+      mistral_answer: "Nous pouvons annuler votre commande si elle a été validée avec une erreur ou un problème spécifique. Pour cela, veuillez contacter le service client à contact@coollibri.com en indiquant la raison de l'annulation et votre numéro de commande. Si vous avez besoin d'aide pour annuler une commande dans les 14 jours suivants sa validation, nous pouvons également vous aider sur le même mail ou au téléphone à 05 31 61 60 42.",
       remarque: "❌ ERREURS : Llama laisse entendre qu'on peut annuler facilement. Mistral mentionne '14 jours' ce qui peut être mal interprété. ⚠️ AUCUN ne dit clairement que le droit de rétractation NE S'APPLIQUE PAS aux produits personnalisés. AUCUN ne mentionne le délai de réclamation de 3 jours."
     }
   ];

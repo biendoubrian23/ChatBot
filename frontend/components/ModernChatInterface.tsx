@@ -10,7 +10,7 @@ import FloatingChatButton from './FloatingChatButton'
 import ChatWindow from './ChatWindow'
 import QuickActions from './QuickActions'
 import OrderNumberInput from './OrderNumberInput'
-import { getOrderTracking, detectOrderInquiry } from '@/lib/orderUtils'
+import { getOrderTracking } from '@/lib/orderUtils'
 import { detectGreeting } from '@/lib/greetingUtils'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'
@@ -94,7 +94,7 @@ export default function ChatInterface({ onMetricsUpdate }: ChatInterfaceProps) {
   const handleCancelOrderInput = () => {
     setShowOrderInput(false)
     setMode('normal')
-    
+
     const cancelMessage: Message = {
       id: Date.now().toString(),
       role: 'assistant',
@@ -142,9 +142,9 @@ export default function ChatInterface({ onMetricsUpdate }: ChatInterfaceProps) {
             hasStartedReceiving = true
             firstByteTime = Date.now() - startTime
           }
-          
+
           fullContent += chunk
-          
+
           setMessages((prev) =>
             prev.map((msg) =>
               msg.id === assistantId
@@ -164,7 +164,7 @@ export default function ChatInterface({ onMetricsUpdate }: ChatInterfaceProps) {
             timestamp: new Date(),
             sources: [{ source: 'Base de données CoolLibri', relevance: 1.0 }]
           }
-          
+
           setMetricsHistory((prev) => {
             const updated = [...prev, newMetric]
             if (onMetricsUpdate) {
@@ -172,7 +172,7 @@ export default function ChatInterface({ onMetricsUpdate }: ChatInterfaceProps) {
             }
             return updated
           })
-          
+
           setIsLoading(false)
           setMode('normal')
         },
@@ -184,7 +184,7 @@ export default function ChatInterface({ onMetricsUpdate }: ChatInterfaceProps) {
             content: `Désolé, je n'ai pas pu trouver la commande n°${orderNumber}. ${error}`,
             timestamp: new Date(),
           }
-          setMessages((prev) => 
+          setMessages((prev) =>
             prev.map((msg) =>
               msg.id === assistantId ? errorMessage : msg
             )
@@ -198,7 +198,7 @@ export default function ChatInterface({ onMetricsUpdate }: ChatInterfaceProps) {
             hasStartedReceiving = true
             firstByteTime = Date.now() - startTime
           }
-          
+
           setMessages((prev) =>
             prev.map((msg) =>
               msg.id === assistantId
@@ -216,9 +216,16 @@ export default function ChatInterface({ onMetricsUpdate }: ChatInterfaceProps) {
                 : msg
             )
           )
+        },
+        // onAnalysis: afficher le raisonnement du LLM
+        (analysis: any) => {
+          console.log('%c🤖 LLM Analysis', 'background: #6366f1; color: white; padding: 4px; border-radius: 4px; font-weight: bold;')
+          console.log('Intent:', analysis.intent)
+          console.log('Reasoning:', analysis.reasoning)
+          if (analysis.order_number) console.log('Order Number:', analysis.order_number)
         }
       )
-      
+
     } catch (error) {
       const errorMessage: Message = {
         id: assistantId,
@@ -226,7 +233,7 @@ export default function ChatInterface({ onMetricsUpdate }: ChatInterfaceProps) {
         content: `Désolé, je n'ai pas pu trouver la commande n°${orderNumber}. Veuillez vérifier le numéro et réessayer.`,
         timestamp: new Date(),
       }
-      setMessages((prev) => 
+      setMessages((prev) =>
         prev.map((msg) =>
           msg.id === assistantId ? errorMessage : msg
         )
@@ -261,7 +268,7 @@ export default function ChatInterface({ onMetricsUpdate }: ChatInterfaceProps) {
     }
 
     response += '\n\n📅 **Dates clés**\n'
-    
+
     if (item?.production_date) {
       const prodDate = new Date(item.production_date).toLocaleDateString('fr-FR', {
         day: 'numeric',
@@ -278,7 +285,7 @@ export default function ChatInterface({ onMetricsUpdate }: ChatInterfaceProps) {
         year: 'numeric'
       })
       response += `L'expédition est prévue pour le **${shipDate}**`
-      
+
       if (item?.confirmed_shipping) {
         const confirmDate = new Date(item.confirmed_shipping).toLocaleDateString('fr-FR', {
           day: 'numeric',
@@ -319,14 +326,14 @@ export default function ChatInterface({ onMetricsUpdate }: ChatInterfaceProps) {
         timestamp: new Date(),
       }
       setMessages((prev) => [...prev, userMessage])
-      
+
       // Afficher l'indicateur de chargement
       setIsLoading(true)
-      
+
       // Délai naturel de 1-1.5 secondes pour simuler une réponse humaine
       const delay = 1000 + Math.random() * 500 // Entre 1s et 1.5s
       await new Promise(resolve => setTimeout(resolve, delay))
-      
+
       // Réponse après le délai
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -341,51 +348,9 @@ export default function ChatInterface({ onMetricsUpdate }: ChatInterfaceProps) {
     }
 
     // ============================================================
-    // 2. DÉTECTION DES DEMANDES DE SUIVI DE COMMANDE
+    // 2. TOUTES LES QUESTIONS → BACKEND LLM-FIRST
+    // Le backend décide si c'est du tracking ou une question générale
     // ============================================================
-    const inquiryResult = detectOrderInquiry(content)
-    
-    // Si numéro de commande présent → workflow SQL direct (sans ajouter le message utilisateur ici)
-    if (inquiryResult.type === 'direct_tracking') {
-      // Ajouter le message utilisateur
-      const userMessage: Message = {
-        id: Date.now().toString(),
-        role: 'user',
-        content,
-        timestamp: new Date(),
-      }
-      setMessages((prev) => [...prev, userMessage])
-      
-      // Appeler directement le tracking
-      await handleOrderNumberSubmit(inquiryResult.orderNumber)
-      return
-    }
-    
-    // Si demande de suivi sans numéro → demander le numéro
-    if (inquiryResult.type === 'ask_order_number') {
-      // Ajouter le message utilisateur
-      const userMessage: Message = {
-        id: Date.now().toString(),
-        role: 'user',
-        content,
-        timestamp: new Date(),
-      }
-      setMessages((prev) => [...prev, userMessage])
-      
-      // Demander le numéro de commande
-      const botMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: 'Veuillez entrer le numéro de votre commande :',
-        timestamp: new Date(),
-      }
-      setMessages((prev) => [...prev, botMessage])
-      setShowOrderInput(true)
-      setMode('order_tracking')
-      return
-    }
-    
-    // Sinon → question générale, laisser le RAG répondre
     const userMessage: Message = {
       id: Date.now().toString(),
       role: 'user',
@@ -433,14 +398,19 @@ export default function ChatInterface({ onMetricsUpdate }: ChatInterfaceProps) {
           conversation_id: conversationId || undefined,
           history: history,
         },
-        // onToken
-        (token: string) => {
+        // onToken - avec support du remplacement complet pour les corrections
+        (token: string, replace?: boolean) => {
           if (!hasStartedReceiving) {
             hasStartedReceiving = true
             firstByteTime = Date.now() - startTime
             fullContent = token
           } else {
-            fullContent += token
+            if (replace) {
+              // Remplacer tout le contenu (utilisé pour les corrections d'email)
+              fullContent = token
+            } else {
+              fullContent += token
+            }
           }
           setMessages((prev) =>
             prev.map((msg) =>
@@ -474,7 +444,7 @@ export default function ChatInterface({ onMetricsUpdate }: ChatInterfaceProps) {
               relevance: s.relevance_score
             }))
           }
-          
+
           setMetricsHistory((prev) => [...prev, newMetric])
           setIsLoading(false)
         },
@@ -485,13 +455,26 @@ export default function ChatInterface({ onMetricsUpdate }: ChatInterfaceProps) {
             prev.map((msg) =>
               msg.id === assistantId
                 ? {
-                    ...msg,
-                    content: 'Désolé, une erreur est survenue. Veuillez réessayer.',
-                  }
+                  ...msg,
+                  content: 'Désolé, une erreur est survenue. Veuillez réessayer.',
+                }
                 : msg
             )
           )
           setIsLoading(false)
+        },
+        // onAnalysis - Log LLM reasoning to console
+        (analysis: any) => {
+          console.log('%c🤖 LLM Intent Analysis', 'background: #6366f1; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold;')
+          console.log('  Intent:', analysis.intent)
+          console.log('  Reasoning:', analysis.reasoning)
+          if (analysis.order_number) console.log('  Order Number:', analysis.order_number)
+
+          // Si le backend demande un numéro de commande, afficher l'input
+          if (analysis.intent === 'order_tracking' && !analysis.order_number) {
+            setShowOrderInput(true)
+            setMode('order_tracking')
+          }
         }
       )
     } catch (err: any) {
@@ -500,9 +483,9 @@ export default function ChatInterface({ onMetricsUpdate }: ChatInterfaceProps) {
         prev.map((msg) =>
           msg.id === assistantId
             ? {
-                ...msg,
-                content: 'Désolé, une erreur est survenue. Veuillez réessayer.',
-              }
+              ...msg,
+              content: 'Désolé, une erreur est survenue. Veuillez réessayer.',
+            }
             : msg
         )
       )

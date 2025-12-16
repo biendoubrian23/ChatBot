@@ -12,7 +12,7 @@
       "label": "Contact service client",
       "question": "Comment puis-je contacter le service client de Coollibri ?",
       "expected_answer": "Par téléphone au 05 31 61 60 42 ou par email à contact@coollibri.com, du lundi au vendredi de 8h30 à 18h.",
-      "actual_answer": "Vous pouvez nous contacter en écrivant à contactcoollibri.com (ou appeler au 05 31 61 60 42) avec votre numéro de commande et une description précise du problème rencontré, si nécessaire des photos jointes pour plus d'informations. Nous vous répondrons le plus rapidement possible.",
+      "actual_answer": "Vous pouvez nous contacter en écrivant à contact@coollibri.com (ou appeler au 05 31 61 60 42) avec votre numéro de commande et une description précise du problème rencontré, si nécessaire des photos jointes pour plus d'informations. Nous vous répondrons le plus rapidement possible.",
       "time_to_first_token_seconds": 23.92,
       "total_response_time_seconds": 31.03
     },

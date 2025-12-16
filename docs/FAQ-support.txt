@@ -184,3 +184,35 @@ CE QUE VOUS POUVEZ FAIRE:
    • Téléphone: 05 31 61 60 42
    • Mentionnez votre numéro de commande ET la date de la confirmation de remboursement
 L'équipe pourra vérifier le statut auprès de votre comptable et accélérer le traitement si nécessaire.
+
+ Télécharger une facture
+Comment obtenir et télécharger ma facture de commande ?
+La facture de votre commande CoolLibri est disponible directement dans votre espace client en ligne.
+Vous pouvez la télécharger au format PDF à tout moment pour votre comptabilité.
+
+PROCÉDURE POUR TÉLÉCHARGER VOTRE FACTURE :
+1. Connectez-vous à votre compte sur le site CoolLibri
+2. Cliquez sur "Mon compte" en haut à droite de la page d'accueil
+3. Accédez à la section "Mes commandes"
+4. Pour chaque commande validée, vous verrez un bouton ou lien "Télécharger la facture"
+5. Cliquez dessus pour obtenir instantanément votre facture au format PDF
+
+INFORMATIONS IMPORTANTES SUR LES FACTURES :
+• La facture est généralement disponible quelques heures après la validation du paiement
+• Elle contient tous les détails nécessaires : numéro de commande, date, montants TTC/HT, TVA
+• Le PDF est conforme aux normes comptables françaises
+• Vous pouvez télécharger votre facture autant de fois que nécessaire
+
+FACTURE NON DISPONIBLE ?
+Si la facture n'apparaît pas dans votre espace client après 24 heures suivant votre commande :
+ Contactez le service client : contact@coollibri.com
+En précisant :
+• Votre numéro de commande
+• La date de votre commande
+• Votre nom et prénom
+
+FACTURE MENSUELLE POUR PROFESSIONNELS :
+Si vous avez un compte CoolLibri PRO avec option facture mensuelle activée :
+• Une facture récapitulative regroupant toutes vos commandes du mois sera disponible
+• Consultez votre tableau de bord professionnel pour y accéder
+• Cette option simplifie votre comptabilité en centralisant tous vos achats mensuels

@@ -1,20 +1,29 @@
-"""Service intelligent pour analyser les messages utilisateurs et détecter l'intention."""
+"""Service intelligent pour analyser les messages utilisateurs avec LLM-first."""
 import re
+import json
+import hashlib
+import threading
 from typing import Optional, Dict, Any
 from app.services.llm import OllamaService
 
 
+# Cache global thread-safe pour les intentions (clé = hash du message normalisé)
+_INTENT_CACHE: Dict[str, Dict[str, Any]] = {}
+_CACHE_MAX_SIZE = 500  # Limiter la taille du cache
+_CACHE_LOCK = threading.Lock()  # Verrou pour accès concurrent
+
+
 class MessageAnalyzer:
-    """Analyse les messages pour détecter si c'est une question sur commande ou générale."""
+    """
+    Analyse les messages avec le LLM comme cerveau principal.
     
-    # Mots-clés spécifiques au tracking de commande (expressions précises)
-    ORDER_KEYWORDS = [
-        "ma commande", "mes commandes", "suivi de commande", "suivi commande",
-        "où en est ma commande", "ou en est ma commande", "où est ma commande",
-        "statut de ma commande", "état de ma commande", "avancement de ma commande",
-        "numéro de commande", "numero de commande", "n° de commande",
-        "tracker ma commande", "suivre ma commande", "commande en cours"
-    ]
+    Flux LLM-First + Cache (Thread-Safe):
+    1. Vérifier si l'intention est en cache (avec verrou)
+    2. Sinon, le LLM analyse le message et détermine l'intention
+    3. Mettre en cache le résultat (avec verrou)
+    
+    Optimisé pour plusieurs utilisateurs simultanés.
+    """
     
     def __init__(self, llm_service: OllamaService):
         """
@@ -25,25 +34,176 @@ class MessageAnalyzer:
         """
         self.llm = llm_service
     
-    def extract_order_number(self, message: str) -> Optional[str]:
-        """
-        Extrait un numéro de commande du message avec regex.
+    def _get_cache_key(self, message: str) -> str:
+        """Génère une clé de cache basée sur le message normalisé."""
+        # Normaliser: minuscule, sans espaces multiples, sans ponctuation superflue
+        normalized = re.sub(r'\s+', ' ', message.lower().strip())
+        # Garder les chiffres intacts pour les numéros de commande
+        return hashlib.md5(normalized.encode()).hexdigest()
+    
+    def _check_cache(self, message: str) -> Optional[Dict[str, Any]]:
+        """Vérifie si l'intention est en cache (thread-safe)."""
+        key = self._get_cache_key(message)
+        with _CACHE_LOCK:
+            if key in _INTENT_CACHE:
+                cached = _INTENT_CACHE[key].copy()
+                cached["source"] = "cache"
+                print(f"⚡ Cache HIT: {cached['intent']}")
+                return cached
+        return None
+    
+    def _add_to_cache(self, message: str, analysis: Dict[str, Any]) -> None:
+        """Ajoute une analyse au cache (thread-safe)."""
+        global _INTENT_CACHE
+        key = self._get_cache_key(message)
         
-        Patterns acceptés:
-        - "commande 13349"
-        - "13349"
-        - "numéro 13349"
-        - "n° 13349"
-        - "#13349"
+        with _CACHE_LOCK:
+            # Limiter la taille du cache
+            if len(_INTENT_CACHE) >= _CACHE_MAX_SIZE:
+                # Supprimer les 100 plus anciennes entrées
+                keys_to_remove = list(_INTENT_CACHE.keys())[:100]
+                for k in keys_to_remove:
+                    del _INTENT_CACHE[k]
+            
+            _INTENT_CACHE[key] = analysis.copy()
+    
+    async def analyze_with_llm(self, message: str) -> Dict[str, Any]:
         """
-        # Nettoyer le message
+        Analyse complète du message par le LLM.
+        PROMPT OPTIMISÉ pour vitesse + qualité.
+        
+        Returns:
+            {
+                "intent": "order_tracking" | "general_question",
+                "order_number": str | None,
+                "reasoning": str
+            }
+        """
+        # PROMPT OPTIMISÉ: distingue bien questions générales vs suivi de commande
+        prompt = f"""Analyse ce message client CoolLibri (imprimerie livres):
+"{message}"
+
+INTENTION:
+- ORDER_TRACKING = veut le STATUT/SUIVI de SA commande PERSONNELLE ("où en est MA commande?", "commande 13349", "mon colis?", "je veux suivre ma commande", juste un numéro de commande)
+- GENERAL_QUESTION = questions GÉNÉRALES sur CoolLibri: délais de livraison en général, prix, formats, fonctionnement, annulation, réclamation, qualité, problèmes, remboursement
+
+⚠️ ATTENTION: Si le client pose une question GÉNÉRALE sur les délais ("quels sont les délais de livraison?", "combien de temps pour recevoir un livre?", "délais d'expédition?") SANS parler de SA commande → c'est GENERAL_QUESTION
+
+NUMÉRO: Extrais UNIQUEMENT un numéro PRÉSENT dans le message. Sinon null.
+
+JSON uniquement:
+{{"intent":"ORDER_TRACKING|GENERAL_QUESTION","order_number":"xxxxx|null","reasoning":"court"}}"""
+
+        try:
+            # max_tokens réduit de 20%: 150 → 120
+            response = await self.llm.generate(prompt, max_tokens=120)
+            response_clean = response.strip()
+            
+            # Nettoyer la réponse pour extraire le JSON
+            # Parfois le LLM ajoute des backticks ou du texte autour
+            if "```json" in response_clean:
+                response_clean = response_clean.split("```json")[1].split("```")[0]
+            elif "```" in response_clean:
+                response_clean = response_clean.split("```")[1].split("```")[0]
+            
+            # Trouver le JSON dans la réponse
+            json_match = re.search(r'\{[^{}]*\}', response_clean, re.DOTALL)
+            if json_match:
+                response_clean = json_match.group(0)
+            
+            # Parser le JSON
+            result = json.loads(response_clean)
+            
+            intent = result.get("intent", "GENERAL_QUESTION").upper()
+            order_number = result.get("order_number")
+            reasoning = result.get("reasoning", "")
+            
+            # Normaliser l'intention
+            if "ORDER" in intent or "TRACKING" in intent:
+                intent = "order_tracking"
+            else:
+                intent = "general_question"
+            
+            # Nettoyer le numéro de commande
+            if order_number and order_number != "null" and order_number != "None":
+                # Extraire uniquement les chiffres
+                order_number = re.sub(r'[^\d]', '', str(order_number))
+                if not order_number or len(order_number) < 4:
+                    order_number = None
+                else:
+                    # VALIDATION CRUCIALE: Vérifier que le numéro existe VRAIMENT dans le message
+                    if order_number not in message:
+                        print(f"⚠️ LLM a inventé un numéro ({order_number}) - ignoré car absent du message")
+                        order_number = None
+            else:
+                order_number = None
+            
+            print(f"🧠 LLM Analysis: intent={intent}, order_number={order_number}, reasoning={reasoning}")
+            
+            return {
+                "intent": intent,
+                "order_number": order_number,
+                "reasoning": reasoning,
+                "source": "llm"
+            }
+            
+        except json.JSONDecodeError as e:
+            print(f"⚠️ Erreur parsing JSON LLM: {e}")
+            print(f"   Réponse brute: {response_clean[:200] if 'response_clean' in dir() else 'N/A'}")
+            # Fallback: essayer de détecter l'intention dans la réponse brute
+            return self._fallback_analysis(message, response_clean if 'response_clean' in dir() else "")
+            
+        except Exception as e:
+            print(f"⚠️ Erreur LLM: {e}")
+            return self._fallback_analysis(message, "")
+    
+    def _fallback_analysis(self, message: str, llm_response: str) -> Dict[str, Any]:
+        """
+        Analyse de secours si le LLM échoue ou retourne un JSON invalide.
+        Utilise des heuristiques simples.
+        """
+        message_lower = message.lower()
+        llm_response_upper = llm_response.upper()
+        
+        # Essayer de comprendre ce que le LLM voulait dire
+        if "ORDER_TRACKING" in llm_response_upper or "ORDER" in llm_response_upper:
+            intent = "order_tracking"
+        elif "GENERAL" in llm_response_upper:
+            intent = "general_question"
+        else:
+            # Heuristiques basées sur le message original
+            tracking_keywords = ["où en est", "suivi", "suivre", "tracker", "statut de ma commande"]
+            general_keywords = ["annuler", "réclamation", "défaut", "floue", "qualité", "problème", "remboursement", "rendu", "3d", "fichier"]
+            
+            has_tracking = any(kw in message_lower for kw in tracking_keywords)
+            has_general = any(kw in message_lower for kw in general_keywords)
+            
+            if has_general:
+                intent = "general_question"
+            elif has_tracking:
+                intent = "order_tracking"
+            else:
+                intent = "general_question"  # Par défaut
+        
+        # Essayer d'extraire un numéro de commande avec regex
+        order_number = self._extract_order_number_regex(message)
+        
+        return {
+            "intent": intent,
+            "order_number": order_number,
+            "reasoning": "Fallback analysis",
+            "source": "fallback"
+        }
+    
+    def _extract_order_number_regex(self, message: str) -> Optional[str]:
+        """
+        Extraction de numéro de commande par regex (utilisé en fallback uniquement).
+        """
         cleaned = message.lower().strip()
         
-        # Pattern 1: Numéro après des mots-clés
         patterns = [
             r'(?:commande|commandes|numéro|numero|n°|#)\s*[:\s]*(\d{4,6})',
-            r'(?:^|\s)(\d{5})(?:\s|$)',  # Numéro seul de 5 chiffres
-            r'(?:^|\s)(\d{4,6})(?:\s|$)',  # Numéro de 4-6 chiffres
+            r'(?:^|\s)(\d{5})(?:\s|$)',
         ]
         
         for pattern in patterns:
@@ -53,95 +213,66 @@ class MessageAnalyzer:
         
         return None
     
-    def contains_order_keywords(self, message: str) -> bool:
-        """Vérifie si le message contient des expressions spécifiques au tracking de commande."""
-        message_lower = message.lower().strip()
-        # Cherche les expressions complètes pour éviter les faux positifs
-        return any(keyword in message_lower for keyword in self.ORDER_KEYWORDS)
-    
-    async def analyze_intent_with_llm(self, message: str) -> str:
-        """
-        Utilise le LLM pour déterminer l'intention du message.
-        
-        Returns:
-            "order_tracking" ou "general_question"
-        """
-        prompt = f"""Tu es un assistant qui analyse les messages des clients d'une imprimerie de livres.
-
-Détermine si le message suivant concerne le SUIVI D'UNE COMMANDE ou une QUESTION GÉNÉRALE sur les services/produits.
-
-Message du client: "{message}"
-
-Réponds UNIQUEMENT par:
-- "ORDER_TRACKING" si le client veut suivre/connaître l'état de sa commande
-- "GENERAL_QUESTION" si c'est une question sur les produits, services, prix, délais généraux, types de reliures, formats, etc.
-
-Exemples:
-- "où en est ma commande ?" → ORDER_TRACKING
-- "ma commande 13349" → ORDER_TRACKING
-- "quand vais-je recevoir mon livre ?" → ORDER_TRACKING
-- "quels sont les types de reliures ?" → GENERAL_QUESTION
-- "combien coûte l'impression ?" → GENERAL_QUESTION
-- "quels formats proposez-vous ?" → GENERAL_QUESTION
-
-Réponse (un seul mot):"""
-
-        try:
-            response = await self.llm.generate(prompt, max_tokens=10)
-            response_clean = response.strip().upper()
-            
-            if "ORDER" in response_clean or "TRACKING" in response_clean:
-                return "order_tracking"
-            else:
-                return "general_question"
-        except Exception as e:
-            print(f"⚠️ Erreur LLM pour analyse d'intention: {e}")
-            # Fallback sur les mots-clés
-            if self.contains_order_keywords(message):
-                return "order_tracking"
-            return "general_question"
-    
     async def analyze_message(self, message: str) -> Dict[str, Any]:
         """
         Analyse complète du message utilisateur.
+        
+        FLUX OPTIMISÉ:
+        1. Vérifier le cache
+        2. Si pas en cache, le LLM analyse
+        3. Mettre en cache le résultat
         
         Returns:
             {
                 "intent": "order_tracking" | "general_question",
                 "order_number": str | None,
                 "needs_order_input": bool,
-                "confidence": "high" | "medium" | "low"
+                "confidence": "high" | "medium" | "low",
+                "source": "llm" | "fallback" | "cache"
             }
         """
-        # Étape 1: Extraction du numéro avec regex
-        order_number = self.extract_order_number(message)
-        
-        # Si numéro trouvé, c'est forcément du tracking
-        if order_number:
+        # Étape 1: Vérifier le cache (TTFB ~0ms si hit)
+        cached = self._check_cache(message)
+        if cached:
+            intent = cached["intent"]
+            order_number = cached.get("order_number")
+            # Re-extraire le numéro au cas où le message en contient un nouveau
+            if not order_number:
+                order_number = self._extract_order_number_regex(message)
+            needs_order_input = (intent == "order_tracking" and order_number is None)
             return {
-                "intent": "order_tracking",
+                "intent": intent,
                 "order_number": order_number,
-                "needs_order_input": False,
-                "confidence": "high"
+                "needs_order_input": needs_order_input,
+                "confidence": "high",
+                "source": "cache"
             }
         
-        # Étape 2: Utiliser le LLM d'abord pour classifier
-        try:
-            intent = await self.analyze_intent_with_llm(message)
-            confidence = "high"
-        except Exception as e:
-            print(f"⚠️ Erreur LLM pour analyse d'intention: {e}")
-            # Fallback sur les mots-clés spécifiques
-            has_order_keywords = self.contains_order_keywords(message)
-            intent = "order_tracking" if has_order_keywords else "general_question"
-            confidence = "medium" if has_order_keywords else "low"
+        # Étape 2: Le LLM analyse tout
+        analysis = await self.analyze_with_llm(message)
         
-        # Étape 3: Déterminer si on a besoin de demander le numéro
+        intent = analysis["intent"]
+        order_number = analysis.get("order_number")
+        source = analysis.get("source", "llm")
+        
+        # Mettre en cache (seulement si LLM a répondu)
+        if source == "llm":
+            self._add_to_cache(message, analysis)
+        
+        # Déterminer la confiance
+        confidence = "high" if source == "llm" else "medium"
+        
+        # Déterminer si on a besoin de demander le numéro
         needs_order_input = (intent == "order_tracking" and order_number is None)
         
-        return {
+        result = {
             "intent": intent,
             "order_number": order_number,
             "needs_order_input": needs_order_input,
-            "confidence": confidence
+            "confidence": confidence,
+            "source": source
         }
+        
+        print(f"📊 Final Analysis: {result}")
+        
+        return result

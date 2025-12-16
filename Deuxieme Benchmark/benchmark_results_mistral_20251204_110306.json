@@ -1,7 +1,7 @@
 📊 RÉSUMÉ DU BENCHMARK
 ======================================================================
 🤖 Modèle testé    : neural-chat
-📅 Date            : 2025-12-04T10:54:37
+📅 Date            : 2025-12-04T10: 54: 37
 ❓ Questions       : 30
 ----------------------------------------------------------------------
 ⏱️  TEMPS DE RÉPONSE:
@@ -89,7 +89,7 @@
       "label": "Annulation commande urgente",
       "question": "J'ai fait une erreur dans ma commande, puis-je l'annuler ?",
       "expected_answer": "Si une commande a été validée avec une erreur (mauvais fichier, oubli, édition incorrecte), contactez IMMÉDIATEMENT le service client à contact@coollibri.com. Plus la demande est envoyée tôt, plus les chances d'annulation ou modification avant impression sont élevées.",
-      "actual_answer": "Pour annuler une commande déjà validée, il faut contacter le service client immédiatement à contactcoollibri.com ou au 05 31 61 60 42. Plus la demande est envoyée tôt, plus les chances d'annulation sont élevées.",
+      "actual_answer": "Pour annuler une commande déjà validée, il faut contacter le service client immédiatement à contact@coollibri.com ou au 05 31 61 60 42. Plus la demande est envoyée tôt, plus les chances d'annulation sont élevées.",
       "time_to_first_token_seconds": 6.42,
       "total_response_time_seconds": 12.31
     },
@@ -319,7 +319,7 @@
       "label": "Demande remboursement",
       "question": "Comment demander un remboursement ?",
       "expected_answer": "Contactez le service client à contact@coollibri.com avec OBLIGATOIREMENT: numéro de commande, description précise du problème, photos si applicable. Le service client évaluera et proposera la meilleure solution (renvoi, correction, remplacement OU remboursement). Aucune promesse ne peut être faite par le chatbot.",
-      "actual_answer": "Pour demander un remboursement ou renvoi de votre commande, vous pouvez contacter le service client CoolLibri en envoyant un email à contactcoollibri.com avec :\n- Votre numéro de commande indispensable pour retrouver votre dossier\n- Une description claire et détaillée des problèmes rencontrés (un point par ligne si possible)\nVous pouvez également nous appeler au 05 31 61 60 42. N'hésitez pas à contacter le service client pour toute question ou réclamation concernant votre commande.",
+      "actual_answer": "Pour demander un remboursement ou renvoi de votre commande, vous pouvez contacter le service client CoolLibri en envoyant un email à contact@coollibri.com avec :\n- Votre numéro de commande indispensable pour retrouver votre dossier\n- Une description claire et détaillée des problèmes rencontrés (un point par ligne si possible)\nVous pouvez également nous appeler au 05 31 61 60 42. N'hésitez pas à contacter le service client pour toute question ou réclamation concernant votre commande.",
       "time_to_first_token_seconds": 6.33,
       "total_response_time_seconds": 20.06
     },
@@ -329,7 +329,7 @@
       "label": "Droit rétractation",
       "question": "Puis-je annuler ma commande après validation, j'ai 14 jours de rétractation ?",
       "expected_answer": "NON. Le droit de rétractation ne s'applique pas car les livres sont des produits personnalisés fabriqués selon vos spécifications. Une fois validée, la commande ne peut pas être annulée. Contactez rapidement le service client si erreur.",
-      "actual_answer": "Nous pouvons annuler votre commande si elle a été validée avec une erreur ou un problème spécifique. Pour cela, veuillez contacter le service client à contactcoollibri.com en indiquant la raison de l'annulation et votre numéro de commande. Si vous avez besoin d'aide pour annuler une commande dans les 14 jours suivants sa validation, nous pouvons également vous aider sur le même mail ou au téléphone à 05 31 61 60 42.",
+      "actual_answer": "Nous pouvons annuler votre commande si elle a été validée avec une erreur ou un problème spécifique. Pour cela, veuillez contacter le service client à contact@coollibri.com en indiquant la raison de l'annulation et votre numéro de commande. Si vous avez besoin d'aide pour annuler une commande dans les 14 jours suivants sa validation, nous pouvons également vous aider sur le même mail ou au téléphone à 05 31 61 60 42.",
       "time_to_first_token_seconds": 6.49,
       "total_response_time_seconds": 18.37
     }

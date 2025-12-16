@@ -37,6 +37,8 @@ class ChatResponse(BaseModel):
     conversation_id: str = Field(..., description="Conversation ID")
     timestamp: datetime = Field(default_factory=datetime.utcnow, description="Response timestamp")
     processing_time: Optional[float] = Field(None, description="Processing time in seconds")
+    intent: Optional[str] = Field(None, description="Detected intent (order_tracking or general_question)")
+    reasoning: Optional[str] = Field(None, description="LLM reasoning for intent detection")
 
 
 class HealthResponse(BaseModel):
@@ -66,4 +68,5 @@ class MessageAnalysisResponse(BaseModel):
     order_number: Optional[str] = Field(None, description="Extracted order number if found")
     needs_order_input: bool = Field(..., description="Whether to show order number input")
     confidence: str = Field(..., description="Confidence level: 'high', 'medium', or 'low'")
+    source: str = Field(default="llm", description="Analysis source: 'llm' or 'fallback'")
 

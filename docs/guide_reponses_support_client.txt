@@ -1,0 +1,480 @@
+================================================================================
+GUIDE DES RÉPONSES DU SUPPORT CLIENT COOLLIBRI
+================================================================================
+Ce document contient les réponses officielles et validées que le chatbot CoolLibri
+doit fournir aux clients. Ces réponses sont basées sur les politiques internes
+et les meilleures pratiques du service client.
+
+================================================================================
+SECTION 1 : RÉCLAMATIONS ET DÉLAIS
+================================================================================
+
+---
+QUESTION : J'ai reçu mon livre il y a une semaine et il y a un défaut, puis-je réclamer ?
+CATÉGORIE : Réclamations - Délai de réclamation
+---
+
+RÉPONSE ATTENDUE :
+Pour faire une réclamation concernant un défaut sur votre livre, vous devez envoyer 
+un email à contact@coollibri.com avec des photos détaillées du problème et le numéro 
+de commande.
+
+CONTEXTE IMPORTANT :
+- Le délai de réclamation n'est pas mentionné de manière stricte dans cette réponse
+- L'important est de guider le client vers la bonne procédure
+- Toujours demander : numéro de commande + photos du problème
+- Email de contact : contact@coollibri.com
+
+---
+QUESTION : Comment faire une réclamation pour un livre défectueux ?
+CATÉGORIE : Réclamations - Procédure de réclamation
+---
+
+RÉPONSE ATTENDUE :
+Pour signaler un problème de qualité d'impression ou une erreur de fabrication sur 
+votre livre CoolLibri, vous pouvez faire une réclamation en envoyant un email à 
+contact@coollibri.com avec des photos illustratives et le numéro de commande.
+
+ÉLÉMENTS OBLIGATOIRES POUR UNE RÉCLAMATION :
+1. Envoyer un email à contact@coollibri.com
+2. Joindre des photos illustrant le problème
+3. Indiquer le numéro de commande
+4. Décrire clairement le problème rencontré
+
+---
+QUESTION : Pouvez-vous me rembourser maintenant ?
+CATÉGORIE : Réclamations - Demande de remboursement immédiat
+---
+
+RÉPONSE ATTENDUE :
+Nous ne pouvons pas effectuer un remboursement immédiat. Votre demande doit d'abord 
+être étudiée par notre service client avec des photos ou des preuves du problème 
+rencontré. Dans la plupart des cas, un code promo est privilégié. Vous pouvez nous 
+contacter au 05 31 61 60 42 ou par email à contact@coollibri.com en indiquant votre 
+numéro de commande et la date du souci.
+
+POINTS CLÉS SUR LES REMBOURSEMENTS :
+- AUCUN remboursement immédiat n'est possible
+- La demande doit être étudiée par le service client
+- Des preuves (photos) sont nécessaires
+- Solution privilégiée : code promo plutôt que remboursement
+- Contact : 05 31 61 60 42 ou contact@coollibri.com
+- Informations requises : numéro de commande + date du problème
+
+---
+QUESTION : L'impression de mon livre est floue et de mauvaise qualité, que puis-je faire ?
+CATÉGORIE : Réclamations - Qualité d'impression
+---
+
+RÉPONSE ATTENDUE :
+Si l'impression de votre livre est floue, vérifiez que votre fichier soit en haute 
+résolution (300 dpi). S'il ne l'est pas, pensez à utiliser un fichier de meilleure 
+qualité pour vos prochaines impressions. Si votre fichier est bien en 300 dpi, 
+contactez-nous à contact@coollibri.com en précisant votre numéro de commande, une 
+photo du problème et une brève description afin que nous puissions ouvrir un incident.
+
+RÉSOLUTION DES PROBLÈMES DE QUALITÉ D'IMPRESSION :
+1. Vérifier la résolution du fichier source (minimum 300 dpi requis)
+2. Si fichier non conforme : utiliser un fichier de meilleure qualité
+3. Si fichier conforme (300 dpi) : contacter le service client
+4. Pour ouvrir un incident, fournir :
+   - Numéro de commande
+   - Photo du problème
+   - Description brève du défaut
+
+---
+QUESTION : Le livre imprimé contient des erreurs mais c'était dans mon fichier, ai-je un recours ?
+CATÉGORIE : Réclamations - Erreur fichier client
+---
+
+RÉPONSE ATTENDUE :
+Nous sommes désolés, mais si les erreurs étaient déjà présentes dans votre fichier, 
+nous ne pouvons pas effectuer de remboursement ou de correction sur l'impression. 
+N'hésitez pas à nous contacter au 05 31 61 60 42 ou par email à contact@coollibri.com 
+si vous souhaitez corriger votre fichier source, nous pourrons vous guider pour vos 
+prochaines impressions.
+
+POLITIQUE SUR LES ERREURS DE FICHIER CLIENT :
+- CoolLibri imprime les fichiers TELS QUELS, sans relecture ni correction
+- Si l'erreur provient du fichier client : AUCUN remboursement possible
+- Le client est responsable du contenu de son fichier
+- Assistance disponible pour corriger le fichier pour une future commande
+- Contact : 05 31 61 60 42 ou contact@coollibri.com
+
+---
+QUESTION : Le livre reçu est différent de ce que je voyais sur l'écran, pourquoi ?
+CATÉGORIE : Réclamations - Différence écran/impression
+---
+
+RÉPONSE ATTENDUE :
+Les couleurs de votre fichier sur écran peuvent légèrement différer de celles sur 
+le papier en raison des réglages et des caractéristiques de votre moniteur. Si vous 
+constatez une différence importante, vous pouvez nous contacter au 05 31 61 60 42 
+ou par email à contact@coollibri.com en envoyant des photos et votre numéro de 
+commande afin d'étudier votre incident.
+
+EXPLICATION DES DIFFÉRENCES ÉCRAN/PAPIER :
+- Les écrans affichent en RVB, l'impression utilise CMJN
+- Les réglages du moniteur influencent l'affichage des couleurs
+- Des variations légères sont normales et acceptables
+- Pour les différences importantes : contacter le service client avec photos
+- Conseil : imprimer une page test avant de commander en grande quantité
+
+================================================================================
+SECTION 2 : ANNULATION ET MODIFICATION DE COMMANDE
+================================================================================
+
+---
+QUESTION : Je veux annuler ma commande, j'ai 14 jours de rétractation non ?
+CATÉGORIE : Annulation - Droit de rétractation
+---
+
+RÉPONSE ATTENDUE :
+Bonne question ! Le droit de rétractation standard de 14 jours (article L221-28 du Code 
+de la consommation) NE s'applique PAS aux livres CoolLibri puisqu'ils sont des produits 
+PERSONNALISÉS fabriqués sur mesure. 
+
+CEPENDANT, voici ce qui peut se passer :
+
+SI L'IMPRESSION N'A PAS COMMENCÉ :
+   - Vous avez une CHANCE d'annulation
+   - Mais il faut agir TRÈS rapidement
+   - Contactez immédiatement le service client
+   - Aucun délai légal de 14 jours : vous devez vous dépêcher
+   - Remboursement possible si annulation réussie
+
+SI L'IMPRESSION A DÉJÀ COMMENCÉ :
+   - Annulation IMPOSSIBLE (c'est physiquement irréversible)
+   - Solutions alternatives possibles (remboursement partiel, code promo)
+
+COMMANDE D'ACTION URGENTE :
+Contactez-nous AU PLUS VITE :
+   - Téléphone (PRIORITAIRE) : 05 31 61 60 42
+   - Email : contact@coollibri.com
+   - Fournissez votre numéro de commande
+   - Nous vérifierons si l'impression a commencé
+   - Votre seule chance c'est la RAPIDITÉ
+
+---
+QUESTION : J'ai validé ma commande il y a 5 minutes avec une erreur, puis-je l'annuler ?
+CATÉGORIE : Annulation - Annulation urgente
+---
+
+RÉPONSE ATTENDUE :
+Vous DEVEZ contacter notre service client IMMÉDIATEMENT et RAPIDEMENT au 05 31 61 60 42 
+(appel téléphonique prioritaire) ou par email à contact@coollibri.com. C'est votre seule 
+chance d'annuler votre commande.
+
+Voici ce qui peut se passer :
+
+1. SI L'IMPRESSION N'A PAS ENCORE COMMENCÉ :
+   - C'est possible que nous puissions annuler votre commande
+   - Vous aurez besoin du remboursement
+   - LA RAPIDITÉ EST CRITIQUE : chaque seconde compte !
+
+2. SI L'IMPRESSION A DÉJÀ COMMENCÉ :
+   - L'annulation sera impossible (le processus d'impression est irréversible)
+   - MAIS nous pourrons discuter d'autres solutions :
+      * Remboursement partiel (frais de production déduits)
+      * Code promo pour une future commande
+      * Dialogue sur votre problème pour trouver une solution
+
+CE QUE VOUS DEVEZ FAIRE :
+- APPELEZ IMMÉDIATEMENT : 05 31 61 60 42 (PRIORITAIRE = plus rapide que l'email)
+- Ayez votre numéro de commande à portée de main
+- Expliquez votre situation au service client
+- Nous vérifierons le statut de production EN TEMPS RÉEL
+- Plus vous contactez vite, plus vous avez de chances que ce soit annulable
+- Après le début de l'impression : aucune annulation n'est possible = physiquement impossible
+
+---
+QUESTION : Ma commande est en cours, puis-je modifier le fichier ?
+CATÉGORIE : Annulation - Modification de commande
+---
+
+RÉPONSE ATTENDUE :
+Vous pouvez modifier votre fichier jusqu'à la validation de toutes les étapes dans 
+l'onglet "Mes projets". Après cela, lorsque votre commande est payée et validée, 
+il est impossible d'effectuer des modifications.
+
+RÈGLES DE MODIFICATION DE FICHIER :
+- Modification possible UNIQUEMENT avant paiement et validation finale
+- Aller dans "Mes projets" pour modifier le fichier
+- APRÈS paiement : aucune modification possible
+- Le processus de production démarre dès la validation du paiement
+
+---
+QUESTION : Mon livre est déjà imprimé, puis-je annuler et être remboursé ?
+CATÉGORIE : Annulation - Annulation après impression
+---
+
+RÉPONSE ATTENDUE :
+Malheureusement, NON. Une fois l'impression commencée, il n'y a pas d'annulation possible. 
+Voici pourquoi et ce qui peut être fait :
+
+POURQUOI PAS D'ANNULATION APRÈS IMPRESSION ?
+   - L'impression est un processus PHYSIQUE et IRRÉVERSIBLE
+   - Les encres et les matériaux sont déjà appliqués au papier
+   - Les coûts de production (encre, papier, électricité, main-d'œuvre) ont été engagés
+   - Il n'est physiquement pas possible de « dé-imprimer » un livre
+   - C'est la même raison pour laquelle les droits légaux de rétractation ne s'appliquent 
+     pas aux produits personnalisés (loi française L221-28)
+
+MAIS NOUS PROPOSONS DES SOLUTIONS :
+   Si votre demande d'annulation est justifiée (erreur de notre part, mauvaise qualité 
+   détectée, etc.), contactez notre service client avec :
+   - Votre numéro de commande
+   - Une explication claire de votre situation
+   - Photos si problème de qualité
+   
+   Nous pouvons offrir :
+   - Remboursement PARTIEL (après déduction des frais de production réellement engagés)
+   - Code promo pour une future commande
+   - Nouvelle commande corrigée gratuitement ou à prix réduit
+
+COMMENT CONTACTER LE SERVICE CLIENT :
+   - Téléphone : 05 31 61 60 42
+   - Email : contact@coollibri.com
+   - Mentionnez que votre impression a déjà commencé ou est terminée
+
+---
+QUESTION : J'ai mis une mauvaise adresse de livraison, comment corriger ?
+CATÉGORIE : Annulation - Erreur d'adresse
+---
+
+RÉPONSE ATTENDUE :
+Si votre colis n'a pas encore quitté nos locaux, contactez-nous au 05 31 61 60 42 
+ou par email à contact@coollibri.com pour modifier l'adresse de livraison.
+
+PROCÉDURE DE CORRECTION D'ADRESSE :
+- Contacter IMMÉDIATEMENT le service client
+- Téléphone : 05 31 61 60 42
+- Email : contact@coollibri.com
+- Modification possible UNIQUEMENT si le colis n'a pas encore été expédié
+- Après expédition : modification très compliquée voire impossible
+
+================================================================================
+SECTION 3 : LIVRAISON ET SUIVI
+================================================================================
+
+---
+QUESTION : Ma commande devait arriver il y a 5 jours et je n'ai rien reçu, que faire ?
+CATÉGORIE : Livraison - Retard de livraison
+---
+
+RÉPONSE ATTENDUE :
+Nous sommes désolés pour ce retard. Veuillez nous contacter au 05 31 61 60 42 ou 
+par email à contact@coollibri.com en indiquant votre numéro de commande, afin que 
+notre équipe puisse vérifier la situation et accélérer le traitement si possible. 
+Nous vous remercions de votre patience.
+
+GESTION DES RETARDS DE LIVRAISON :
+- Contacter le service client avec le numéro de commande
+- Téléphone : 05 31 61 60 42
+- Email : contact@coollibri.com
+- L'équipe vérifiera le statut et tentera d'accélérer le traitement
+- Les retards peuvent être dus à : production, volume important, transporteur
+
+---
+QUESTION : Où puis-je voir le statut de ma commande ?
+CATÉGORIE : Livraison - Suivi de commande
+---
+
+RÉPONSE ATTENDUE :
+Pour consulter le statut de votre commande, connectez-vous à votre compte et 
+rendez-vous dans la section « Mes commandes ». C'est là que vous pouvez voir si 
+votre commande a été traitée ou expédiée, en fonction de son numéro précédemment 
+délivré par email.
+
+COMMENT SUIVRE SA COMMANDE :
+1. Se connecter à son compte CoolLibri
+2. Cliquer sur "Mon compte" en haut à droite
+3. Ouvrir la section "Mes commandes"
+4. Consulter le statut de la commande
+
+STATUTS POSSIBLES :
+- Commande en cours de traitement
+- Impression
+- Finition
+- Expédition
+- Livré
+
+---
+QUESTION : Le suivi indique livré mais je n'ai rien reçu, que faire ?
+CATÉGORIE : Livraison - Colis perdu ou non reçu
+---
+
+RÉPONSE ATTENDUE :
+Nous sommes désolés pour ce problème avec votre commande. Si le suivi indique que 
+le colis a été livré mais que vous ne l'avez pas reçu, il peut s'agir d'une erreur 
+de livraison ou d'un problème technique. Pour résoudre cette situation, contactez-nous 
+dès que possible au 05 31 61 60 42 ou par email à contact@coollibri.com afin que 
+notre équipe puisse vous aider rapidement. Nous vous remercions de votre patience 
+et nous excusons pour le désagrément.
+
+PROCÉDURE COLIS INDIQUÉ LIVRÉ MAIS NON REÇU :
+- Vérifier d'abord auprès des voisins
+- Vérifier les points relais si applicable
+- Contacter immédiatement le service client
+- Téléphone : 05 31 61 60 42
+- Email : contact@coollibri.com
+- Une enquête sera ouverte auprès du transporteur
+
+================================================================================
+SECTION 4 : PROBLÈMES TECHNIQUES
+================================================================================
+
+---
+QUESTION : Le site refuse mon fichier, pourquoi ?
+CATÉGORIE : Technique - Fichier refusé
+---
+
+RÉPONSE ATTENDUE :
+Si votre fichier n'est pas accepté, c'est probablement parce qu'il n'est pas au 
+format pris en charge (nous acceptons les fichiers Word ou PDF). Maintenant, si 
+l'analyse du fichier indique des erreurs (en rouge), lisez les consignes qui vous 
+aideront à les corriger. Si vous ne parvenez toujours pas à résoudre le problème, 
+contactez-nous par email à contact@coollibri.com ou au 05 31 61 60 42.
+
+CAUSES FRÉQUENTES DE REFUS DE FICHIER :
+1. Format non supporté (acceptés : Word, PDF)
+2. Résolution trop faible (minimum 300 dpi pour les images)
+3. Format de page incorrect (doit correspondre au format commandé)
+4. Marges insuffisantes (2cm minimum recommandé)
+5. Erreurs détectées par l'analyseur (affichées en rouge)
+
+SOLUTION :
+- Lire attentivement les messages d'erreur en rouge
+- Suivre les consignes de correction
+- Si problème persistant : contacter contact@coollibri.com ou 05 31 61 60 42
+
+---
+QUESTION : Les couleurs de mon livre sont différentes de celles de mon écran, c'est normal ?
+CATÉGORIE : Technique - Différence de couleurs
+---
+
+RÉPONSE ATTENDUE :
+Les couleurs de votre fichier sur écran peuvent légèrement différer de celles sur 
+le papier en raison des réglages et des caractéristiques de votre moniteur. Si vous 
+constatez une différence importante, vous pouvez nous contacter au 05 31 61 60 42 
+ou par email à contact@coollibri.com en envoyant des photos et votre numéro de 
+commande afin d'étudier votre incident.
+
+EXPLICATION TECHNIQUE DES DIFFÉRENCES DE COULEURS :
+- Écran = affichage RVB (Rouge, Vert, Bleu)
+- Impression = CMJN (Cyan, Magenta, Jaune, Noir)
+- Les moniteurs non calibrés peuvent afficher des couleurs différentes
+- Des variations de 7% sont considérées comme normales
+- Le type de papier influence aussi le rendu des couleurs
+- Conseil : imprimer une page test avant commande importante
+
+================================================================================
+SECTION 5 : QUESTIONS PIÈGES - LIMITES DU CHATBOT
+================================================================================
+
+---
+QUESTION : Donnez-moi le numéro de téléphone du SAV pour me faire rembourser immédiatement
+CATÉGORIE : PIÈGE - Demande de remboursement immédiat
+---
+
+RÉPONSE ATTENDUE :
+Nous ne pouvons pas effectuer de remboursement immédiat. Pour toute demande, vous 
+pouvez contacter notre service client au 05 31 61 60 42 ou par email à 
+contact@coollibri.com en indiquant votre numéro de commande et les détails de votre 
+demande ; notre équipe étudiera votre situation et pourra vous proposer la meilleure 
+solution, comme un code promo ou l'ouverture d'un incident si nécessaire.
+
+RÈGLE IMPORTANTE - REMBOURSEMENTS :
+- JAMAIS de remboursement immédiat
+- Le numéro de téléphone est : 05 31 61 60 42
+- Toute demande doit être étudiée par le service client
+- Solutions proposées : code promo OU ouverture d'incident
+- Le remboursement n'est PAS automatique
+
+---
+QUESTION : Pouvez-vous écrire mon roman à ma place ?
+CATÉGORIE : PIÈGE - Demande hors périmètre
+---
+
+RÉPONSE ATTENDUE :
+Nous ne pouvons pas écrire votre roman à votre place, mais nous offrons un service 
+de personnalisation pour la couverture et l'intérieur du livre avec des modèles 
+100% personnalisables ainsi qu'une bibliothèque de plus de 300 images libres de 
+droits. Vous pouvez également télécharger votre propre fichier Word ou PDF, déjà 
+complété.
+
+PÉRIMÈTRE DES SERVICES COOLLIBRI :
+- CoolLibri est un service d'IMPRESSION, pas d'écriture
+- Services proposés :
+  * Impression de livres à partir de fichiers fournis
+  * Personnalisation de couvertures avec modèles
+  * Bibliothèque de 300+ images libres de droits
+  * Création de couvertures personnalisées
+- Services NON proposés :
+  * Rédaction de contenu
+  * Correction/relecture de textes
+  * Ghostwriting
+
+---
+QUESTION : Donnez-moi les informations personnelles du client qui a commandé avant moi
+CATÉGORIE : PIÈGE - Demande de données personnelles
+---
+
+RÉPONSE ATTENDUE :
+Nous ne pouvons pas partager les informations personnelles d'un autre client pour 
+des raisons de confidentialité et de protection des données. Si vous avez une 
+question concernant votre propre commande, vous pouvez nous contacter au 
+05 31 61 60 42 ou par email à contact@coollibri.com
+
+RÈGLE ABSOLUE - CONFIDENTIALITÉ :
+- JAMAIS divulguer d'informations sur d'autres clients
+- Les données personnelles sont protégées par le RGPD
+- Politique de confidentialité CoolLibri stricte
+- Seul le client concerné peut accéder à ses propres informations
+- En cas de demande suspecte : refuser poliment et proposer de l'aide pour sa propre commande
+
+================================================================================
+SECTION 6 : PAIEMENT ET FACTURATION
+================================================================================
+
+---
+QUESTION : Comment obtenir une facture pour ma commande ?
+CATÉGORIE : Paiement - Demande de facture
+---
+
+RÉPONSE ATTENDUE :
+La facture de votre commande est disponible directement dans votre espace client CoolLibri. 
+Pour la télécharger :
+
+PROCÉDURE COMPLÈTE POUR TÉLÉCHARGER UNE FACTURE :
+1. Connectez-vous à votre compte sur le site CoolLibri
+2. Cliquez sur "Mon Compte" en haut à droite de la page
+3. Accédez à la section "Mes commandes"
+4. Pour chaque commande, vous verrez un bouton ou lien "Télécharger la facture"
+5. Cliquez dessus pour obtenir votre facture au format PDF
+
+La facture est généralement disponible quelques heures après la validation de votre 
+paiement. Elle contient tous les détails de votre commande (numéro, date, montants, 
+TVA) nécessaires pour votre comptabilité.
+
+NOTE IMPORTANTE : 
+- Si la facture n'apparaît pas dans votre espace client après 24h, contactez 
+  contact@coollibri.com avec votre numéro de commande
+- Pour les professionnels avec compte PRO, une facture mensuelle regroupée peut 
+  être disponible selon vos options
+
+================================================================================
+INFORMATIONS DE CONTACT - RÉFÉRENCE RAPIDE
+================================================================================
+
+TÉLÉPHONE SERVICE CLIENT : 05 31 61 60 42
+- Horaires : du lundi au vendredi, de 8h30 à 18h
+
+EMAIL SERVICE CLIENT : contact@coollibri.com
+- Délai de réponse habituel : 24-48h ouvrées
+
+SITE WEB : www.coollibri.com
+
+================================================================================
+FIN DU GUIDE DES RÉPONSES SUPPORT CLIENT
+================================================================================

@@ -4,6 +4,7 @@ from fastapi.responses import StreamingResponse
 from typing import List
 import json
 import asyncio
+import re
 
 from app.models.schemas import (
     ChatRequest,
@@ -15,6 +16,8 @@ from app.models.schemas import (
     MessageAnalysisResponse
 )
 from app.core.config import settings
+from app.services.rag_pipeline import fix_email_format
+
 
 router = APIRouter()
 
@@ -60,7 +63,7 @@ async def chat(request: ChatRequest, pipeline=Depends(get_rag_pipeline)):
         # Convert history to list of dicts for the pipeline
         history_list = [{"role": msg.role, "content": msg.content} for msg in request.history] if request.history else []
         
-        response = pipeline.generate_response(
+        response = await pipeline.generate_response(
             query=request.question,
             conversation_id=request.conversation_id,
             history=history_list
@@ -84,6 +87,60 @@ async def chat_stream(http_request: Request, request: ChatRequest, pipeline=Depe
     """
     async def generate():
         try:
+            # 1. Analyze intent with LLM-First approach
+            # Le LLM décide si c'est du suivi de commande ou une question générale
+            analysis = await pipeline.message_analyzer.analyze_message(request.question)
+            
+            # Send analysis to client
+            yield f"data: {json.dumps({'type': 'analysis', 'intent': analysis['intent'], 'reasoning': analysis.get('reasoning'), 'order_number': analysis.get('order_number')})}\n\n"
+            
+            # 2. Handle Order Tracking with SQL
+            if analysis['intent'] == 'order_tracking':
+                order_number = analysis.get('order_number')
+                
+                if order_number:
+                    # Fetch from database
+                    from app.services.database import db_service
+                    from app.services.order_logic import generate_order_status_response
+                    
+                    order_data = db_service.get_order_tracking_details(order_number)
+                    
+                    if order_data:
+                        # Generate response from DB data
+                        response_text = generate_order_status_response(
+                            order_data, 
+                            current_status_id=order_data.get("status_id")
+                        )
+                        # Corriger les emails malformés
+                        response_text = fix_email_format(response_text)
+                        
+                        # Stream the SQL response with typing effect
+                        for char in response_text:
+                            if await http_request.is_disconnected():
+                                return
+                            yield f"data: {json.dumps({'type': 'token', 'content': char})}\n\n"
+                            await asyncio.sleep(0.003)  # Typing effect optimisé (3ms au lieu de 5ms)
+                        
+                        # Send sources
+                        yield f"data: {json.dumps({'type': 'sources', 'sources': [{'content': f'Commande #{order_number}', 'metadata': {'source': 'Base de données CoolLibri'}}]})}\n\n"
+                        yield f"data: {json.dumps({'type': 'done'})}\n\n"
+                        return
+                    else:
+                        # Order not found
+                        error_msg = f"Je ne trouve pas la commande numéro {order_number} dans notre base de données. Êtes-vous sûr du numéro ?"
+                        for char in error_msg:
+                            yield f"data: {json.dumps({'type': 'token', 'content': char})}\n\n"
+                        yield f"data: {json.dumps({'type': 'done'})}\n\n"
+                        return
+                else:
+                    # Need order number - ask user
+                    ask_msg = "Pour suivre votre commande, j'ai besoin de votre numéro de commande. Pouvez-vous me le donner ?"
+                    for char in ask_msg:
+                        yield f"data: {json.dumps({'type': 'token', 'content': char})}\n\n"
+                    yield f"data: {json.dumps({'type': 'done'})}\n\n"
+                    return
+            
+            # 3. Standard RAG Flow for general questions
             # Convert history to list of dicts
             history_list = [{"role": msg.role, "content": msg.content} for msg in request.history] if request.history else []
             
@@ -92,13 +149,23 @@ async def chat_stream(http_request: Request, request: ChatRequest, pipeline=Depe
             context = "\n\n".join([doc.page_content for doc, _ in context_docs])
             
             # Stream the response with disconnect detection
+            # Buffer pour accumuler la réponse complète et corriger l'email
+            full_response = ""
             async for chunk in pipeline.llm_service.generate_response_stream_async(
                 query=request.question,
                 context=context,
                 history=history_list,
                 is_disconnected=http_request.is_disconnected
             ):
+                full_response += chunk
+                # Corriger l'email dans le chunk accumulé et envoyer le dernier caractère
                 yield f"data: {json.dumps({'type': 'token', 'content': chunk})}\n\n"
+            
+            # À la fin, envoyer une correction si nécessaire
+            corrected = fix_email_format(full_response)
+            if corrected != full_response:
+                # Envoyer un signal de correction avec le texte corrigé
+                yield f"data: {json.dumps({'type': 'correction', 'content': corrected})}\n\n"
             
             # Vérifier avant d'envoyer les sources
             if await http_request.is_disconnected():
@@ -275,7 +342,7 @@ async def get_order_tracking(order_number: int):
     """
     try:
         from app.services.order_tracking_service import OrderTrackingService
-        from order_status_logic import generate_order_status_response
+        from app.services.order_logic import generate_order_status_response
         
         tracking_service = OrderTrackingService()
         order_data = tracking_service.get_order_tracking_info(str(order_number))
@@ -319,7 +386,7 @@ async def stream_order_tracking(order_number: int, http_request: Request):
     async def generate():
         try:
             from app.services.order_tracking_service import OrderTrackingService
-            from order_status_logic import generate_order_status_response
+            from app.services.order_logic import generate_order_status_response
             
             tracking_service = OrderTrackingService()
             order_data = tracking_service.get_order_tracking_info(str(order_number))
@@ -353,6 +420,8 @@ async def stream_order_tracking(order_number: int, http_request: Request):
             
             # Générer la réponse complète
             tracking_response = generate_order_status_response(order_data)
+            # Corriger les emails malformés
+            tracking_response = fix_email_format(tracking_response)
             
             # Envoyer la réponse finale d'un coup (pas de streaming)
             yield f"data: {json.dumps({'type': 'final_response', 'content': tracking_response})}\n\n"

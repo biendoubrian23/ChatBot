@@ -228,7 +228,7 @@ Total chunks: 51
 
 Content:
 ----------------------------------------------------------------------
-. Voici les informations dont nous avons besoin pour vous donner un prix : Type de reliure souhaitée : Format du livre : Couverture : choix du papier et du pelliculage Brillant/Mat ou soft touch ? Impression couverture : recto couleur Papier Intérieur : Type dimpression intérieur : couleur ou noir et blanc ? Nombre de pages intérieur : Livraison 1 point en France incluse Quantité : Vous pouvez nous écrire un mail à contactcoollibri.com avec tous ces champs renseignés et nous pourrons ensuite vous faire part de notre proposition de prix. Quest-ce quun ISBN ? LISBN (International Standard Book Number) est un numéro unique à 13 caractères qui permet didentifier de manière non équivoque un ouvrage
+. Voici les informations dont nous avons besoin pour vous donner un prix : Type de reliure souhaitée : Format du livre : Couverture : choix du papier et du pelliculage Brillant/Mat ou soft touch ? Impression couverture : recto couleur Papier Intérieur : Type dimpression intérieur : couleur ou noir et blanc ? Nombre de pages intérieur : Livraison 1 point en France incluse Quantité : Vous pouvez nous écrire un mail à contact@coollibri.com avec tous ces champs renseignés et nous pourrons ensuite vous faire part de notre proposition de prix. Quest-ce quun ISBN ? LISBN (International Standard Book Number) est un numéro unique à 13 caractères qui permet didentifier de manière non équivoque un ouvrage
 ----------------------------------------------------------------------
 
 ======================================================================

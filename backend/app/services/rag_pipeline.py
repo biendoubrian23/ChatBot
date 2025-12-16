@@ -1,5 +1,6 @@
 """RAG pipeline service orchestrating all components."""
 import time
+import re
 from typing import List, Tuple, Optional
 from datetime import datetime
 import uuid
@@ -8,8 +9,33 @@ from langchain.schema import Document
 from app.services.embeddings import EmbeddingService
 from app.services.vectorstore import VectorStoreService
 from app.services.llm import OllamaService
+from app.services.message_analyzer import MessageAnalyzer
+from app.services.order_logic import generate_order_status_response
+from app.services.database import db_service
 from app.models.schemas import ChatResponse, SourceDocument
 
+
+def fix_email_format(text: str) -> str:
+    """Corrige les emails CoolLibri malformés dans le texte.
+    
+    Le LLM oublie parfois le @ dans les emails. Cette fonction corrige:
+    - contactcoollibri.com -> contact@coollibri.com
+    - contact coollibri.com -> contact@coollibri.com
+    """
+    # Pattern pour détecter les variations malformées de l'email
+    patterns = [
+        (r'contactcoollibri\.com', 'contact@coollibri.com'),
+        (r'contact\s+coollibri\.com', 'contact@coollibri.com'),
+        (r'contact\.coollibri\.com', 'contact@coollibri.com'),
+        (r'contactcoolibri\.com', 'contact@coollibri.com'),  # typo sans double l
+        (r'contact coolibri\.com', 'contact@coollibri.com'),
+    ]
+    
+    result = text
+    for pattern, replacement in patterns:
+        result = re.sub(pattern, replacement, result, flags=re.IGNORECASE)
+    
+    return result
 
 class RAGPipeline:
     """RAG pipeline orchestrating retrieval and generation."""
@@ -34,6 +60,7 @@ class RAGPipeline:
         self.top_k = top_k
         self.rerank_top_n = rerank_top_n
         self.cache = {}  # Simple in-memory cache
+        self.message_analyzer = MessageAnalyzer(llm_service)
     
     def retrieve_documents(self, query: str) -> List[Tuple[Document, float]]:
         """Retrieve relevant documents for a query.
@@ -81,7 +108,7 @@ class RAGPipeline:
             )
         return "\n".join(context_parts)
     
-    def generate_response(
+    async def generate_response(
         self,
         query: str,
         conversation_id: Optional[str] = None,
@@ -102,6 +129,64 @@ class RAGPipeline:
         # Generate conversation ID if not provided
         if conversation_id is None:
             conversation_id = str(uuid.uuid4())
+            
+        # 1. Analyze intent with LLM-First approach
+        # Le LLM décide si c'est du suivi de commande ou une question générale
+        analysis = await self.message_analyzer.analyze_message(query)
+        intent = analysis["intent"]
+        order_number = analysis.get("order_number")
+        reasoning = analysis.get("reasoning")
+        
+        print(f"🤖 Pipeline Analysis: Intent={intent}, Order={order_number}")
+        
+        # 2. Handle Order Tracking
+        if intent == "order_tracking":
+            if order_number:
+                # Fetch order details from DB
+                print(f"🔍 Searching for order {order_number}...")
+                order_data = db_service.get_order_tracking_details(order_number)
+                
+                if order_data:
+                    # Generate status response
+                    answer = generate_order_status_response(
+                        order_data, 
+                        current_status_id=order_data["status_id"]
+                    )
+                    
+                    return ChatResponse(
+                        answer=answer,
+                        sources=[SourceDocument(
+                            content=f"Détails de la commande {order_number}",
+                            metadata={"source": "database", "type": "order_status"},
+                            relevance_score=1.0
+                        )],
+                        conversation_id=conversation_id,
+                        processing_time=time.time() - start_time,
+                        intent=intent,
+                        reasoning=reasoning
+                    )
+                else:
+                    # Order not found
+                    return ChatResponse(
+                        answer=f"Je ne trouve pas la commande numéro {order_number} dans notre base de données. Êtes-vous sûr du numéro ?",
+                        sources=[],
+                        conversation_id=conversation_id,
+                        processing_time=time.time() - start_time,
+                        intent=intent,
+                        reasoning=reasoning
+                    )
+            elif analysis.get("needs_order_input"):
+                # Ask for order number
+                return ChatResponse(
+                    answer="Pour suivre votre commande, j'ai besoin de votre numéro de commande. Pouvez-vous me le donner ?",
+                    sources=[],
+                    conversation_id=conversation_id,
+                    processing_time=time.time() - start_time,
+                    intent=intent,
+                    reasoning=reasoning
+                )
+
+        # 3. Standard RAG Flow (General Question)
         
         # Check cache (only if no history, as context changes with history)
         cache_key = query.lower().strip()
@@ -109,6 +194,10 @@ class RAGPipeline:
             cached_response = self.cache[cache_key]
             cached_response.conversation_id = conversation_id
             cached_response.timestamp = datetime.utcnow()
+            # Update intent/reasoning in cached response if missing
+            if not hasattr(cached_response, 'intent') or not cached_response.intent:
+                cached_response.intent = intent
+                cached_response.reasoning = reasoning
             return cached_response
         
         # Retrieve documents
@@ -120,7 +209,9 @@ class RAGPipeline:
                 answer="Je n'ai pas trouvé d'information pertinente pour répondre à votre question.",
                 sources=[],
                 conversation_id=conversation_id,
-                processing_time=time.time() - start_time
+                processing_time=time.time() - start_time,
+                intent=intent,
+                reasoning=reasoning
             )
         
         # Rerank documents
@@ -135,6 +226,9 @@ class RAGPipeline:
             context=context,
             history=history
         )
+        
+        # Post-traitement: corriger les emails malformés
+        answer = fix_email_format(answer)
         
         # Prepare source documents
         sources = [
@@ -151,7 +245,9 @@ class RAGPipeline:
             answer=answer,
             sources=sources,
             conversation_id=conversation_id,
-            processing_time=time.time() - start_time
+            processing_time=time.time() - start_time,
+            intent=intent,
+            reasoning=reasoning
         )
         
         # Cache the response

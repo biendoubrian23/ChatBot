@@ -26,10 +26,11 @@ export const chatAPI = {
    */
   async sendMessageStream(
     request: ChatRequest,
-    onToken: (token: string) => void,
+    onToken: (token: string, replace?: boolean) => void,
     onSources: (sources: any[]) => void,
     onComplete: () => void,
-    onError: (error: string) => void
+    onError: (error: string) => void,
+    onAnalysis?: (analysis: any) => void
   ): Promise<void> {
     try {
       const response = await fetch(`${API_BASE_URL}/chat/stream`, {
@@ -63,15 +64,21 @@ export const chatAPI = {
           if (line.startsWith('data: ')) {
             try {
               const data = JSON.parse(line.slice(6))
-              
+
               if (data.type === 'token') {
                 onToken(data.content)
+              } else if (data.type === 'correction') {
+                // Le backend a corrigé le texte (ex: email malformé)
+                // On remplace tout le contenu par la version corrigée
+                onToken(data.content, true) // true = replace all
               } else if (data.type === 'sources') {
                 onSources(data.sources)
               } else if (data.type === 'done') {
                 onComplete()
               } else if (data.type === 'error') {
                 onError(data.message)
+              } else if (data.type === 'analysis' && onAnalysis) {
+                onAnalysis(data)
               }
             } catch (e) {
               console.error('Error parsing SSE data:', e)
@@ -106,7 +113,7 @@ export const chatAPI = {
     try {
       console.log('[streamOrderTracking] Starting request for order:', orderNumber)
       console.log('[streamOrderTracking] URL:', `${API_BASE_URL}/order/${orderNumber}/tracking/stream`)
-      
+
       const response = await fetch(`${API_BASE_URL}/order/${orderNumber}/tracking/stream`, {
         method: 'GET',
         mode: 'cors',
@@ -139,7 +146,7 @@ export const chatAPI = {
         const chunk = decoder.decode(value, { stream: true })
         buffer += chunk
         const lines = buffer.split('\n')
-        
+
         // Keep last incomplete line in buffer
         buffer = lines.pop() || ''
 
@@ -147,7 +154,7 @@ export const chatAPI = {
           if (line.startsWith('data: ')) {
             try {
               const data = JSON.parse(line.slice(6))
-              
+
               if (data.type === 'thinking' && onThinking) {
                 onThinking(data.content)
               } else if (data.type === 'final_response' && onFinalResponse) {
