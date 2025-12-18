@@ -4,7 +4,6 @@ from fastapi.responses import StreamingResponse
 from typing import List
 import json
 import asyncio
-import re
 
 from app.models.schemas import (
     ChatRequest,
@@ -16,8 +15,6 @@ from app.models.schemas import (
     MessageAnalysisResponse
 )
 from app.core.config import settings
-from app.services.rag_pipeline import fix_email_format
-
 
 router = APIRouter()
 
@@ -111,8 +108,6 @@ async def chat_stream(http_request: Request, request: ChatRequest, pipeline=Depe
                             order_data, 
                             current_status_id=order_data.get("status_id")
                         )
-                        # Corriger les emails malformés
-                        response_text = fix_email_format(response_text)
                         
                         # Stream the SQL response with typing effect
                         for char in response_text:
@@ -149,23 +144,13 @@ async def chat_stream(http_request: Request, request: ChatRequest, pipeline=Depe
             context = "\n\n".join([doc.page_content for doc, _ in context_docs])
             
             # Stream the response with disconnect detection
-            # Buffer pour accumuler la réponse complète et corriger l'email
-            full_response = ""
             async for chunk in pipeline.llm_service.generate_response_stream_async(
                 query=request.question,
                 context=context,
                 history=history_list,
                 is_disconnected=http_request.is_disconnected
             ):
-                full_response += chunk
-                # Corriger l'email dans le chunk accumulé et envoyer le dernier caractère
                 yield f"data: {json.dumps({'type': 'token', 'content': chunk})}\n\n"
-            
-            # À la fin, envoyer une correction si nécessaire
-            corrected = fix_email_format(full_response)
-            if corrected != full_response:
-                # Envoyer un signal de correction avec le texte corrigé
-                yield f"data: {json.dumps({'type': 'correction', 'content': corrected})}\n\n"
             
             # Vérifier avant d'envoyer les sources
             if await http_request.is_disconnected():
@@ -420,8 +405,6 @@ async def stream_order_tracking(order_number: int, http_request: Request):
             
             # Générer la réponse complète
             tracking_response = generate_order_status_response(order_data)
-            # Corriger les emails malformés
-            tracking_response = fix_email_format(tracking_response)
             
             # Envoyer la réponse finale d'un coup (pas de streaming)
             yield f"data: {json.dumps({'type': 'final_response', 'content': tracking_response})}\n\n"

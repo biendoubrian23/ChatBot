@@ -79,15 +79,13 @@ class MessageAnalyzer:
                 "reasoning": str
             }
         """
-        # PROMPT OPTIMISÉ: distingue bien questions générales vs suivi de commande
+        # PROMPT OPTIMISÉ: 50% plus court mais même précision
         prompt = f"""Analyse ce message client CoolLibri (imprimerie livres):
 "{message}"
 
 INTENTION:
-- ORDER_TRACKING = veut le STATUT/SUIVI de SA commande PERSONNELLE ("où en est MA commande?", "commande 13349", "mon colis?", "je veux suivre ma commande", juste un numéro de commande)
-- GENERAL_QUESTION = questions GÉNÉRALES sur CoolLibri: délais de livraison en général, prix, formats, fonctionnement, annulation, réclamation, qualité, problèmes, remboursement
-
-⚠️ ATTENTION: Si le client pose une question GÉNÉRALE sur les délais ("quels sont les délais de livraison?", "combien de temps pour recevoir un livre?", "délais d'expédition?") SANS parler de SA commande → c'est GENERAL_QUESTION
+- ORDER_TRACKING = veut le STATUT/SUIVI d'une commande ("où en est ma commande?", "commande 13349", "mon colis?", juste un numéro)
+- GENERAL_QUESTION = tout le reste (annulation, réclamation, qualité, prix, formats, problèmes, remboursement)
 
 NUMÉRO: Extrais UNIQUEMENT un numéro PRÉSENT dans le message. Sinon null.
 
