@@ -108,7 +108,8 @@ export const chatAPI = {
     onComplete: () => void,
     onError: (error: string) => void,
     onThinking?: (step: string) => void,
-    onFinalResponse?: (content: string) => void
+    onFinalResponse?: (content: string) => void,
+    onAnalysis?: (analysis: any) => void
   ): Promise<void> {
     try {
       console.log('[streamOrderTracking] Starting request for order:', orderNumber)
@@ -165,6 +166,8 @@ export const chatAPI = {
                 onComplete()
               } else if (data.type === 'error') {
                 onError(data.message)
+              } else if (data.type === 'analysis' && onAnalysis) {
+                onAnalysis(data)
               }
             } catch (e) {
               console.error('Error parsing SSE data:', e)
