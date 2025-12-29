@@ -24,10 +24,18 @@ class SocketErrorFilter(logging.Filter):
     def filter(self, record):
         return "socket.send()" not in str(record.getMessage())
 
-# Appliquer le filtre aux loggers uvicorn
+# Filtre pour masquer les logs de tracking (parallel-monitor)
+class TrackingLogFilter(logging.Filter):
+    def filter(self, record):
+        msg = str(record.getMessage())
+        # Ignorer les endpoints de tracking
+        return "/tracking/" not in msg
+
+# Appliquer les filtres aux loggers uvicorn
 for logger_name in ["uvicorn", "uvicorn.error", "uvicorn.access"]:
     logger = logging.getLogger(logger_name)
     logger.addFilter(SocketErrorFilter())
+    logger.addFilter(TrackingLogFilter())
 
 # Create FastAPI app
 app = FastAPI(

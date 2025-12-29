@@ -124,7 +124,7 @@ class MistralProvider(BaseLLMProvider):
                                 content = chunk["choices"][0]["delta"]["content"]
                                 yield content
                                 # Délai naturel style ChatGPT
-                                await asyncio.sleep(0.03)
+                                await asyncio.sleep(0.12)
                         except (json.JSONDecodeError, KeyError, IndexError):
                             continue
                             
@@ -221,7 +221,7 @@ class GroqProvider(BaseLLMProvider):
                                 content = chunk["choices"][0]["delta"]["content"]
                                 yield content
                                 # Délai naturel style ChatGPT
-                                await asyncio.sleep(0.03)
+                                await asyncio.sleep(0.12)
                         except (json.JSONDecodeError, KeyError, IndexError):
                             continue
                             
@@ -331,7 +331,7 @@ class OllamaProvider(BaseLLMProvider):
                         yield "Désolé, une erreur s'est produite."
                         break
                     yield chunk
-                    await asyncio.sleep(0.05)
+                    await asyncio.sleep(0.12)
                 except thread_queue.Empty:
                     await asyncio.sleep(0.01)
                     continue
