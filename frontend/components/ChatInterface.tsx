@@ -70,6 +70,9 @@ export default function ChatInterface() {
     const startTime = Date.now()
     let firstByteTime: number | undefined = undefined
 
+    // Tracking pour Parallel Monitor
+    const trackingId = await chatAPI.trackRequestStart(content, conversationId || undefined)
+
     // Create assistant message placeholder with loading indicator
     const assistantId = (Date.now() + 1).toString()
     const assistantMessage: Message = {
@@ -90,6 +93,7 @@ export default function ChatInterface() {
 
       let fullContent = ''
       let hasStartedReceiving = false
+      let tokenCount = 0
 
       // Use streaming API
       await chatAPI.sendMessageStream(
@@ -104,8 +108,17 @@ export default function ChatInterface() {
             hasStartedReceiving = true
             firstByteTime = Date.now() - startTime // Capturer TTFB
             fullContent = token // Replace loading indicator with first token
+            // Update tracking status
+            if (trackingId) {
+              chatAPI.trackRequestUpdate(trackingId, 'streaming', fullContent, ++tokenCount)
+            }
           } else {
             fullContent += token
+            tokenCount++
+            // Update tracking every 10 tokens
+            if (trackingId && tokenCount % 10 === 0) {
+              chatAPI.trackRequestUpdate(trackingId, 'streaming', fullContent, tokenCount)
+            }
           }
           setMessages((prev) =>
             prev.map((msg) =>
@@ -135,6 +148,10 @@ export default function ChatInterface() {
                 : msg
             )
           )
+          // End tracking
+          if (trackingId) {
+            chatAPI.trackRequestEnd(trackingId, fullContent, true)
+          }
           setIsLoading(false)
           if (!conversationId) {
             setConversationId(Date.now().toString())
@@ -144,6 +161,10 @@ export default function ChatInterface() {
         (errorMsg: string) => {
           console.error('Streaming error:', errorMsg)
           setError(errorMsg)
+          // End tracking with error
+          if (trackingId) {
+            chatAPI.trackRequestEnd(trackingId, undefined, false, errorMsg)
+          }
           setMessages((prev) =>
             prev.map((msg) =>
               msg.id === assistantId
@@ -160,6 +181,10 @@ export default function ChatInterface() {
         err.response?.data?.detail || 
         'Une erreur est survenue. Vérifiez que le serveur est démarré.'
       )
+      // End tracking with error
+      if (trackingId) {
+        chatAPI.trackRequestEnd(trackingId, undefined, false, err.message)
+      }
       
       // Update message with error
       setMessages((prev) =>

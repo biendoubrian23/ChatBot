@@ -1,24 +1,29 @@
 """PDF processing service for document extraction."""
 import os
 import re
-from typing import List, Dict
+from typing import List, Dict, Optional
 from pathlib import Path
 import PyPDF2
 import pdfplumber
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.schema import Document
 
+from app.core.config import settings
+
 
 class PDFProcessor:
     """Service to process PDF files and extract text."""
     
-    def __init__(self, chunk_size: int = 800, chunk_overlap: int = 150):
+    def __init__(self, chunk_size: Optional[int] = None, chunk_overlap: Optional[int] = None):
         """Initialize PDF processor.
         
         Args:
-            chunk_size: Size of text chunks (800 optimal pour FAQ)
-            chunk_overlap: Overlap between chunks (150 = 18.75%)
+            chunk_size: Size of text chunks (default: from config, optimized for Mistral)
+            chunk_overlap: Overlap between chunks (default: from config)
         """
+        # Utiliser la config centralisée par défaut
+        chunk_size = chunk_size or settings.chunk_size
+        chunk_overlap = chunk_overlap or settings.chunk_overlap
         self.chunk_size = chunk_size
         self.chunk_overlap = chunk_overlap
         self.text_splitter = RecursiveCharacterTextSplitter(

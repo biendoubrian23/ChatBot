@@ -31,3 +31,7 @@ pymssql==2.3.1
 requests==2.32.0
 beautifulsoup4==4.12.3
 lxml==5.3.0
+
+# System Monitoring
+psutil>=5.9.0
+gputil>=1.4.0  # Optionnel - pour les métriques GPU NVIDIA

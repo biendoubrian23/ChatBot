@@ -1,33 +1,132 @@
-"""Ollama LLM service for generating responses."""
+"""Multi-provider LLM service for generating responses."""
 import ollama
+import httpx
 from typing import Optional, List, Dict, AsyncGenerator, Callable
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
 import threading
+import hashlib
+
+# Import the new provider system
+from app.services.llm_provider import create_llm_provider, BaseLLMProvider, get_optimal_config
+from app.core.config import settings
 
 
 class OllamaService:
-    """Service for interacting with Ollama LLM."""
+    """Service for interacting with LLM with optimized connection pooling.
+    
+    Now supports multiple providers: Mistral AI, Groq, and Ollama (local).
+    """
     
     def __init__(self, base_url: str = "http://localhost:11434", model: str = "mistral:latest"):
-        """Initialize Ollama service.
+        """Initialize LLM service with the configured provider.
         
         Args:
-            base_url: Ollama server URL
-            model: Model name to use
+            base_url: Ollama server URL (used for Ollama provider)
+            model: Model name to use (used for Ollama provider)
         """
         self.base_url = base_url
         self.model = model
-        self.client = ollama.Client(host=base_url)
+        
+        # Initialize the provider based on settings
+        try:
+            self.provider: BaseLLMProvider = create_llm_provider(settings)
+            self._use_new_provider = True
+            
+            # Afficher le type de provider
+            provider_type = "☁️ CLOUD" if self.provider.is_cloud else "💻 LOCAL"
+            print(f"✅ Using {settings.llm_provider.upper()} provider ({provider_type})")
+            
+            # Afficher la config optimale
+            config = get_optimal_config(self.provider)
+            print(f"   → Batching: {'désactivé' if not config['enable_request_batching'] else 'activé'}")
+            print(f"   → Max concurrent: {config['max_concurrent_llm_requests']}")
+            
+        except Exception as e:
+            print(f"⚠️ Failed to initialize cloud provider: {e}")
+            print("⚠️ Falling back to Ollama")
+            self._use_new_provider = False
+            # Fallback to Ollama
+            self.client = ollama.Client(host=base_url)
+        
+        # Pool de connexions HTTP persistantes pour réduire la latence
+        self._http_client = httpx.Client(
+            base_url=base_url,
+            timeout=httpx.Timeout(300.0, connect=10.0),
+            limits=httpx.Limits(
+                max_keepalive_connections=10,
+                max_connections=20,
+                keepalive_expiry=30.0,
+            ),
+            http2=False,
+        )
+        
+        # Client async pour les requêtes non-bloquantes
+        self._async_client: Optional[httpx.AsyncClient] = None
+        
         # 8 workers pour gérer plusieurs utilisateurs simultanés
         self._executor = ThreadPoolExecutor(max_workers=8)
+        
+        # Cache de réponses rapide (pour dedup dans la même seconde)
+        self._quick_cache: Dict[str, tuple] = {}
+        self._quick_cache_ttl = 2.0
+        self._cache_lock = threading.Lock()
+    
+    def _get_async_client(self) -> httpx.AsyncClient:
+        """Retourne le client async, le créant si nécessaire."""
+        if self._async_client is None:
+            self._async_client = httpx.AsyncClient(
+                base_url=self.base_url,
+                timeout=httpx.Timeout(300.0, connect=10.0),
+                limits=httpx.Limits(
+                    max_keepalive_connections=10,
+                    max_connections=20,
+                    keepalive_expiry=30.0,
+                ),
+            )
+        return self._async_client
+    
+    def _get_cache_key(self, prompt: str) -> str:
+        """Génère une clé de cache pour un prompt."""
+        return hashlib.md5(prompt.encode()).hexdigest()
+    
+    def _check_quick_cache(self, prompt: str) -> Optional[str]:
+        """Vérifie le cache rapide pour éviter les requêtes dupliquées."""
+        import time
+        key = self._get_cache_key(prompt)
+        with self._cache_lock:
+            if key in self._quick_cache:
+                response, timestamp = self._quick_cache[key]
+                if time.time() - timestamp < self._quick_cache_ttl:
+                    print("⚡ Quick cache HIT (dedup)")
+                    return response
+                else:
+                    del self._quick_cache[key]
+        return None
+    
+    def _add_to_quick_cache(self, prompt: str, response: str):
+        """Ajoute une réponse au cache rapide."""
+        import time
+        key = self._get_cache_key(prompt)
+        with self._cache_lock:
+            # Limiter la taille du cache
+            if len(self._quick_cache) > 50:
+                # Supprimer les entrées expirées
+                now = time.time()
+                expired = [k for k, (_, t) in self._quick_cache.items() 
+                          if now - t > self._quick_cache_ttl]
+                for k in expired:
+                    del self._quick_cache[k]
+            self._quick_cache[key] = (response, time.time())
     
     def is_available(self) -> bool:
-        """Check if Ollama service is available.
+        """Check if LLM service is available.
         
         Returns:
             True if available, False otherwise
         """
+        if self._use_new_provider:
+            return self.provider.is_available()
         try:
             self.client.list()
             return True
@@ -45,6 +144,9 @@ class OllamaService:
         Returns:
             Generated response
         """
+        if self._use_new_provider:
+            return await self.provider.generate(prompt, max_tokens)
+        
         try:
             response = self.client.generate(
                 model=self.model,
@@ -77,11 +179,35 @@ class OllamaService:
         Yields:
             Response chunks
         """
+        # Use new cloud provider if available
+        if self._use_new_provider:
+            system_prompt = self._get_system_prompt()
+            
+            # Build messages list for chat API
+            messages = []
+            
+            # Add context as first user message
+            context_msg = f"CONTEXTE DISPONIBLE:\n{context}"
+            if history:
+                context_msg += "\n\nHISTORIQUE DE CONVERSATION:\n"
+                for msg in history[-4:]:
+                    role = "Client" if msg["role"] == "user" else "Assistant"
+                    context_msg += f"{role}: {msg['content']}\n"
+            
+            messages.append({"role": "user", "content": context_msg})
+            messages.append({"role": "assistant", "content": "J'ai bien compris le contexte. Quelle est votre question ?"})
+            messages.append({"role": "user", "content": query})
+            
+            async for chunk in self.provider.generate_stream(messages, system_prompt, is_disconnected):
+                yield chunk
+            return
+        
+        # Fallback to Ollama
         import queue as thread_queue
         
         cancel_event = threading.Event()
-        chunk_queue = thread_queue.Queue()  # Thread-safe queue standard
-        
+        chunk_queue = thread_queue.Queue()
+
         def sync_generate():
             """Runs in thread pool - generates chunks and puts them in queue."""
             try:
@@ -105,7 +231,7 @@ class OllamaService:
                         "temperature": 0,
                         "top_p": 0.3,
                         "top_k": 30,
-                        "num_predict": 900,  # Augmenté de 700 à 900 pour des réponses plus complètes
+                        "num_predict": 900,
                         "repeat_penalty": 1.3,
                     }
                 )
@@ -120,21 +246,17 @@ class OllamaService:
                 if not cancel_event.is_set():
                     chunk_queue.put(f"__ERROR__:{str(e)}")
             finally:
-                # Signal end
                 chunk_queue.put(None)
         
-        # Start generation in thread pool
         loop = asyncio.get_event_loop()
         future = loop.run_in_executor(self._executor, sync_generate)
         
         try:
             while True:
-                # Check if disconnected
                 if is_disconnected and await is_disconnected():
                     cancel_event.set()
                     return
                 
-                # Non-blocking check for chunks
                 try:
                     chunk = chunk_queue.get_nowait()
                     
@@ -146,8 +268,9 @@ class OllamaService:
                         break
                     
                     yield chunk
+                    await asyncio.sleep(0.05)
+                    
                 except thread_queue.Empty:
-                    # No chunk yet, wait a tiny bit and retry
                     await asyncio.sleep(0.01)
                     continue
                     
@@ -177,6 +300,8 @@ RÈGLES ABSOLUES:
 6. Tu connais CoolLibri parfaitement : prix, formats, délais, processus
 7. Sois UTILE : donne des informations concrètes, pas des réponses vagues
 8. JAMAIS proposer de vérifier quelque chose pour l'utilisateur
+9. Ne propose JAMAIS de solutions de remboursement, renvoi, correction ou remplacement - redirige toujours vers le service client contact@coollibri.com ou 05 31 61 60 42 avec numéro de commande et des photos en cas de problème.
+10. Tu ne peux pas inventer des informations - si tu ne sais pas, dis simplement "Je n'ai pas cette information précise, contactez-nous au..."
 
 SALUTATIONS (bonjour, salut, hello, coucou, bonsoir, hey) :
 → Réponds en UNE SEULE phrase courte et amicale

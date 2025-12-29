@@ -187,6 +187,49 @@ export const chatAPI = {
     const response = await apiClient.get('/stats')
     return response.data
   },
+
+  /**
+   * Request tracking for Parallel Monitor
+   */
+  async trackRequestStart(question: string, sessionId?: string): Promise<string | null> {
+    try {
+      const response = await apiClient.post('/tracking/start', {
+        question,
+        session_id: sessionId,
+        source: 'frontend'
+      })
+      return response.data.request_id
+    } catch (error) {
+      console.error('Track start error:', error)
+      return null
+    }
+  },
+
+  async trackRequestUpdate(requestId: string, status: string, responsePreview?: string, tokensCount?: number): Promise<void> {
+    try {
+      await apiClient.post('/tracking/update', {
+        request_id: requestId,
+        status,
+        response_preview: responsePreview,
+        tokens_count: tokensCount
+      })
+    } catch (error) {
+      // Silently fail - tracking is not critical
+    }
+  },
+
+  async trackRequestEnd(requestId: string, response?: string, success: boolean = true, errorMessage?: string): Promise<void> {
+    try {
+      await apiClient.post('/tracking/end', {
+        request_id: requestId,
+        response,
+        success,
+        error_message: errorMessage
+      })
+    } catch (error) {
+      // Silently fail - tracking is not critical
+    }
+  },
 }
 
 export default apiClient

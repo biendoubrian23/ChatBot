@@ -1,6 +1,7 @@
 """RAG pipeline service orchestrating all components."""
 import time
 import re
+import hashlib
 from typing import List, Tuple, Optional
 from datetime import datetime
 import uuid
@@ -12,7 +13,10 @@ from app.services.llm import OllamaService
 from app.services.message_analyzer import MessageAnalyzer
 from app.services.order_logic import generate_order_status_response
 from app.services.database import db_service
+from app.services.semantic_cache import get_response_cache, SemanticCache
+from app.services.request_batcher import get_batcher, RequestPriority
 from app.models.schemas import ChatResponse, SourceDocument
+from app.core.config import settings
 
 
 def fix_email_format(text: str) -> str:
@@ -61,6 +65,34 @@ class RAGPipeline:
         self.rerank_top_n = rerank_top_n
         self.cache = {}  # Simple in-memory cache
         self.message_analyzer = MessageAnalyzer(llm_service)
+        
+        # Cache sémantique pour les réponses
+        self._semantic_cache: Optional[SemanticCache] = None
+        if settings.enable_semantic_cache:
+            self._init_semantic_cache()
+        
+        # Request batcher pour le parallélisme
+        self._batcher = get_batcher()
+    
+    def _init_semantic_cache(self):
+        """Initialise le cache sémantique avec la fonction d'embedding."""
+        try:
+            # Utiliser le vectorstore pour les embeddings
+            def embed_query(query: str):
+                return self.vectorstore.embedding_service.embed_query(query)
+            
+            self._semantic_cache = get_response_cache(embedding_func=embed_query)
+            print("✅ Cache sémantique initialisé")
+        except Exception as e:
+            print(f"⚠️ Cache sémantique non disponible: {e}")
+            self._semantic_cache = None
+    
+    def _get_context_hash(self, documents: List[Tuple[Document, float]]) -> str:
+        """Génère un hash du contexte pour le cache."""
+        if not documents:
+            return "empty"
+        content = "".join([doc.page_content[:100] for doc, _ in documents[:3]])
+        return hashlib.md5(content.encode()).hexdigest()[:12]
     
     def retrieve_documents(self, query: str) -> List[Tuple[Document, float]]:
         """Retrieve relevant documents for a query.
@@ -220,6 +252,30 @@ class RAGPipeline:
         # Format context
         context = self.format_context(reranked_docs)
         
+        # Check semantic cache before calling LLM
+        context_hash = self._get_context_hash(reranked_docs)
+        if self._semantic_cache and not history:
+            cached_answer = self._semantic_cache.get(query, context_hash)
+            if cached_answer:
+                print(f"🧠 Semantic Cache HIT")
+                # Prepare source documents
+                sources = [
+                    SourceDocument(
+                        content=doc.page_content,
+                        metadata=doc.metadata,
+                        relevance_score=score
+                    )
+                    for doc, score in reranked_docs
+                ]
+                return ChatResponse(
+                    answer=cached_answer,
+                    sources=sources,
+                    conversation_id=conversation_id,
+                    processing_time=time.time() - start_time,
+                    intent=intent,
+                    reasoning=reasoning
+                )
+        
         # Generate answer with LLM (now with history)
         answer = self.llm_service.generate_response(
             query=query,
@@ -229,6 +285,19 @@ class RAGPipeline:
         
         # Post-traitement: corriger les emails malformés
         answer = fix_email_format(answer)
+        
+        # Store in semantic cache
+        if self._semantic_cache and not history:
+            try:
+                embedding = self.vectorstore.embedding_service.embed_query(query)
+                self._semantic_cache.set(
+                    query=query,
+                    value=answer,
+                    context_hash=context_hash,
+                    embedding=embedding
+                )
+            except Exception as e:
+                print(f"⚠️ Erreur cache sémantique: {e}")
         
         # Prepare source documents
         sources = [

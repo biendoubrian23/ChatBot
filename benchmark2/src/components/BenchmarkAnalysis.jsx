@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
-import { Download, FileSpreadsheet, BarChart3, Clock, Zap, Award, CheckCircle, XCircle, AlertCircle, ChevronDown, ChevronUp, Edit3 } from 'lucide-react';
+import { Download, FileSpreadsheet, BarChart3, Clock, Zap, Award, CheckCircle, XCircle, AlertCircle, ChevronDown, ChevronUp, Edit3, Activity } from 'lucide-react';
 import * as XLSX from 'xlsx';
+import SystemMonitor from './SystemMonitor';
 
 const BenchmarkAnalysis = () => {
   const [generating, setGenerating] = useState(false);
@@ -522,6 +523,11 @@ const BenchmarkAnalysis = () => {
               {generating ? 'Génération...' : 'Télécharger Excel'}
             </button>
           </div>
+        </div>
+
+        {/* 🎛️ Moniteur Système Temps Réel - VU-mètre CPU/GPU */}
+        <div className="mb-8">
+          <SystemMonitor backendUrl="http://localhost:8000" />
         </div>
 
         {/* Classement */}

@@ -16,6 +16,9 @@ from app.models.schemas import (
 )
 from app.core.config import settings
 
+# Import du système de métriques pour tracker les requêtes actives
+from app.api import system_metrics
+
 router = APIRouter()
 
 # These will be initialized in main.py
@@ -56,6 +59,11 @@ async def chat(request: ChatRequest, pipeline=Depends(get_rag_pipeline)):
     Returns:
         Chat response with answer and sources
     """
+    # Track la requête active pour les métriques
+    system_metrics.active_chatbot_requests["count"] += 1
+    if system_metrics.active_chatbot_requests["count"] > system_metrics.active_chatbot_requests["peak"]:
+        system_metrics.active_chatbot_requests["peak"] = system_metrics.active_chatbot_requests["count"]
+    
     try:
         # Convert history to list of dicts for the pipeline
         history_list = [{"role": msg.role, "content": msg.content} for msg in request.history] if request.history else []
@@ -68,6 +76,9 @@ async def chat(request: ChatRequest, pipeline=Depends(get_rag_pipeline)):
         return response
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing request: {str(e)}")
+    finally:
+        # Fin de la requête
+        system_metrics.active_chatbot_requests["count"] = max(0, system_metrics.active_chatbot_requests["count"] - 1)
 
 
 @router.post("/chat/stream")
@@ -82,6 +93,11 @@ async def chat_stream(http_request: Request, request: ChatRequest, pipeline=Depe
     Returns:
         Streaming response with answer chunks
     """
+    # Track la requête active pour les métriques
+    system_metrics.active_chatbot_requests["count"] += 1
+    if system_metrics.active_chatbot_requests["count"] > system_metrics.active_chatbot_requests["peak"]:
+        system_metrics.active_chatbot_requests["peak"] = system_metrics.active_chatbot_requests["count"]
+    
     async def generate():
         try:
             # 1. Analyze intent with LLM-First approach
@@ -169,6 +185,9 @@ async def chat_stream(http_request: Request, request: ChatRequest, pipeline=Depe
         except Exception as e:
             if not await http_request.is_disconnected():
                 yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
+        finally:
+            # Fin de la requête streaming - décrémente le compteur
+            system_metrics.active_chatbot_requests["count"] = max(0, system_metrics.active_chatbot_requests["count"] - 1)
     
     return StreamingResponse(generate(), media_type="text/event-stream")
 

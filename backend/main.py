@@ -6,10 +6,15 @@ import logging
 
 from app.core.config import settings
 from app.api import routes
+from app.api import parallel_test
+from app.api import system_metrics
+from app.api import request_tracking
+from app.api import optimization_stats
 from app.services.embeddings import EmbeddingService
 from app.services.vectorstore import VectorStoreService
 from app.services.llm import OllamaService
 from app.services.rag_pipeline import RAGPipeline
+from app.services.request_batcher import init_batcher, shutdown_batcher
 
 # Configurer le logging pour ignorer les erreurs de socket déconnectés
 logging.getLogger("uvicorn.error").setLevel(logging.WARNING)
@@ -92,10 +97,29 @@ async def startup_event():
     routes.ollama_service = ollama_service
     routes.vectorstore = vectorstore
     
+    # Initialiser le request batcher pour le parallélisme
+    if settings.enable_request_batching:
+        await init_batcher()
+        print("✓ Request Batcher initialisé")
+    
+    # Afficher les optimisations actives
+    print("\n🔧 Optimisations actives:")
+    print(f"   - Cache sémantique: {'✓' if settings.enable_semantic_cache else '✗'}")
+    print(f"   - Request batching: {'✓' if settings.enable_request_batching else '✗'}")
+    print(f"   - Max requêtes parallèles: {settings.max_concurrent_llm_requests}")
+    
     print("\n✅ LibriAssist API is ready!")
     print(f"📍 Listening on http://{settings.api_host}:{settings.api_port}")
     print(f"📚 Vector store contains {vectorstore.count()} documents")
     print("\n💡 Tip: Use /docs for API documentation")
+
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    """Cleanup on shutdown."""
+    print("🛑 Arrêt de LibriAssist API...")
+    await shutdown_batcher()
+    print("✅ Cleanup terminé")
 
 
 @app.get("/")
@@ -111,6 +135,10 @@ async def root():
 
 # Include routers
 app.include_router(routes.router, prefix="/api/v1", tags=["chatbot"])
+app.include_router(parallel_test.router, prefix="/api/v1", tags=["parallel-testing"])
+app.include_router(system_metrics.router, prefix="/api/v1", tags=["system-metrics"])
+app.include_router(request_tracking.router, prefix="/api/v1", tags=["request-tracking"])
+app.include_router(optimization_stats.router, prefix="/api/v1", tags=["optimization"])
 
 
 if __name__ == "__main__":

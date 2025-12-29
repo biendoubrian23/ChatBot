@@ -370,6 +370,9 @@ export default function ChatInterface({ onMetricsUpdate }: ChatInterfaceProps) {
     const startTime = Date.now()
     let firstByteTime: number | undefined = undefined
 
+    // Tracking pour Parallel Monitor
+    const trackingId = await chatAPI.trackRequestStart(content, conversationId || undefined)
+
     const assistantId = (Date.now() + 1).toString()
     const assistantMessage: Message = {
       id: assistantId,
@@ -391,6 +394,7 @@ export default function ChatInterface({ onMetricsUpdate }: ChatInterfaceProps) {
       let fullContent = ''
       let hasStartedReceiving = false
       let sources: any[] = []
+      let tokenCount = 0
 
       await chatAPI.sendMessageStream(
         {
@@ -404,12 +408,21 @@ export default function ChatInterface({ onMetricsUpdate }: ChatInterfaceProps) {
             hasStartedReceiving = true
             firstByteTime = Date.now() - startTime
             fullContent = token
+            // Update tracking
+            if (trackingId) {
+              chatAPI.trackRequestUpdate(trackingId, 'streaming', fullContent, ++tokenCount)
+            }
           } else {
             if (replace) {
               // Remplacer tout le contenu (utilisé pour les corrections d'email)
               fullContent = token
             } else {
               fullContent += token
+            }
+            tokenCount++
+            // Update tracking every 10 tokens
+            if (trackingId && tokenCount % 10 === 0) {
+              chatAPI.trackRequestUpdate(trackingId, 'streaming', fullContent, tokenCount)
             }
           }
           setMessages((prev) =>
@@ -445,11 +458,20 @@ export default function ChatInterface({ onMetricsUpdate }: ChatInterfaceProps) {
             }))
           }
 
+          // End tracking
+          if (trackingId) {
+            chatAPI.trackRequestEnd(trackingId, fullContent, true)
+          }
+
           setMetricsHistory((prev) => [...prev, newMetric])
           setIsLoading(false)
         },
         // onError
         (errorMsg: string) => {
+          // End tracking with error
+          if (trackingId) {
+            chatAPI.trackRequestEnd(trackingId, undefined, false, errorMsg)
+          }
           setError(errorMsg)
           setMessages((prev) =>
             prev.map((msg) =>
@@ -478,6 +500,10 @@ export default function ChatInterface({ onMetricsUpdate }: ChatInterfaceProps) {
         }
       )
     } catch (err: any) {
+      // End tracking with error
+      if (trackingId) {
+        chatAPI.trackRequestEnd(trackingId, undefined, false, err.message)
+      }
       setError(err.message || 'Une erreur est survenue')
       setMessages((prev) =>
         prev.map((msg) =>
