@@ -1,6 +1,6 @@
 {
   "benchmark_info": {
-    "date": "2025-12-16T11:02:55.567016",
+    "date": "2025-12-29T16:55:48.058128",
     "model": "mistral",
     "backend_url": "http://localhost:8000",
     "total_questions": 24
@@ -12,9 +12,9 @@
       "label": "Délai général",
       "question": "Quels sont les délais de livraison ?",
       "expected_answer": "Prévoyez 2 à 3 semaines incluant: validation fichiers (1-2 jours), préparation (2-3 jours), impression (3-5 jours), reliure (2-3 jours), expédition (3-7 jours). Les délais varient selon format, nombre de pages et charge de production.",
-      "actual_answer": "Prévoyez entre 2 à 3 semaines après le paiement complet.",
-      "time_to_first_token_seconds": 22.47,
-      "total_response_time_seconds": 23.77
+      "actual_answer": "Prévoyez entre 2 à 3 semaines à partir du jour du paiement complet de votre commande. Les délais incluent la validation des fichiers, la préparation, l'impression, la reliure et l'expédition. Pour un délai précis, vous recevrez une estimation détaillée avant de payer, basée sur vos choix de format, papier, reliure et volume.",
+      "time_to_first_token_seconds": 3.57,
+      "total_response_time_seconds": 15.85
     },
     {
       "id": 2,
@@ -22,9 +22,9 @@
       "label": "Commande urgente",
       "question": "J'ai une commande urgente, pouvez-vous accélérer ?",
       "expected_answer": "Les délais de production sont fixes et dépendent de la charge de travail. Il n'est pas possible de garantir une accélération. Contactez contact@coollibri.com pour voir si une solution est envisageable selon votre cas.",
-      "actual_answer": "Nous pouvons accélérer la production pour votre commande urgente. Veuillez contacter le service client à contact@coollibri.com ou au 05 31 61 60 42 pour plus d'informations sur les délais possibles et obtenir une réponse personnalisée en fonction de votre besoin spécifique.",
-      "time_to_first_token_seconds": 8.92,
-      "total_response_time_seconds": 15.41
+      "actual_answer": "Pour accélérer votre commande, nous proposons une option Express à 12,50€ TTC. Cette option réduit les délais de production. Contactez-nous au 05 31 61 60 42 ou par email à contact@coollibri.com pour plus d'informations.",
+      "time_to_first_token_seconds": 3.25,
+      "total_response_time_seconds": 13.03
     },
     {
       "id": 3,
@@ -32,9 +32,9 @@
       "label": "Temps production",
       "question": "Combien de temps dure l'impression de mon livre ?",
       "expected_answer": "L'impression seule prend 3-5 jours ouvrables après validation des fichiers. Ajoutez 2-3 jours pour la reliure/finition. Le temps total de production est de 5-8 jours ouvrables avant expédition.",
-      "actual_answer": "Le délai d'impression pour votre livre est entre 2 à 3 semaines après le paiement complet.",
-      "time_to_first_token_seconds": 8.87,
-      "total_response_time_seconds": 11.0
+      "actual_answer": "Le délai moyen de production est de 2 à 3 semaines à partir du jour du paiement complet. Ce délai inclut la validation des fichiers, la préparation, l'impression, la reliure et la livraison. Pour une estimation précise, contactez-nous avant de payer votre commande.",
+      "time_to_first_token_seconds": 4.39,
+      "total_response_time_seconds": 14.57
     },
     {
       "id": 4,
@@ -42,9 +42,9 @@
       "label": "Expédition délai",
       "question": "Une fois expédié, en combien de temps je reçois mon colis ?",
       "expected_answer": "Après expédition, comptez 2-3 jours ouvrables pour GLS standard, 2-3 jours pour Relais Colis. Pour l'international, les délais varient selon la destination (5-15 jours).",
-      "actual_answer": "Pour suivre votre commande, j'ai besoin de votre numéro de commande. Pouvez-vous me le donner ?",
-      "time_to_first_token_seconds": 5.65,
-      "total_response_time_seconds": 5.65
+      "actual_answer": "Le délai de livraison dépend de votre localisation et du transporteur. En moyenne, comptez entre 3 à 7 jours après l'expédition. Pour un délai précis, consultez le suivi de votre commande ou contactez-nous.",
+      "time_to_first_token_seconds": 3.21,
+      "total_response_time_seconds": 11.67
     },
     {
       "id": 5,
@@ -52,9 +52,9 @@
       "label": "Livre pour Noël",
       "question": "Si je commande maintenant, je recevrai mon livre pour Noël ?",
       "expected_answer": "Cela dépend de la date actuelle. Prévoyez minimum 2-3 semaines de délai total. En période de fêtes, les délais peuvent être allongés. Contactez contact@coollibri.com pour une estimation précise.",
-      "actual_answer": "Non, pour recevoir votre livre avant Noël, nous vous recommandons d'effectuer une commande au plus tard le 15 décembre.",
-      "time_to_first_token_seconds": 10.5,
-      "total_response_time_seconds": 12.96
+      "actual_answer": "Pour recevoir votre livre pour Noël, vous devez commander avant le 15 décembre. Voici les délais :\n- Standard : 2 à 3 semaines\n- Express (+12,50€) : 7 à 10 jours\n\nVérifiez la date limite exacte sur notre site.",
+      "time_to_first_token_seconds": 5.16,
+      "total_response_time_seconds": 15.92
     },
     {
       "id": 6,
@@ -62,9 +62,9 @@
       "label": "Validation fichiers",
       "question": "Combien de temps pour valider mes fichiers ?",
       "expected_answer": "La validation des fichiers prend généralement 1-2 jours ouvrables. Si des corrections sont nécessaires, vous serez contacté par email. Une fois validés, la production démarre.",
-      "actual_answer": "1 à 2 jours.",
-      "time_to_first_token_seconds": 9.32,
-      "total_response_time_seconds": 9.9
+      "actual_answer": "La validation de vos fichiers prend généralement 1 à 2 jours. Ce délai peut varier selon la complexité de votre mise en page et la charge de production. Pour un délai précis, consultez l'estimation détaillée avant de payer votre commande.",
+      "time_to_first_token_seconds": 3.38,
+      "total_response_time_seconds": 12.09
     },
     {
       "id": 7,
@@ -72,9 +72,9 @@
       "label": "Retard livraison",
       "question": "Ma commande a du retard, ça fait 3 semaines que j'attends !",
       "expected_answer": "Contactez le service client à contact@coollibri.com ou au 05 31 61 60 42 avec votre numéro de commande. Ils vérifieront l'état de votre commande et vous donneront des informations sur le retard.",
-      "actual_answer": "Nous sommes désolés pour la retard sur votre commande. Votre livraison devrait arriver dans les prochains jours en fonction du délai moyen recommandé et des paramètres de production spécifiques à votre projet. Si vous avez d'autres questions ou si le temps est critique, n'hésitez pas à nous contacter par courrier électronique (contact@coollibri.com) ou au 05 31 61 60 42.",
-      "time_to_first_token_seconds": 10.97,
-      "total_response_time_seconds": 19.47
+      "actual_answer": "Pour suivre votre commande, j'ai besoin de votre numéro de commande. Pouvez-vous me le donner ?",
+      "time_to_first_token_seconds": 2.71,
+      "total_response_time_seconds": 2.71
     },
     {
       "id": 8,
@@ -83,8 +83,8 @@
       "question": "Mon colis est bloqué en transit depuis une semaine, que faire ?",
       "expected_answer": "Contactez contact@coollibri.com avec votre numéro de commande et le numéro de suivi. Une enquête sera ouverte auprès du transporteur pour débloquer la situation.",
       "actual_answer": "Pour suivre votre commande, j'ai besoin de votre numéro de commande. Pouvez-vous me le donner ?",
-      "time_to_first_token_seconds": 5.02,
-      "total_response_time_seconds": 5.02
+      "time_to_first_token_seconds": 3.05,
+      "total_response_time_seconds": 3.05
     },
     {
       "id": 9,
@@ -93,8 +93,8 @@
       "question": "Le statut de ma commande n'a pas changé depuis 10 jours, c'est normal ?",
       "expected_answer": "Un statut stagnant pendant plus d'une semaine peut indiquer un problème. Contactez le service client à contact@coollibri.com avec votre numéro de commande pour vérifier l'avancement.",
       "actual_answer": "Pour suivre votre commande, j'ai besoin de votre numéro de commande. Pouvez-vous me le donner ?",
-      "time_to_first_token_seconds": 5.96,
-      "total_response_time_seconds": 5.96
+      "time_to_first_token_seconds": 3.06,
+      "total_response_time_seconds": 3.06
     },
     {
       "id": 10,
@@ -103,8 +103,8 @@
       "question": "Le suivi dit livré mais je n'ai rien reçu, mon colis est perdu ?",
       "expected_answer": "Vérifiez d'abord auprès de vos voisins ou gardien. Si introuvable, contactez immédiatement contact@coollibri.com avec votre numéro de commande. Une enquête sera ouverte auprès du transporteur.",
       "actual_answer": "Pour suivre votre commande, j'ai besoin de votre numéro de commande. Pouvez-vous me le donner ?",
-      "time_to_first_token_seconds": 8.37,
-      "total_response_time_seconds": 8.37
+      "time_to_first_token_seconds": 3.05,
+      "total_response_time_seconds": 3.05
     },
     {
       "id": 11,
@@ -112,9 +112,9 @@
       "label": "Mauvaise adresse",
       "question": "Mon colis a été livré à la mauvaise adresse, que faire ?",
       "expected_answer": "Contactez immédiatement le service client à contact@coollibri.com avec votre numéro de commande et les détails. Si l'erreur vient du transporteur, une réclamation sera ouverte.",
-      "actual_answer": "Nous sommes désolés pour ce problème. Si votre colis a été livré à la mauvaise adresse, contactez-nous au 05 31 61 60 42 ou par email à contactcoollibri.com afin de modifier l'adresse et récupérer le colis correctement.",
-      "time_to_first_token_seconds": 10.06,
-      "total_response_time_seconds": 16.05
+      "actual_answer": "Nous sommes désolés pour ce problème. Contactez-nous immédiatement au 05 31 61 60 42 ou par email à contact@coollibri.com avec votre numéro de commande et une description détaillée de la situation. Notre équipe fera tout son possible pour résoudre ce problème rapidement.",
+      "time_to_first_token_seconds": 3.51,
+      "total_response_time_seconds": 12.27
     },
     {
       "id": 12,
@@ -122,9 +122,9 @@
       "label": "Relance livraison",
       "question": "Comment relancer ma livraison qui traîne ?",
       "expected_answer": "Envoyez un email à contact@coollibri.com ou appelez le 05 31 61 60 42 avec votre numéro de commande. Le service client vérifiera le statut et prendra les mesures nécessaires.",
-      "actual_answer": "Pour suivre votre commande, j'ai besoin de votre numéro de commande. Pouvez-vous me le donner ?",
-      "time_to_first_token_seconds": 5.24,
-      "total_response_time_seconds": 5.25
+      "actual_answer": "Pour relancer votre livraison, contactez-nous immédiatement au 05 31 61 60 42 ou par email à contact@coollibri.com. Indiquez votre numéro de commande, la date de commande et l'adresse de livraison. Notre équipe vérifiera le statut et tentera d'accélérer le traitement. Les retards peuvent être dus à la production, au volume de commandes ou au transporteur.",
+      "time_to_first_token_seconds": 3.21,
+      "total_response_time_seconds": 17.54
     },
     {
       "id": 13,
@@ -132,9 +132,9 @@
       "label": "Colis écrasé",
       "question": "J'ai reçu mon colis complètement écrasé, le livre est abîmé !",
       "expected_answer": "Contactez contact@coollibri.com dans les 3 jours ouvrables avec: photos du colis (toutes faces), photos des dommages sur le livre, numéro de commande. Une réclamation sera ouverte auprès du transporteur.",
-      "actual_answer": "Nous sommes désolés pour le dommage subi. Contactez notre service client immédiatement au 05 31 61 60 42 ou par email à contactcoollibri.com en envoyant des photos de l'état du colis et votre numéro de commande afin d'ouvrir une enquête auprès du transporteur.",
-      "time_to_first_token_seconds": 10.3,
-      "total_response_time_seconds": 17.87
+      "actual_answer": "Nous sommes désolés pour ce problème. Pour résoudre cette situation, contactez-nous dès que possible au 05 31 61 60 42 ou par email à contact@coollibri.com avec votre numéro de commande et des photos du colis et du livre abîmé. Notre équipe pourra vous aider rapidement.",
+      "time_to_first_token_seconds": 3.12,
+      "total_response_time_seconds": 14.39
     },
     {
       "id": 14,
@@ -142,9 +142,9 @@
       "label": "Livre mouillé",
       "question": "Mon livre est arrivé mouillé et les pages sont gondolées",
       "expected_answer": "Prenez des photos immédiatement et contactez contact@coollibri.com dans les 3 jours avec: photos du colis, photos du livre abîmé, numéro de commande. Gardez le colis comme preuve.",
-      "actual_answer": "Nous sommes désolés pour ce problème. Veuillez nous contacter immédiatement à contact@coollibri.com afin que nous puissions vous aider et remplacer votre livre si nécessaire.",
-      "time_to_first_token_seconds": 15.01,
-      "total_response_time_seconds": 18.99
+      "actual_answer": "Pour ce type de problème, contactez-nous au 05 31 61 60 42 ou écrivez à contact@coollibri.com avec votre numéro de commande et des photos du livre.",
+      "time_to_first_token_seconds": 3.21,
+      "total_response_time_seconds": 10.98
     },
     {
       "id": 15,
@@ -152,9 +152,9 @@
       "label": "Couverture abîmée",
       "question": "La couverture de mon livre a des rayures et marques",
       "expected_answer": "Si les dommages sont dus au transport, contactez contact@coollibri.com dans les 3 jours avec photos et numéro de commande. Si c'est un défaut d'impression, une analyse sera effectuée.",
-      "actual_answer": "Les rayures et marques sur la couverture peuvent être enlevées grâce à notre service de personnalisation. Utilisez un fichier sans défaut pour obtenir une impression optimale.",
-      "time_to_first_token_seconds": 11.95,
-      "total_response_time_seconds": 15.66
+      "actual_answer": "Pour ce type de demande spécifique, vous pouvez nous contacter par email à contact@coollibri.com ou appeler le 05 31 61 60 42 en nous fournissant votre numéro de commande et des photos du problème.",
+      "time_to_first_token_seconds": 3.37,
+      "total_response_time_seconds": 11.92
     },
     {
       "id": 16,
@@ -162,9 +162,9 @@
       "label": "Pages déchirées",
       "question": "Plusieurs pages de mon livre sont déchirées à la livraison",
       "expected_answer": "Contactez immédiatement contact@coollibri.com avec des photos claires des pages déchirées et votre numéro de commande. Si c'est un défaut de fabrication ou transport, une solution sera proposée.",
-      "actual_answer": "Nous sommes désolés pour ce problème. Veuillez contacter notre service client à contact@coollibri.com ou au 05 31 61 60 42 afin de débloquer la situation.",
-      "time_to_first_token_seconds": 12.66,
-      "total_response_time_seconds": 17.56
+      "actual_answer": "Nous sommes désolés pour ce problème. Pour ouvrir un incident, envoyez un email à contact@coollibri.com avec votre numéro de commande, des photos des pages déchirées et une brève description du problème. Notre équipe étudiera votre demande.",
+      "time_to_first_token_seconds": 4.55,
+      "total_response_time_seconds": 12.96
     },
     {
       "id": 17,
@@ -172,9 +172,9 @@
       "label": "Impression floue",
       "question": "L'impression de mon livre est floue et de mauvaise qualité",
       "expected_answer": "Contactez contact@coollibri.com avec des photos du problème et votre numéro de commande. Note: la qualité dépend aussi de vos fichiers qui doivent être en 300 DPI minimum. Le service client analysera la cause.",
-      "actual_answer": "S'il y a des problèmes d'impression sur votre livre, vérifiez que le fichier est en haute résolution (300 dpi). Si cela ne fonctionne toujours pas, contactez-nous à contact@coollibri.com avec numéro de commande et une photo du problème pour ouvrir un incident.",
-      "time_to_first_token_seconds": 14.03,
-      "total_response_time_seconds": 20.87
+      "actual_answer": "Vérifiez que votre fichier est en haute résolution (300 dpi). Si ce n'est pas le cas, utilisez un fichier de meilleure qualité pour vos prochaines impressions. Si votre fichier est bien en 300 dpi, contactez-nous à contact@coollibri.com en précisant votre numéro de commande, une photo du problème et une brève description afin que nous puissions ouvrir un incident.",
+      "time_to_first_token_seconds": 3.21,
+      "total_response_time_seconds": 16.77
     },
     {
       "id": 18,
@@ -182,9 +182,9 @@
       "label": "Reliure défaillante",
       "question": "La reliure de mon livre se décolle après quelques jours",
       "expected_answer": "C'est un défaut de fabrication. Contactez contact@coollibri.com rapidement avec des photos et votre numéro de commande. Un remplacement ou une solution sera proposée.",
-      "actual_answer": "Nous sommes désolés pour votre expérience. Contactez notre service client à contact@coollibri.com ou au 05 31 61 60 42 afin de trouver une solution rapide et efficace.",
-      "time_to_first_token_seconds": 12.23,
-      "total_response_time_seconds": 16.93
+      "actual_answer": "Pour ce type de demande spécifique, vous pouvez écrire à contact@coollibri.com ou appeler le 05 31 61 60 42. Pensez à fournir votre numéro de commande et des photos du problème.",
+      "time_to_first_token_seconds": 3.41,
+      "total_response_time_seconds": 11.87
     },
     {
       "id": 19,
@@ -192,9 +192,9 @@
       "label": "Demande remboursement",
       "question": "Je veux me faire rembourser ma commande",
       "expected_answer": "Contactez le service client à contact@coollibri.com ou au 05 31 61 60 42 avec votre numéro de commande et le motif. Le remboursement n'est possible qu'en cas de défaut de fabrication avéré, pas pour un changement d'avis.",
-      "actual_answer": "Pour obtenir un remboursement pour votre commande, veuillez contacter le service client en indiquant votre numéro de commande et la date du souci. Vous pouvez nous joindre au 05 31 61 60 42 ou par email à contactcoollibri.com",
-      "time_to_first_token_seconds": 9.99,
-      "total_response_time_seconds": 16.04
+      "actual_answer": "Pour un remboursement, contactez-nous au 05 31 61 60 42 ou par email à contact@coollibri.com. Indiquez votre numéro de commande, la date du problème et joignez des photos. Notre service client étudiera votre demande.",
+      "time_to_first_token_seconds": 5.64,
+      "total_response_time_seconds": 13.68
     },
     {
       "id": 20,
@@ -202,9 +202,9 @@
       "label": "Délai remboursement",
       "question": "J'attends mon remboursement depuis 3 semaines, c'est trop long !",
       "expected_answer": "Le délai normal est de 1-2 semaines après validation. Si vous n'avez rien reçu après 2 semaines, recontactez contact@coollibri.com avec votre numéro de commande et la date de confirmation du remboursement.",
-      "actual_answer": "Nous sommes désolés pour la longueur du délai. Votre remboursement est en cours et devrait être effectué dans les plus brefs délais possible. Si vous n'avez pas reçu de notification, veuillez contacter le service client à contact@coollibri.com ou au 05 31 61 60 42 pour obtenir des informations supplémentaires et une solution rapide.",
-      "time_to_first_token_seconds": 8.82,
-      "total_response_time_seconds": 17.32
+      "actual_answer": "Le remboursement peut prendre jusqu'à 2 semaines après confirmation. Si vous ne l'avez pas reçu après ce délai, contactez-nous à contact@coollibri.com ou appelez le 05 31 61 60 42 avec votre numéro de commande et la date de confirmation.",
+      "time_to_first_token_seconds": 3.11,
+      "total_response_time_seconds": 14.3
     },
     {
       "id": 21,
@@ -212,9 +212,9 @@
       "label": "Rétractation 14j",
       "question": "J'ai le droit de rétractation de 14 jours non ?",
       "expected_answer": "Non, le droit de rétractation de 14 jours ne s'applique pas car les livres sont des produits personnalisés fabriqués selon vos spécifications (article L221-28 du Code de la consommation).",
-      "actual_answer": "Non, CoolLibri n’est pas soumis à la loi sur les consommateurs. Nous ne pouvons donc pas vous offrir un droit d'annulation pour vos commandes imprimées.",
-      "time_to_first_token_seconds": 9.58,
-      "total_response_time_seconds": 13.07
+      "actual_answer": "Non, le droit de rétractation de 14 jours ne s'applique pas aux livres CoolLibri. Ils sont des produits personnalisés fabriqués sur mesure selon vos spécifications. Une fois la commande validée, elle ne peut pas être annulée. Vous avez cependant un délai de réclamation de 3 jours ouvrables après livraison pour signaler tout problème de qualité, défaut ou erreur de fabrication.",
+      "time_to_first_token_seconds": 3.32,
+      "total_response_time_seconds": 17.44
     },
     {
       "id": 22,
@@ -222,9 +222,9 @@
       "label": "Erreur dans fichier",
       "question": "Il y a une erreur dans mon livre mais c'était dans mon fichier, puis-je être remboursé ?",
       "expected_answer": "Non, CoolLibri imprime les fichiers tels quels sans relecture ni correction. Vous êtes responsable du contenu envoyé. Le remboursement n'est pas possible pour une erreur dans votre fichier.",
-      "actual_answer": "Nous sommes désolés mais si les erreurs étaient déjà présentes dans votre fichier, nous ne pouvons pas effectuer un remboursement. Contactez le service client au 05 31 61 60 42 ou par email à contactcoollibri.com pour corriger votre prochain livre imprimé.",
-      "time_to_first_token_seconds": 7.49,
-      "total_response_time_seconds": 13.58
+      "actual_answer": "Nous sommes désolés, mais si les erreurs étaient déjà présentes dans votre fichier, nous ne pouvons pas effectuer de remboursement. Vous pouvez nous contacter au 05 31 61 60 42 ou par email à contact@coollibri.com pour corriger votre fichier source pour vos prochaines impressions.",
+      "time_to_first_token_seconds": 3.53,
+      "total_response_time_seconds": 10.28
     },
     {
       "id": 23,
@@ -232,9 +232,9 @@
       "label": "Double prélèvement",
       "question": "J'ai été prélevé deux fois pour la même commande !",
       "expected_answer": "Contactez immédiatement contact@coollibri.com avec: votre numéro de commande, copie de votre relevé bancaire montrant les deux prélèvements. Le doublon sera vérifié et remboursé.",
-      "actual_answer": "Pour suivre votre commande, j'ai besoin de votre numéro de commande. Pouvez-vous me le donner ?",
-      "time_to_first_token_seconds": 5.57,
-      "total_response_time_seconds": 5.57
+      "actual_answer": "Pour résoudre ce problème, contactez-nous rapidement à contact@coollibri.com ou appelez le 05 31 61 60 42. Précisez votre numéro de commande et joignez des photos de votre commande.",
+      "time_to_first_token_seconds": 4.14,
+      "total_response_time_seconds": 12.58
     },
     {
       "id": 35,
@@ -242,54 +242,54 @@
       "label": "Contact service client",
       "question": "Comment contacter le service client ?",
       "expected_answer": "Le service client est joignable par email à contact@coollibri.com ou par téléphone au 05 31 61 60 42 du lundi au vendredi.",
-      "actual_answer": "Contactez notre service client au 05 31 61 60 42 ou par email à contactcoollibri.com en incluant votre numéro de commande et les détails de votre demande.",
-      "time_to_first_token_seconds": 10.66,
-      "total_response_time_seconds": 14.57
+      "actual_answer": "Vous pouvez nous joindre par téléphone au 05 31 61 60 42 du lundi au vendredi de 8h30 à 18h, par email à contact@coollibri.com ou via le formulaire de contact sur notre site web.",
+      "time_to_first_token_seconds": 3.72,
+      "total_response_time_seconds": 13.25
     }
   ],
   "statistics": {
-    "total_time_seconds": 326.84,
-    "average_total_time_seconds": 13.62,
-    "min_total_time_seconds": 5.02,
-    "max_total_time_seconds": 23.77,
-    "average_ttft_seconds": 9.98,
-    "min_ttft_seconds": 5.02,
-    "max_ttft_seconds": 22.47,
+    "total_time_seconds": 285.23,
+    "average_total_time_seconds": 11.88,
+    "min_total_time_seconds": 2.71,
+    "max_total_time_seconds": 17.54,
+    "average_ttft_seconds": 3.58,
+    "min_ttft_seconds": 2.71,
+    "max_ttft_seconds": 5.64,
     "by_category": {
       "Délais": {
         "count": 6,
-        "avg_total_seconds": 13.12,
-        "avg_ttft_seconds": 10.96,
-        "min_total_seconds": 5.65,
-        "max_total_seconds": 23.77
+        "avg_total_seconds": 13.85,
+        "avg_ttft_seconds": 3.83,
+        "min_total_seconds": 11.67,
+        "max_total_seconds": 15.92
       },
       "Retards": {
         "count": 6,
-        "avg_total_seconds": 10.02,
-        "avg_ttft_seconds": 7.6,
-        "min_total_seconds": 5.02,
-        "max_total_seconds": 19.47
+        "avg_total_seconds": 6.95,
+        "avg_ttft_seconds": 3.1,
+        "min_total_seconds": 2.71,
+        "max_total_seconds": 17.54
       },
       "Colis abîmé": {
         "count": 6,
-        "avg_total_seconds": 17.98,
-        "avg_ttft_seconds": 12.7,
-        "min_total_seconds": 15.66,
-        "max_total_seconds": 20.87
+        "avg_total_seconds": 13.15,
+        "avg_ttft_seconds": 3.48,
+        "min_total_seconds": 10.98,
+        "max_total_seconds": 16.77
       },
       "Remboursement": {
         "count": 5,
-        "avg_total_seconds": 13.12,
-        "avg_ttft_seconds": 8.29,
-        "min_total_seconds": 5.57,
-        "max_total_seconds": 17.32
+        "avg_total_seconds": 13.66,
+        "avg_ttft_seconds": 3.95,
+        "min_total_seconds": 10.28,
+        "max_total_seconds": 17.44
       },
       "Pré-commande": {
         "count": 1,
-        "avg_total_seconds": 14.57,
-        "avg_ttft_seconds": 10.66,
-        "min_total_seconds": 14.57,
-        "max_total_seconds": 14.57
+        "avg_total_seconds": 13.25,
+        "avg_ttft_seconds": 3.72,
+        "min_total_seconds": 13.25,
+        "max_total_seconds": 13.25
       }
     }
   }
