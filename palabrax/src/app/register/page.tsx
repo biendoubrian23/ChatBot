@@ -95,7 +95,7 @@ export default function RegisterPage() {
       
       {/* Right Panel - Features */}
       <div className="hidden lg:flex flex-1 bg-muted flex-col justify-center px-16 border-l border-border">
-        <h2 className="text-2xl font-semibold">Inclus dans PALABRAX</h2>
+        <h2 className="text-2xl font-semibold">Inclus dans MONITORA</h2>
         <ul className="mt-8 space-y-4">
           <Feature text="Workspaces illimités" />
           <Feature text="Upload de documents (PDF, TXT, MD)" />

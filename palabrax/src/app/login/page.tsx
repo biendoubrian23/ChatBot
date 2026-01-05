@@ -17,7 +17,7 @@ export default function LoginPage() {
           
           <h1 className="text-3xl font-semibold tracking-tight">Connexion</h1>
           <p className="mt-2 text-gray-600">
-            Accédez à votre tableau de bord PALABRAX.
+            Accédez à votre tableau de bord MONITORA.
           </p>
           
           <form className="mt-10 space-y-6">
@@ -77,7 +77,7 @@ export default function LoginPage() {
       <div className="hidden lg:flex flex-1 bg-muted items-center justify-center border-l border-border">
         <div className="text-center">
           <div className="w-20 h-20 bg-black mx-auto" />
-          <h2 className="mt-8 text-2xl font-semibold">PALABRAX</h2>
+          <h2 className="mt-8 text-2xl font-semibold">MONITORA</h2>
           <p className="mt-2 text-gray-600">Chatbot Management Platform</p>
         </div>
       </div>
