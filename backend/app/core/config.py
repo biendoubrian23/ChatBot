@@ -33,6 +33,9 @@ class Settings(BaseSettings):
     # LLM Provider Configuration (ollama | mistral | groq)
     llm_provider: str = "mistral"
     
+    # Database Provider Configuration (coollibri | chrono24)
+    db_provider: str = "coollibri"
+    
     # Mistral AI Configuration
     mistral_api_key: Optional[str] = None
     mistral_model: str = "mistral-small-latest"

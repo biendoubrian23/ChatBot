@@ -21,183 +21,236 @@ BACKEND_URL = "http://localhost:8000"
 CHAT_ENDPOINT = f"{BACKEND_URL}/api/v1/chat"  # Endpoint non-streaming
 CHAT_STREAM_ENDPOINT = f"{BACKEND_URL}/api/v1/chat/stream"  # Endpoint streaming
 
-# Les 35 questions de test avec leurs réponses attendues
-# Questions orientées DÉLAIS, RETARDS, PROBLÈMES, REMBOURSEMENTS, FORMATS, COLIS ABÎMÉS + Questions PRÉ-COMMANDE
+# Les questions de test - Focus sur préparation fichiers ET problèmes après commande
 QUESTIONS = [
-    # ============ DÉLAIS DE LIVRAISON (6) ============
+    # ============ QUESTIONS FICHIERS & PRÉPARATION AVANT COMMANDE (15) ============
     {
         "id": 1,
-        "category": "Délais",
-        "label": "Délai général",
-        "question": "Quels sont les délais de livraison ?",
-        "expected": "Prévoyez 2 à 3 semaines incluant: validation fichiers (1-2 jours), préparation (2-3 jours), impression (3-5 jours), reliure (2-3 jours), expédition (3-7 jours). Les délais varient selon format, nombre de pages et charge de production."
+        "category": "Fichiers",
+        "label": "Format fichier PDF",
+        "question": "Quel format de fichier je dois envoyer pour mon livre ?",
+        "expected": "PDF haute résolution (300 DPI minimum) avec polices incorporées. Assurez-vous que le PDF est en CMJN pour l'impression couleur."
     },
     {
         "id": 2,
-        "category": "Délais",
-        "label": "Commande urgente",
-        "question": "J'ai une commande urgente, pouvez-vous accélérer ?",
-        "expected": "Les délais de production sont fixes et dépendent de la charge de travail. Il n'est pas possible de garantir une accélération. Contactez contact@coollibri.com pour voir si une solution est envisageable selon votre cas."
+        "category": "Fichiers",
+        "label": "Résolution DPI",
+        "question": "Mon fichier est en 72 DPI, c'est suffisant pour imprimer ?",
+        "expected": "Non, 72 DPI n'est pas suffisant. Il faut minimum 300 DPI pour une bonne qualité d'impression. Des images en basse résolution paraîtront floues."
     },
     {
         "id": 3,
-        "category": "Délais",
-        "label": "Temps production",
-        "question": "Combien de temps dure l'impression de mon livre ?",
-        "expected": "L'impression seule prend 3-5 jours ouvrables après validation des fichiers. Ajoutez 2-3 jours pour la reliure/finition. Le temps total de production est de 5-8 jours ouvrables avant expédition."
+        "category": "Fichiers",
+        "label": "Polices non incorporées",
+        "question": "Que se passe-t-il si j'envoie un PDF avec des polices non incorporées ?",
+        "expected": "Les polices manquantes peuvent être remplacées par d'autres polices, modifiant l'aspect de votre livre. Incorporez toujours les polices dans votre PDF."
     },
     {
         "id": 4,
-        "category": "Délais",
-        "label": "Expédition délai",
-        "question": "Une fois expédié, en combien de temps je reçois mon colis ?",
-        "expected": "Après expédition, comptez 2-3 jours ouvrables pour GLS standard, 2-3 jours pour Relais Colis. Pour l'international, les délais varient selon la destination (5-15 jours)."
+        "category": "Fichiers",
+        "label": "Couleurs RVB vs CMJN",
+        "question": "Quelle différence entre RVB et CMJN pour mon fichier ?",
+        "expected": "RVB est pour l'écran, CMJN pour l'impression. Convertissez votre fichier en CMJN pour que les couleurs imprimées correspondent à ce que vous voyez."
     },
     {
         "id": 5,
-        "category": "Délais",
-        "label": "Livre pour Noël",
-        "question": "Si je commande maintenant, je recevrai mon livre pour Noël ?",
-        "expected": "Cela dépend de la date actuelle. Prévoyez minimum 2-3 semaines de délai total. En période de fêtes, les délais peuvent être allongés. Contactez contact@coollibri.com pour une estimation précise."
+        "category": "Fichiers",
+        "label": "Pages blanches de garde",
+        "question": "Dois-je ajouter des pages blanches au début et à la fin du livre ?",
+        "expected": "Oui, il est recommandé d'ajouter des pages de garde blanches pour une meilleure présentation et protection du contenu."
     },
     {
         "id": 6,
-        "category": "Délais",
-        "label": "Validation fichiers",
-        "question": "Combien de temps pour valider mes fichiers ?",
-        "expected": "La validation des fichiers prend généralement 1-2 jours ouvrables. Si des corrections sont nécessaires, vous serez contacté par email. Une fois validés, la production démarre."
+        "category": "Fichiers",
+        "label": "Marges et saignant",
+        "question": "Qu'est-ce que les marges et le saignant dans un livre ?",
+        "expected": "Les marges sont les bords blancs internes. Le saignant est l'extension de l'image au-delà des bords pour éviter les bandes blanches après découpe. Consultez les spécifications de CoolLibri."
     },
-    
-    # ============ RETARDS ET PROBLÈMES DE LIVRAISON (6) ============
     {
         "id": 7,
-        "category": "Retards",
-        "label": "Retard livraison",
-        "question": "Ma commande a du retard, ça fait 3 semaines que j'attends !",
-        "expected": "Contactez le service client à contact@coollibri.com ou au 05 31 61 60 42 avec votre numéro de commande. Ils vérifieront l'état de votre commande et vous donneront des informations sur le retard."
+        "category": "Fichiers",
+        "label": "Numérotation pages",
+        "question": "Comment numéroter les pages dans mon livre ?",
+        "expected": "Vous pouvez ajouter la numérotation dans votre PDF avant d'envoyer. CoolLibri imprime le PDF tel qu'envoyé."
     },
     {
         "id": 8,
-        "category": "Retards",
-        "label": "Colis bloqué",
-        "question": "Mon colis est bloqué en transit depuis une semaine, que faire ?",
-        "expected": "Contactez contact@coollibri.com avec votre numéro de commande et le numéro de suivi. Une enquête sera ouverte auprès du transporteur pour débloquer la situation."
+        "category": "Fichiers",
+        "label": "Taille fichier maximal",
+        "question": "Existe-t-il une limite de taille pour mon fichier PDF ?",
+        "expected": "Les fichiers très volumineux peuvent être problématiques. Généralement, restez sous 100-200 MB. Compressez les images si nécessaire."
     },
     {
         "id": 9,
-        "category": "Retards",
-        "label": "Statut inchangé",
-        "question": "Le statut de ma commande n'a pas changé depuis 10 jours, c'est normal ?",
-        "expected": "Un statut stagnant pendant plus d'une semaine peut indiquer un problème. Contactez le service client à contact@coollibri.com avec votre numéro de commande pour vérifier l'avancement."
+        "category": "Fichiers",
+        "label": "Couverture rigide ou souple",
+        "question": "Comment faire une couverture en cartonné (hardcover) ou souple (softcover) ?",
+        "expected": "C'est un choix lors de la commande. La couverture en cartonné (dos carré cousu collé) offre plus de rigidité. Souple (dos carré collé) est plus léger."
     },
     {
         "id": 10,
-        "category": "Retards",
-        "label": "Colis perdu",
-        "question": "Le suivi dit livré mais je n'ai rien reçu, mon colis est perdu ?",
-        "expected": "Vérifiez d'abord auprès de vos voisins ou gardien. Si introuvable, contactez immédiatement contact@coollibri.com avec votre numéro de commande. Une enquête sera ouverte auprès du transporteur."
+        "category": "Fichiers",
+        "label": "Reliure spirale",
+        "question": "Si je choisis une reliure spirale, y a-t-il des exigences spéciales pour le fichier ?",
+        "expected": "Oui, il faut prévoir une marge plus importante à gauche pour les trous de spirale. Consultez les dimensions exactes selon le modèle."
     },
     {
         "id": 11,
-        "category": "Retards",
-        "label": "Mauvaise adresse",
-        "question": "Mon colis a été livré à la mauvaise adresse, que faire ?",
-        "expected": "Contactez immédiatement le service client à contact@coollibri.com avec votre numéro de commande et les détails. Si l'erreur vient du transporteur, une réclamation sera ouverte."
+        "category": "Fichiers",
+        "label": "Couverture 4e de couverture",
+        "question": "Comment préparer le fichier de couverture avec 4e de couverture (dos + verso) ?",
+        "expected": "Généralement, le fichier couverture doit inclure : 1ère de couverture + dos + 4e de couverture. Les dimensions exactes sont fournies par CoolLibri selon le nombre de pages."
     },
     {
         "id": 12,
-        "category": "Retards",
-        "label": "Relance livraison",
-        "question": "Comment relancer ma livraison qui traîne ?",
-        "expected": "Envoyez un email à contact@coollibri.com ou appelez le 05 31 61 60 42 avec votre numéro de commande. Le service client vérifiera le statut et prendra les mesures nécessaires."
+        "category": "Fichiers",
+        "label": "Validation fichier",
+        "question": "Que fait CoolLibri lors de la validation de mon fichier ?",
+        "expected": "CoolLibri vérifie que le PDF respecte les spécifications (résolution, marges, polices). Si problèmes détectés, vous serez contacté pour corriger."
     },
-    
-    # ============ COLIS ABÎMÉ ET QUALITÉ (6) ============
     {
         "id": 13,
-        "category": "Colis abîmé",
-        "label": "Colis écrasé",
-        "question": "J'ai reçu mon colis complètement écrasé, le livre est abîmé !",
-        "expected": "Contactez contact@coollibri.com dans les 3 jours ouvrables avec: photos du colis (toutes faces), photos des dommages sur le livre, numéro de commande. Une réclamation sera ouverte auprès du transporteur."
+        "category": "Fichiers",
+        "label": "BAT avant impression",
+        "question": "Je peux avoir un aperçu (BAT) avant impression pour vérifier ?",
+        "expected": "Oui, CoolLibri propose généralement un service BAT (Bon À Tirer). Vous recevez un exemplaire de test avant de lancer la production complète."
     },
     {
         "id": 14,
-        "category": "Colis abîmé",
-        "label": "Livre mouillé",
-        "question": "Mon livre est arrivé mouillé et les pages sont gondolées",
-        "expected": "Prenez des photos immédiatement et contactez contact@coollibri.com dans les 3 jours avec: photos du colis, photos du livre abîmé, numéro de commande. Gardez le colis comme preuve."
+        "category": "Fichiers",
+        "label": "Erreur dans fichier détectée",
+        "question": "CoolLibri a trouvé une erreur dans mon fichier, combien de temps pour corriger ?",
+        "expected": "Cela dépend du type d'erreur. Vous devrez envoyer un nouveau fichier corrigé. Les délais de validation redémarrent à zéro."
     },
     {
         "id": 15,
-        "category": "Colis abîmé",
-        "label": "Couverture abîmée",
-        "question": "La couverture de mon livre a des rayures et marques",
-        "expected": "Si les dommages sont dus au transport, contactez contact@coollibri.com dans les 3 jours avec photos et numéro de commande. Si c'est un défaut d'impression, une analyse sera effectuée."
+        "category": "Fichiers",
+        "label": "Fichier trop volumineux rejeté",
+        "question": "Mon fichier PDF est trop gros et rejeté, comment le compresser ?",
+        "expected": "Réduisez la résolution des images (300 DPI suffit), supprimez les objets inutiles, ou utilisez un outil de compression PDF. Gardez au moins 300 DPI pour l'impression."
     },
+
+    # ============ PROBLÈMES APRÈS COMMANDE & DÉFAUTS (13) ============
     {
         "id": 16,
-        "category": "Colis abîmé",
-        "label": "Pages déchirées",
-        "question": "Plusieurs pages de mon livre sont déchirées à la livraison",
-        "expected": "Contactez immédiatement contact@coollibri.com avec des photos claires des pages déchirées et votre numéro de commande. Si c'est un défaut de fabrication ou transport, une solution sera proposée."
+        "category": "Post-Commande",
+        "label": "Colis écrasé à la livraison",
+        "question": "J'ai reçu mon colis écrasé, mon livre est abîmé, que faire ?",
+        "expected": "Contactez contact@coollibri.com dans les 3 jours ouvrables avec photos du colis endommagé et du livre. Une réclamation auprès du transporteur sera ouverte."
     },
     {
         "id": 17,
-        "category": "Colis abîmé",
-        "label": "Impression floue",
-        "question": "L'impression de mon livre est floue et de mauvaise qualité",
-        "expected": "Contactez contact@coollibri.com avec des photos du problème et votre numéro de commande. Note: la qualité dépend aussi de vos fichiers qui doivent être en 300 DPI minimum. Le service client analysera la cause."
+        "category": "Post-Commande",
+        "label": "Livre mouillé",
+        "question": "Mon livre est arrivé mouillé et les pages sont gondolées, est-ce couvert ?",
+        "expected": "Prenez des photos immédiatement et contactez contact@coollibri.com. Si l'eau vient du transport, une réclamation auprès du transporteur peut être faite."
     },
     {
         "id": 18,
-        "category": "Colis abîmé",
-        "label": "Reliure défaillante",
-        "question": "La reliure de mon livre se décolle après quelques jours",
-        "expected": "C'est un défaut de fabrication. Contactez contact@coollibri.com rapidement avec des photos et votre numéro de commande. Un remplacement ou une solution sera proposée."
+        "category": "Post-Commande",
+        "label": "Couleurs différentes de l'écran",
+        "question": "Les couleurs de mon livre imprimé ne correspondent pas à mon écran, pourquoi ?",
+        "expected": "L'écran (RVB) affiche les couleurs différemment de l'impression (CMJN). C'est normal. Envoyez toujours un fichier CMJN pour les résultats les plus fidèles."
     },
-    
-    # ============ REMBOURSEMENT ET RÉCLAMATION (6) ============
     {
         "id": 19,
-        "category": "Remboursement",
-        "label": "Demande remboursement",
-        "question": "Je veux me faire rembourser ma commande",
-        "expected": "Contactez le service client à contact@coollibri.com ou au 05 31 61 60 42 avec votre numéro de commande et le motif. Le remboursement n'est possible qu'en cas de défaut de fabrication avéré, pas pour un changement d'avis."
+        "category": "Post-Commande",
+        "label": "Impression floue",
+        "question": "L'impression est floue sur certaines pages, c'est un défaut de fabrication ?",
+        "expected": "Cela peut venir du fichier source (basse résolution) ou d'un défaut d'impression. Contactez CoolLibri avec des photos. Vérifiez que votre source est en 300 DPI."
     },
     {
         "id": 20,
-        "category": "Remboursement",
-        "label": "Délai remboursement",
-        "question": "J'attends mon remboursement depuis 3 semaines, c'est trop long !",
-        "expected": "Le délai normal est de 1-2 semaines après validation. Si vous n'avez rien reçu après 2 semaines, recontactez contact@coollibri.com avec votre numéro de commande et la date de confirmation du remboursement."
+        "category": "Post-Commande",
+        "label": "Couverture mal alignée",
+        "question": "La couverture de mon livre est mal centrée, les bords sont inégaux",
+        "expected": "Contactez contact@coollibri.com avec photos. C'est un défaut de finition. Un remplacement peut être proposé selon le défaut."
     },
     {
         "id": 21,
-        "category": "Remboursement",
-        "label": "Rétractation 14j",
-        "question": "J'ai le droit de rétractation de 14 jours non ?",
-        "expected": "Non, le droit de rétractation de 14 jours ne s'applique pas car les livres sont des produits personnalisés fabriqués selon vos spécifications (article L221-28 du Code de la consommation)."
+        "category": "Post-Commande",
+        "label": "Reliure qui se décolle",
+        "question": "La reliure commence à se décoller après quelques jours, c'est normal ?",
+        "expected": "Non, c'est un défaut. Contactez CoolLibri rapidement avec preuve du défaut. Une solution de remplacement devrait être proposée."
     },
     {
         "id": 22,
-        "category": "Remboursement",
-        "label": "Erreur dans fichier",
-        "question": "Il y a une erreur dans mon livre mais c'était dans mon fichier, puis-je être remboursé ?",
-        "expected": "Non, CoolLibri imprime les fichiers tels quels sans relecture ni correction. Vous êtes responsable du contenu envoyé. Le remboursement n'est pas possible pour une erreur dans votre fichier."
+        "category": "Post-Commande",
+        "label": "Pages blanches manquantes",
+        "question": "Il me manque des pages blanches que j'avais incluées dans le fichier",
+        "expected": "Vérifiez que votre fichier original contient réellement ces pages. Si oui, contactez CoolLibri - c'est un défaut d'impression ou de reliure."
     },
     {
         "id": 23,
-        "category": "Remboursement",
-        "label": "Double prélèvement",
-        "question": "J'ai été prélevé deux fois pour la même commande !",
-        "expected": "Contactez immédiatement contact@coollibri.com avec: votre numéro de commande, copie de votre relevé bancaire montrant les deux prélèvements. Le doublon sera vérifié et remboursé."
+        "category": "Post-Commande",
+        "label": "Retard de livraison",
+        "question": "Ma commande est en retard depuis 5 jours, la date était dépassée",
+        "expected": "Contactez contact@coollibri.com avec votre numéro de commande. Un retard peut venir de la production ou du transporteur. Ils fourniront des informations."
     },
     {
-        "id": 35,
-        "category": "Pré-commande",
-        "label": "Contact service client",
-        "question": "Comment contacter le service client ?",
-        "expected": "Le service client est joignable par email à contact@coollibri.com ou par téléphone au 05 31 61 60 42 du lundi au vendredi."
+        "id": 24,
+        "category": "Post-Commande",
+        "label": "Quantité différente reçue",
+        "question": "J'ai commandé 100 exemplaires mais j'en ai reçu 95, où sont les 5 manquants ?",
+        "expected": "Contactez immédiatement contact@coollibri.com. Vérifiez aussi que tous les cartons ont été reçus. Une correction ou remplacement devrait être proposé."
+    },
+    {
+        "id": 25,
+        "category": "Post-Commande",
+        "label": "Couverture écorchée",
+        "question": "La couverture de mon livre a des rayures et marques après réception",
+        "expected": "Si les dommages sont dus au transport, contactez CoolLibri avec photos et numéro de commande. Une réclamation transporteur peut être ouverte."
+    },
+    {
+        "id": 26,
+        "category": "Post-Commande",
+        "label": "Texte mal imprimé",
+        "question": "Du texte est illisible ou partiellement coupé dans mon livre",
+        "expected": "C'est probablement un problème de marges ou de fichier. Contactez CoolLibri avec des photos. Vérifiez si c'est votre fichier source qui a le même problème."
+    },
+    {
+        "id": 27,
+        "category": "Post-Commande",
+        "label": "Pages inversées ou désordre",
+        "question": "Les pages de mon livre sont dans le désordre ou certaines sont inversées",
+        "expected": "C'est un défaut grave de reliure. Contactez immédiatement contact@coollibri.com avec preuve. Un remplacement doit être proposé rapidement."
+    },
+    {
+        "id": 28,
+        "category": "Post-Commande",
+        "label": "Remboursement après défaut",
+        "question": "Je veux un remboursement suite à un défaut majeur de mon livre",
+        "expected": "Les défauts de fabrication avérés ouvrent droit à un remplacement ou remboursement. Contactez contact@coollibri.com avec preuve photographique."
+    },
+
+    # ============ PIÈGES À HALLUCINATIONS - HORS SUJET (4) ============
+    {
+        "id": 29,
+        "category": "Hallucination",
+        "label": "API CoolLibri",
+        "question": "Avez-vous une API REST pour automatiser les commandes ?",
+        "expected": "Doit dire qu'il ne sait pas ou que cette info n'est pas dans sa base. Ne doit PAS inventer une fausse API."
+    },
+    {
+        "id": 30,
+        "category": "Hallucination",
+        "label": "Service IA d'écriture",
+        "question": "Pouvez-vous écrire mon livre avec l'IA ?",
+        "expected": "Non. CoolLibri imprime les livres, ne les écrit pas. Pas de service d'écriture assistée par IA."
+    },
+    {
+        "id": 31,
+        "category": "Hallucination",
+        "label": "Distribution Amazon",
+        "question": "Comment distribuer mon livre sur Amazon après impression chez CoolLibri ?",
+        "expected": "CoolLibri fait l'impression. Pour Amazon, vous devez vous inscrire séparément à Amazon KDP. Ce n'est pas un service intégré."
+    },
+    {
+        "id": 32,
+        "category": "Hallucination",
+        "label": "Paiement crypto",
+        "question": "Acceptez-vous les paiements en Bitcoin ou cryptomonnaies ?",
+        "expected": "Doit dire qu'il ne sait pas ou que ce n'est pas mentionné. Ne doit PAS inventer des moyens de paiement."
     }
 ]
 

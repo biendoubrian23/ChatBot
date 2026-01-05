@@ -1,0 +1,362 @@
+{
+  "benchmark_info": {
+    "date": "2026-01-05T10:19:20.551704",
+    "model": "mistral",
+    "backend_url": "http://localhost:8000",
+    "total_questions": 32
+  },
+  "results": [
+    {
+      "id": 1,
+      "category": "Fichiers",
+      "label": "Format fichier PDF",
+      "question": "Quel format de fichier je dois envoyer pour mon livre ?",
+      "expected_answer": "PDF haute résolution (300 DPI minimum) avec polices incorporées. Assurez-vous que le PDF est en CMJN pour l'impression couleur.",
+      "actual_answer": "Pour l'intérieur de votre livre, nous acceptons les fichiers Word (DOC/DOCX) et PDF. Le format PDF est recommandé car il fige la mise en page. La taille maximale acceptée est de 700 Mo. Assurez-vous que votre fichier est finalisé et prêt à l'impression.",
+      "time_to_first_token_seconds": 4.77,
+      "total_response_time_seconds": 13.1
+    },
+    {
+      "id": 2,
+      "category": "Fichiers",
+      "label": "Résolution DPI",
+      "question": "Mon fichier est en 72 DPI, c'est suffisant pour imprimer ?",
+      "expected_answer": "Non, 72 DPI n'est pas suffisant. Il faut minimum 300 DPI pour une bonne qualité d'impression. Des images en basse résolution paraîtront floues.",
+      "actual_answer": "Non, 72 DPI n'est pas suffisant pour une impression de qualité. Nous recommandons un minimum de 300 DPI. Utilisez un fichier de meilleure qualité pour vos prochaines impressions.",
+      "time_to_first_token_seconds": 3.2,
+      "total_response_time_seconds": 8.65
+    },
+    {
+      "id": 3,
+      "category": "Fichiers",
+      "label": "Polices non incorporées",
+      "question": "Que se passe-t-il si j'envoie un PDF avec des polices non incorporées ?",
+      "expected_answer": "Les polices manquantes peuvent être remplacées par d'autres polices, modifiant l'aspect de votre livre. Incorporez toujours les polices dans votre PDF.",
+      "actual_answer": "Votre PDF sera imprimé avec les polices par défaut. Pour éviter cela, réexportez votre PDF en intégrant toutes les polices. Si vous avez besoin d'aide, contactez-nous au 05 31 61 60 42 ou par email à contact@coollibri.com.",
+      "time_to_first_token_seconds": 5.01,
+      "total_response_time_seconds": 5.26
+    },
+    {
+      "id": 4,
+      "category": "Fichiers",
+      "label": "Couleurs RVB vs CMJN",
+      "question": "Quelle différence entre RVB et CMJN pour mon fichier ?",
+      "expected_answer": "RVB est pour l'écran, CMJN pour l'impression. Convertissez votre fichier en CMJN pour que les couleurs imprimées correspondent à ce que vous voyez.",
+      "actual_answer": "Les écrans affichent en RVB (Rouge, Vert, Bleu) tandis que l'impression utilise le CMJN (Cyan, Magenta, Jaune, Noir). Ces deux systèmes de couleurs ne se traduisent pas de la même manière. Pour un rendu optimal, utilisez le mode CMJN pour votre fichier.",
+      "time_to_first_token_seconds": 3.2,
+      "total_response_time_seconds": 11.62
+    },
+    {
+      "id": 5,
+      "category": "Fichiers",
+      "label": "Pages blanches de garde",
+      "question": "Dois-je ajouter des pages blanches au début et à la fin du livre ?",
+      "expected_answer": "Oui, il est recommandé d'ajouter des pages de garde blanches pour une meilleure présentation et protection du contenu.",
+      "actual_answer": "Non, vous n'avez pas besoin d'ajouter des pages blanches au début et à la fin du livre. Nous nous chargeons d'ajouter l'achevé d'imprimer si nécessaire. Si votre dernière page est vide, nous y plaçons l'achevé d'imprimer. Sinon, nous ajoutons des pages pour l'inclure.",
+      "time_to_first_token_seconds": 2.97,
+      "total_response_time_seconds": 11.44
+    },
+    {
+      "id": 6,
+      "category": "Fichiers",
+      "label": "Marges et saignant",
+      "question": "Qu'est-ce que les marges et le saignant dans un livre ?",
+      "expected_answer": "Les marges sont les bords blancs internes. Le saignant est l'extension de l'image au-delà des bords pour éviter les bandes blanches après découpe. Consultez les spécifications de CoolLibri.",
+      "actual_answer": "Les marges sont les espaces vides autour du texte et des images dans un livre, essentiels pour la lisibilité et la reliure. La marge intérieure (côté reliure) doit être d'au moins 2 cm, tandis que les autres marges doivent être d'au moins 1,5 cm.\n\nLe saignant (ou fond perdu) désigne une image qui dépasse légèrement des bords de la page pour éviter les blancs en cas de légère variation lors de l'impression. Pour les images pleine page, prévoir 3 mm de débord de chaque côté.",
+      "time_to_first_token_seconds": 3.16,
+      "total_response_time_seconds": 16.18
+    },
+    {
+      "id": 7,
+      "category": "Fichiers",
+      "label": "Numérotation pages",
+      "question": "Comment numéroter les pages dans mon livre ?",
+      "expected_answer": "Vous pouvez ajouter la numérotation dans votre PDF avant d'envoyer. CoolLibri imprime le PDF tel qu'envoyé.",
+      "actual_answer": "Nous n'ajoutons pas les numéros de page. Vous devez les insérer vous-même dans votre fichier avant de nous le fournir. Assurez-vous qu'ils sont bien visibles et placés dans la zone de sécurité de 2 cm.",
+      "time_to_first_token_seconds": 3.77,
+      "total_response_time_seconds": 9.42
+    },
+    {
+      "id": 8,
+      "category": "Fichiers",
+      "label": "Taille fichier maximal",
+      "question": "Existe-t-il une limite de taille pour mon fichier PDF ?",
+      "expected_answer": "Les fichiers très volumineux peuvent être problématiques. Généralement, restez sous 100-200 MB. Compressez les images si nécessaire.",
+      "actual_answer": "Oui, la taille maximale acceptée pour les fichiers est de 700 Mo. Assurez-vous que votre fichier PDF ne dépasse pas cette limite.",
+      "time_to_first_token_seconds": 3.08,
+      "total_response_time_seconds": 6.97
+    },
+    {
+      "id": 9,
+      "category": "Fichiers",
+      "label": "Couverture rigide ou souple",
+      "question": "Comment faire une couverture en cartonné (hardcover) ou souple (softcover) ?",
+      "expected_answer": "C'est un choix lors de la commande. La couverture en cartonné (dos carré cousu collé) offre plus de rigidité. Souple (dos carré collé) est plus léger.",
+      "actual_answer": "Pour une couverture cartonnée (hardcover), vous devez choisir l'option \"Rembordé\" lors de la création de votre livre. Pour une couverture souple (softcover), sélectionnez l'option \"Dos carré collé\".\n\nPour les deux types de couverture, vous pouvez soit utiliser nos modèles gratuits, soit fournir votre propre fichier de couverture. Si vous choisissez de fournir votre propre fichier, il doit respecter les dimensions exactes et les spécifications techniques requises.\n\nPour la couverture cartonnée, la couverture est imprimée sur du papier 300g couché, offrant une excellente résistance et un rendu haut de gamme. Pour la couverture souple, la couverture est imprimée sur du papier 300g couché, offrant une excellente résistance et un rendu haut de gamme.\n\nPour plus d'informations, vous pouvez consulter notre page de création de couverture.",
+      "time_to_first_token_seconds": 3.36,
+      "total_response_time_seconds": 21.97
+    },
+    {
+      "id": 10,
+      "category": "Fichiers",
+      "label": "Reliure spirale",
+      "question": "Si je choisis une reliure spirale, y a-t-il des exigences spéciales pour le fichier ?",
+      "expected_answer": "Oui, il faut prévoir une marge plus importante à gauche pour les trous de spirale. Consultez les dimensions exactes selon le modèle.",
+      "actual_answer": "Pour la reliure spirale, assurez-vous de respecter ces points :\n- Fusionnez toutes vos pages en un seul fichier PDF dans l'ordre de lecture final.\n- Prévoyez 2 cm de marge intérieure pour éviter que les éléments importants ne soient trop proches de la reliure.\n- Utilisez un logiciel professionnel comme InDesign pour créer votre couverture si nécessaire.",
+      "time_to_first_token_seconds": 3.02,
+      "total_response_time_seconds": 12.08
+    },
+    {
+      "id": 11,
+      "category": "Fichiers",
+      "label": "Couverture 4e de couverture",
+      "question": "Comment préparer le fichier de couverture avec 4e de couverture (dos + verso) ?",
+      "expected_answer": "Généralement, le fichier couverture doit inclure : 1ère de couverture + dos + 4e de couverture. Les dimensions exactes sont fournies par CoolLibri selon le nombre de pages.",
+      "actual_answer": "Pour préparer votre fichier de couverture avec 4e de couverture, vous avez deux options :\n\n1. **PDF de 2 pages** :\n   - Page 1 : Première de couverture\n   - Page 2 : Quatrième de couverture\n   Notre outil de mise en page en ligne placera ces 2 pages sur une maquette et vous pourrez personnaliser le dos.\n\n2. **PDF d'une page avec la couverture à plat** :\n   - À gauche : Quatrième de couverture\n   - Au centre : Dos\n   - À droite : Première de couverture\n\nDans les deux cas, prévoyez 3 mm de fonds perdus tournant et respectez les dimensions exactes requises.",
+      "time_to_first_token_seconds": 3.94,
+      "total_response_time_seconds": 20.15
+    },
+    {
+      "id": 12,
+      "category": "Fichiers",
+      "label": "Validation fichier",
+      "question": "Que fait CoolLibri lors de la validation de mon fichier ?",
+      "expected_answer": "CoolLibri vérifie que le PDF respecte les spécifications (résolution, marges, polices). Si problèmes détectés, vous serez contacté pour corriger.",
+      "actual_answer": "Lors de la validation de votre fichier, CoolLibri vérifie sa conformité aux exigences techniques. Nous ajoutons l'achevé d'imprimer si nécessaire, mais nous n'ajoutons pas de numéros de page ni ne corrigeons les erreurs. Nous imprimons votre fichier tel quel, sans relecture orthographique.",
+      "time_to_first_token_seconds": 3.85,
+      "total_response_time_seconds": 12.34
+    },
+    {
+      "id": 13,
+      "category": "Fichiers",
+      "label": "BAT avant impression",
+      "question": "Je peux avoir un aperçu (BAT) avant impression pour vérifier ?",
+      "expected_answer": "Oui, CoolLibri propose généralement un service BAT (Bon À Tirer). Vous recevez un exemplaire de test avant de lancer la production complète.",
+      "actual_answer": "Oui, vous pouvez visualiser un aperçu (BAT) avant l'impression. Utilisez notre outil de prévisualisation en ligne pour vérifier la mise en page, les couleurs et le contenu. Vous pouvez tourner les pages, zoomer et naviguer comme dans un livre réel. Imprimez une page test en taille réelle pour un rendu plus précis.",
+      "time_to_first_token_seconds": 3.34,
+      "total_response_time_seconds": 11.7
+    },
+    {
+      "id": 14,
+      "category": "Fichiers",
+      "label": "Erreur dans fichier détectée",
+      "question": "CoolLibri a trouvé une erreur dans mon fichier, combien de temps pour corriger ?",
+      "expected_answer": "Cela dépend du type d'erreur. Vous devrez envoyer un nouveau fichier corrigé. Les délais de validation redémarrent à zéro.",
+      "actual_answer": "Vous avez 3 jours ouvrables après la réception de l'erreur pour corriger votre fichier et nous le renvoyer. Passé ce délai, votre commande sera annulée.",
+      "time_to_first_token_seconds": 3.0,
+      "total_response_time_seconds": 7.14
+    },
+    {
+      "id": 15,
+      "category": "Fichiers",
+      "label": "Fichier trop volumineux rejeté",
+      "question": "Mon fichier PDF est trop gros et rejeté, comment le compresser ?",
+      "expected_answer": "Réduisez la résolution des images (300 DPI suffit), supprimez les objets inutiles, ou utilisez un outil de compression PDF. Gardez au moins 300 DPI pour l'impression.",
+      "actual_answer": "Pour réduire la taille de votre fichier PDF, voici les options :\n\n1. **Utilisez un outil de compression en ligne** comme iLovePDF, Smallpdf, ou PDF2Go.\n2. **Réduisez la résolution des images** dans votre fichier avant conversion en PDF (300 DPI minimum).\n3. **Supprimez les éléments inutiles** comme les polices intégrées ou les métadonnées.\n\nSi le problème persiste, contactez-nous au 05 31 61 60 42 ou par email à contact@coollibri.com.",
+      "time_to_first_token_seconds": 3.37,
+      "total_response_time_seconds": 17.86
+    },
+    {
+      "id": 16,
+      "category": "Post-Commande",
+      "label": "Colis écrasé à la livraison",
+      "question": "J'ai reçu mon colis écrasé, mon livre est abîmé, que faire ?",
+      "expected_answer": "Contactez contact@coollibri.com dans les 3 jours ouvrables avec photos du colis endommagé et du livre. Une réclamation auprès du transporteur sera ouverte.",
+      "actual_answer": "Pour un colis endommagé, envoyez un email à contact@coollibri.com avec :\n- Photos du colis (face, verso, zones abîmées)\n- Photos du contenu si nécessaire\n- Votre numéro de commande\n- Une description claire du problème\n\nNotre équipe étudiera votre dossier et vous proposera une solution adaptée.",
+      "time_to_first_token_seconds": 3.79,
+      "total_response_time_seconds": 12.03
+    },
+    {
+      "id": 17,
+      "category": "Post-Commande",
+      "label": "Livre mouillé",
+      "question": "Mon livre est arrivé mouillé et les pages sont gondolées, est-ce couvert ?",
+      "expected_answer": "Prenez des photos immédiatement et contactez contact@coollibri.com. Si l'eau vient du transport, une réclamation auprès du transporteur peut être faite.",
+      "actual_answer": "Nous sommes désolés pour ce problème. Pour ce type de demande spécifique, vous pouvez écrire à contact@coollibri.com ou appeler le 05 31 61 60 42 avec votre numéro de commande et des photos du livre.",
+      "time_to_first_token_seconds": 3.25,
+      "total_response_time_seconds": 9.55
+    },
+    {
+      "id": 18,
+      "category": "Post-Commande",
+      "label": "Couleurs différentes de l'écran",
+      "question": "Les couleurs de mon livre imprimé ne correspondent pas à mon écran, pourquoi ?",
+      "expected_answer": "L'écran (RVB) affiche les couleurs différemment de l'impression (CMJN). C'est normal. Envoyez toujours un fichier CMJN pour les résultats les plus fidèles.",
+      "actual_answer": "Les couleurs de votre fichier sur écran peuvent légèrement différer de celles sur le papier en raison des réglages et des caractéristiques de votre moniteur. Si vous constatez une différence importante, vous pouvez nous contacter au 05 31 61 60 42 ou par email à contact@coollibri.com en envoyant des photos et votre numéro de commande afin d'étudier votre incident.",
+      "time_to_first_token_seconds": 2.98,
+      "total_response_time_seconds": 13.28
+    },
+    {
+      "id": 19,
+      "category": "Post-Commande",
+      "label": "Impression floue",
+      "question": "L'impression est floue sur certaines pages, c'est un défaut de fabrication ?",
+      "expected_answer": "Cela peut venir du fichier source (basse résolution) ou d'un défaut d'impression. Contactez CoolLibri avec des photos. Vérifiez que votre source est en 300 DPI.",
+      "actual_answer": "Vérifiez que votre fichier est en haute résolution (300 dpi). Si ce n'est pas le cas, utilisez un fichier de meilleure qualité pour vos prochaines impressions. Si votre fichier est bien en 300 dpi, contactez-nous à contact@coollibri.com en précisant votre numéro de commande, une photo du problème et une brève description afin que nous puissions ouvrir un incident.",
+      "time_to_first_token_seconds": 3.57,
+      "total_response_time_seconds": 13.88
+    },
+    {
+      "id": 20,
+      "category": "Post-Commande",
+      "label": "Couverture mal alignée",
+      "question": "La couverture de mon livre est mal centrée, les bords sont inégaux",
+      "expected_answer": "Contactez contact@coollibri.com avec photos. C'est un défaut de finition. Un remplacement peut être proposé selon le défaut.",
+      "actual_answer": "Les couvertures sont imprimées avec des bords de 2 cm minimum. Si votre fichier ne respecte pas ces marges, le résultat peut être inégal. Pour une prochaine impression, vérifiez que votre fichier respecte ces dimensions. Pour ce livre, contactez-nous au 05 31 61 60 42 ou par email à contact@coollibri.com avec votre numéro de commande et des photos du problème.",
+      "time_to_first_token_seconds": 3.53,
+      "total_response_time_seconds": 13.78
+    },
+    {
+      "id": 21,
+      "category": "Post-Commande",
+      "label": "Reliure qui se décolle",
+      "question": "La reliure commence à se décoller après quelques jours, c'est normal ?",
+      "expected_answer": "Non, c'est un défaut. Contactez CoolLibri rapidement avec preuve du défaut. Une solution de remplacement devrait être proposée.",
+      "actual_answer": "Cela n'est pas normal. Contactez-nous au 05 31 61 60 42 ou par email à contact@coollibri.com avec votre numéro de commande et des photos du problème.",
+      "time_to_first_token_seconds": 3.11,
+      "total_response_time_seconds": 8.55
+    },
+    {
+      "id": 22,
+      "category": "Post-Commande",
+      "label": "Pages blanches manquantes",
+      "question": "Il me manque des pages blanches que j'avais incluées dans le fichier",
+      "expected_answer": "Vérifiez que votre fichier original contient réellement ces pages. Si oui, contactez CoolLibri - c'est un défaut d'impression ou de reliure.",
+      "actual_answer": "Vérifiez que les pages blanches sont bien intégrées dans votre fichier. Si le problème persiste, contactez-nous à contact@coollibri.com ou appelez le 05 31 61 60 42 avec votre numéro de commande et des photos du problème.",
+      "time_to_first_token_seconds": 3.52,
+      "total_response_time_seconds": 10.87
+    },
+    {
+      "id": 23,
+      "category": "Post-Commande",
+      "label": "Retard de livraison",
+      "question": "Ma commande est en retard depuis 5 jours, la date était dépassée",
+      "expected_answer": "Contactez contact@coollibri.com avec votre numéro de commande. Un retard peut venir de la production ou du transporteur. Ils fourniront des informations.",
+      "actual_answer": "Pour suivre votre commande, j'ai besoin de votre numéro de commande. Pouvez-vous me le donner ?",
+      "time_to_first_token_seconds": 2.73,
+      "total_response_time_seconds": 2.73
+    },
+    {
+      "id": 24,
+      "category": "Post-Commande",
+      "label": "Quantité différente reçue",
+      "question": "J'ai commandé 100 exemplaires mais j'en ai reçu 95, où sont les 5 manquants ?",
+      "expected_answer": "Contactez immédiatement contact@coollibri.com. Vérifiez aussi que tous les cartons ont été reçus. Une correction ou remplacement devrait être proposé.",
+      "actual_answer": "Nous sommes désolés pour ce désagrément. Contactez-nous au 05 31 61 60 42 ou par email à contact@coollibri.com avec votre numéro de commande et des photos du colis reçu. Notre équipe traitera votre demande rapidement.",
+      "time_to_first_token_seconds": 3.06,
+      "total_response_time_seconds": 10.63
+    },
+    {
+      "id": 25,
+      "category": "Post-Commande",
+      "label": "Couverture écorchée",
+      "question": "La couverture de mon livre a des rayures et marques après réception",
+      "expected_answer": "Si les dommages sont dus au transport, contactez CoolLibri avec photos et numéro de commande. Une réclamation transporteur peut être ouverte.",
+      "actual_answer": "Nous sommes désolés pour ce problème. Pour le résoudre, contactez-nous au 05 31 61 60 42 ou par email à contact@coollibri.com en envoyant des photos et votre numéro de commande afin d'étudier votre incident.",
+      "time_to_first_token_seconds": 3.15,
+      "total_response_time_seconds": 10.57
+    },
+    {
+      "id": 26,
+      "category": "Post-Commande",
+      "label": "Texte mal imprimé",
+      "question": "Du texte est illisible ou partiellement coupé dans mon livre",
+      "expected_answer": "C'est probablement un problème de marges ou de fichier. Contactez CoolLibri avec des photos. Vérifiez si c'est votre fichier source qui a le même problème.",
+      "actual_answer": "Les marges de votre fichier ne sont peut-être pas adaptées à l'impression. Vérifiez que votre texte est bien à l'intérieur des marges de sécurité. Si le problème persiste, contactez-nous au 05 31 61 60 42 ou à contact@coollibri.com avec votre numéro de commande et des photos du problème.",
+      "time_to_first_token_seconds": 3.08,
+      "total_response_time_seconds": 12.23
+    },
+    {
+      "id": 27,
+      "category": "Post-Commande",
+      "label": "Pages inversées ou désordre",
+      "question": "Les pages de mon livre sont dans le désordre ou certaines sont inversées",
+      "expected_answer": "C'est un défaut grave de reliure. Contactez immédiatement contact@coollibri.com avec preuve. Un remplacement doit être proposé rapidement.",
+      "actual_answer": "Nous imprimons les fichiers tels qu'ils sont fournis et validés sur le livre virtuel. Si les pages sont dans le désordre ou inversées, cela provient de votre fichier source. Pour une future commande, assurez-vous que les pages sont dans le bon ordre avant de nous les envoyer. Pour ce type de demande spécifique, vous pouvez écrire à contact@coollibri.com ou appeler le 05 31 61 60 42.",
+      "time_to_first_token_seconds": 3.08,
+      "total_response_time_seconds": 10.84
+    },
+    {
+      "id": 28,
+      "category": "Post-Commande",
+      "label": "Remboursement après défaut",
+      "question": "Je veux un remboursement suite à un défaut majeur de mon livre",
+      "expected_answer": "Les défauts de fabrication avérés ouvrent droit à un remplacement ou remboursement. Contactez contact@coollibri.com avec preuve photographique.",
+      "actual_answer": "Nous ne pouvons pas effectuer un remboursement immédiat. Votre demande doit d'abord être étudiée par notre service client avec des photos ou des preuves du problème rencontré. Dans la plupart des cas, un code promo est privilégié. Vous pouvez nous contacter au 05 31 61 60 42 ou par email à contact@coollibri.com en indiquant votre numéro de commande et la date du souci.",
+      "time_to_first_token_seconds": 3.17,
+      "total_response_time_seconds": 13.58
+    },
+    {
+      "id": 29,
+      "category": "Hallucination",
+      "label": "API CoolLibri",
+      "question": "Avez-vous une API REST pour automatiser les commandes ?",
+      "expected_answer": "Doit dire qu'il ne sait pas ou que cette info n'est pas dans sa base. Ne doit PAS inventer une fausse API.",
+      "actual_answer": "Nous n'avons pas d'API REST publique pour automatiser les commandes. Pour des besoins spécifiques, contactez-nous à contact@coollibri.com ou appelez le 05 31 61 60 42.",
+      "time_to_first_token_seconds": 2.39,
+      "total_response_time_seconds": 8.59
+    },
+    {
+      "id": 30,
+      "category": "Hallucination",
+      "label": "Service IA d'écriture",
+      "question": "Pouvez-vous écrire mon livre avec l'IA ?",
+      "expected_answer": "Non. CoolLibri imprime les livres, ne les écrit pas. Pas de service d'écriture assistée par IA.",
+      "actual_answer": "Non, CoolLibri n'offre pas de service d'écriture de livres avec l'IA. Nous nous spécialisons dans l'impression à la demande et la publication de livres. Vous pouvez créer votre livre et nous l'imprimerons selon vos spécifications.",
+      "time_to_first_token_seconds": 2.33,
+      "total_response_time_seconds": 7.92
+    },
+    {
+      "id": 31,
+      "category": "Hallucination",
+      "label": "Distribution Amazon",
+      "question": "Comment distribuer mon livre sur Amazon après impression chez CoolLibri ?",
+      "expected_answer": "CoolLibri fait l'impression. Pour Amazon, vous devez vous inscrire séparément à Amazon KDP. Ce n'est pas un service intégré.",
+      "actual_answer": "Pour distribuer votre livre sur Amazon après impression chez CoolLibri, vous devez suivre ces étapes :\n\n1. **Obtenez un ISBN** : Si ce n'est pas déjà fait, procurez-vous un ISBN via CoolLibri ou un autre fournisseur.\n2. **Préparez votre livre** : Assurez-vous que votre livre est prêt pour la vente, avec une couverture et un contenu finalisés.\n3. **Créez un compte KDP** : Inscrivez-vous sur le site Kindle Direct Publishing (KDP) d'Amazon.\n4. **Téléversez votre livre** : Suivez les instructions de KDP pour téléverser votre fichier de livre et votre couverture.\n5. **Renseignez les détails** : Complétez les informations requises, y compris le prix, la description, et les mots-clés.\n6. **Publiez votre livre** : Une fois toutes les informations saisies, publiez votre livre sur Amazon.\n\nSi vous avez des questions spécifiques sur le processus, vous pouvez contacter le support de KDP.",
+      "time_to_first_token_seconds": 3.02,
+      "total_response_time_seconds": 29.33
+    },
+    {
+      "id": 32,
+      "category": "Hallucination",
+      "label": "Paiement crypto",
+      "question": "Acceptez-vous les paiements en Bitcoin ou cryptomonnaies ?",
+      "expected_answer": "Doit dire qu'il ne sait pas ou que ce n'est pas mentionné. Ne doit PAS inventer des moyens de paiement.",
+      "actual_answer": "Non, CoolLibri n'accepte pas les paiements en Bitcoin ou cryptomonnaies. Nous acceptons les paiements par carte bancaire, PayPal, virement bancaire et chèque.",
+      "time_to_first_token_seconds": 2.9,
+      "total_response_time_seconds": 7.17
+    }
+  ],
+  "statistics": {
+    "total_time_seconds": 381.41,
+    "average_total_time_seconds": 11.92,
+    "min_total_time_seconds": 2.73,
+    "max_total_time_seconds": 29.33,
+    "average_ttft_seconds": 3.3,
+    "min_ttft_seconds": 2.33,
+    "max_ttft_seconds": 5.01,
+    "by_category": {
+      "Fichiers": {
+        "count": 15,
+        "avg_total_seconds": 12.39,
+        "avg_ttft_seconds": 3.54,
+        "min_total_seconds": 5.26,
+        "max_total_seconds": 21.97
+      },
+      "Post-Commande": {
+        "count": 13,
+        "avg_total_seconds": 10.96,
+        "avg_ttft_seconds": 3.23,
+        "min_total_seconds": 2.73,
+        "max_total_seconds": 13.88
+      },
+      "Hallucination": {
+        "count": 4,
+        "avg_total_seconds": 13.25,
+        "avg_ttft_seconds": 2.66,
+        "min_total_seconds": 7.17,
+        "max_total_seconds": 29.33
+      }
+    }
+  }
+}
