@@ -1,5 +1,11 @@
 # MONITORA - Plateforme de Gestion de Chatbots
 ## Cahier des Charges v1.0
+voici le contenu pour le .env
+# Supabase Configuration
+
+
+# Backend API (pour le RAG)
+NEXT_PUBLIC_RAG_API_URL=http://localhost:8000/api/v1
 
 ---
 

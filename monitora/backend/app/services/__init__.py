@@ -1,1 +1,0 @@
-# MONITORA Backend - Services Package
