@@ -1,7 +1,14 @@
 """SQL Server database service for CoolLibri orders."""
-import pyodbc
 from typing import Optional, Dict, Any, List
 from app.core.config import Settings
+
+# Import pyodbc optionnel (pas disponible sur tous les environnements cloud)
+try:
+    import pyodbc
+    PYODBC_AVAILABLE = True
+except ImportError:
+    PYODBC_AVAILABLE = False
+    print("⚠️ pyodbc non disponible - fonctionnalités BDD désactivées")
 
 settings = Settings()
 
@@ -11,6 +18,11 @@ class DatabaseService:
     
     def __init__(self):
         """Initialize database connection."""
+        if not PYODBC_AVAILABLE:
+            self.connection_string = None
+            self.connection = None
+            return
+            
         self.connection_string = (
             f"DRIVER={{{settings.sql_server_driver}}};"
             f"SERVER={settings.sql_server_host},{settings.sql_server_port};"
@@ -23,12 +35,19 @@ class DatabaseService:
     
     def connect(self) -> bool:
         """Établir la connexion à la base de données."""
+        if not PYODBC_AVAILABLE:
+            print("⚠️ pyodbc non disponible - connexion BDD impossible")
+            return False
+            
         try:
             self.connection = pyodbc.connect(self.connection_string, timeout=10)
             print("✅ Connexion SQL Server établie avec succès")
             return True
         except pyodbc.Error as e:
             print(f"❌ Erreur de connexion SQL Server: {e}")
+            return False
+        except Exception as e:
+            print(f"❌ Erreur inattendue: {e}")
             return False
     
     def disconnect(self):
@@ -39,6 +58,9 @@ class DatabaseService:
     
     def test_connection(self) -> Dict[str, Any]:
         """Tester la connexion et retourner des infos sur le serveur."""
+        if not PYODBC_AVAILABLE:
+            return {"success": False, "error": "pyodbc non disponible sur cet environnement"}
+            
         if not self.connect():
             return {"success": False, "error": "Impossible de se connecter"}
         
@@ -58,7 +80,7 @@ class DatabaseService:
             cursor.close()
             return result
             
-        except pyodbc.Error as e:
+        except Exception as e:
             return {"success": False, "error": str(e)}
         finally:
             self.disconnect()
@@ -201,7 +223,7 @@ class DatabaseService:
             cursor.close()
             return order_data
             
-        except pyodbc.Error as e:
+        except Exception as e:
             print(f"❌ Erreur SQL: {e}")
             return None
         finally:
@@ -234,7 +256,7 @@ class DatabaseService:
             cursor.close()
             return tables
             
-        except pyodbc.Error as e:
+        except Exception as e:
             print(f"❌ Erreur SQL: {e}")
             return []
         finally:
@@ -273,7 +295,7 @@ class DatabaseService:
             cursor.close()
             return columns
             
-        except pyodbc.Error as e:
+        except Exception as e:
             print(f"❌ Erreur SQL: {e}")
             return []
         finally:
