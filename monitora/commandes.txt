@@ -1,0 +1,10 @@
+Commandes pour lancer MONITORA
+Terminal 1 - Backend (port 8001)
+cd D:\MesApplis\BiendouCorp\ChatBot\monitora\backend
+D:/MesApplis/BiendouCorp/ChatBot/.venv/Scripts/python.exe main.py
+
+
+
+Terminal 2 - Frontend (port 3001)
+cd D:\MesApplis\BiendouCorp\ChatBot\monitora
+npm run dev

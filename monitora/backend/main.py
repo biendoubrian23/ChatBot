@@ -68,5 +68,5 @@ if __name__ == "__main__":
         "main:app",
         host=settings.api_host,
         port=settings.api_port,
-        reload=True
+        reload=False  # Disable reload to avoid multiprocessing issues on Windows
     )

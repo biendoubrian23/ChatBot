@@ -2,6 +2,11 @@
 from pydantic_settings import BaseSettings
 from typing import Optional
 import os
+from pathlib import Path
+
+# Get the backend directory (where this config.py is located)
+BACKEND_DIR = Path(__file__).resolve().parent.parent.parent
+ENV_FILE = BACKEND_DIR / ".env"
 
 
 class Settings(BaseSettings):
@@ -57,7 +62,8 @@ class Settings(BaseSettings):
     semantic_cache_ttl: float = 7200.0
     
     class Config:
-        env_file = ".env"
+        env_file = str(ENV_FILE)  # Use absolute path to monitora/backend/.env
+        extra = "ignore"  # Ignore extra fields from parent .env files
         case_sensitive = False
 
 
