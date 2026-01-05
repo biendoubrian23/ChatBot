@@ -1,6 +1,15 @@
 # MONITORA - Plateforme de Gestion de Chatbots
 ## Cahier des Charges v1.0
-voici le contenu pour le .env
+voici le contenu pour le .env dans le dossier monitora
+Project URL: https://pokobirrjcckebnvrlmn.supabase.co
+Publishable API Key: sb_publishable_qIJ2jAdLFNGc1oM-irT87w_oT7okFP_
+anon public: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBva29iaXJyamNja2VibnZybG1uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc2MzY5OTQsImV4cCI6MjA4MzIxMjk5NH0._qcpJuYYzyaEhNOFYCtu5gZJOdqX51fbJ1V7HQFlPxY
+service_role: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBva29iaXJyamNja2VibnZybG1uIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NzYzNjk5NCwiZXhwIjoyMDgzMjEyOTk0fQ.wbRPEryg42to82YRY2X3kAQnLR1zdqkgPSYnc7ThsD8
+
+MISTRAL_API_KEY=jgzR7hCWaI6OyParaZufzt8YrcDZ3ne7
+MISTRAL_MODEL=mistral-small-latest
+
+
 # Supabase Configuration
 
 
