@@ -1,0 +1,723 @@
+Guide Complet d'Impression de Livre - CoolLibri
+Introduction au Service d'Autoédition
+CoolLibri propose un service d'impression de livres à la demande qui rend l'autoédition accessible et abordable. Que vous souhaitiez imprimer un livre photo personnel, un livre de recettes de cuisine familiales, un livre illustré pour enfants, un roman, un livre personnel ou tout autre type d'ouvrage, CoolLibri vous accompagne dans toutes les étapes de l'impression. Le service permet d'imprimer aussi bien un exemplaire unique qu'une série de mille exemplaires selon vos besoins.
+
+TYPES DE RELIURE DISPONIBLES
+
+CoolLibri propose 4 types de reliure professionnelle :
+1. Dos Carré Collé - Reliure souple professionnelle (60-700 pages selon papier)
+2. Rembordé - Couverture rigide haut de gamme (24-150 pages)
+3. Agrafé - Reliure magazine économique (8-60 pages)
+4. Spirale - Ouverture 360° pour consultation fréquente (1-500 pages)
+
+→ Pour les détails complets sur chaque reliure (limites de pages précises, caractéristiques techniques, recommandations), consultez le document "Guide Complet des Reliures - CoolLibri.com"
+
+
+FORMATS DISPONIBLES
+Format Poche - 11 x 17 cm
+Description complète :
+Le format poche est le plus petit format proposé, spécialement conçu pour les livres de poche pratiques et facilement transportables.
+Caractéristiques :
+
+Dimensions exactes : 11 centimètres de largeur × 17 centimètres de hauteur
+Format compact et léger
+Facile à transporter dans un sac, une poche de veste ou un sac à main
+Idéal pour la lecture en déplacement
+
+Utilisation recommandée :
+
+Romans de poche
+Nouvelles
+Poésie
+Guides de voyage compacts
+Carnets de notes personnalisés
+
+Avantages :
+
+Très économique à l'impression
+Transport facile
+Lecture confortable en mobilité
+Format standard reconnu par les lecteurs
+
+Gabarits disponibles au téléchargement :
+
+Format 11x17 disponible en version Word (.doc)
+Format 11x17 disponible en version Adobe InDesign (.indd)
+
+Format Grand Livre - 16 x 24 cm
+Description complète :
+Le Grand Livre représente un format intermédiaire polyvalent, offrant plus d'espace que le poche tout en restant maniable.
+Caractéristiques :
+
+Dimensions : 16 centimètres × 24 centimètres
+Format équilibré entre confort de lecture et portabilité
+Espace suffisant pour le texte et les illustrations
+Format apprécié pour les éditions de qualité
+
+Utilisation recommandée :
+
+Romans grand format
+Essais littéraires
+Livres illustrés avec texte
+Recueils de poésie illustrés
+Ouvrages académiques
+Livres de développement personnel
+
+Format A4 Portrait - 21 x 29,7 cm
+Description complète :
+Le format A4 Portrait est le format standard international pour les documents professionnels et académiques.
+Caractéristiques :
+
+Dimensions standard A4 : 21 cm de largeur × 29,7 cm de hauteur
+Grande surface de page
+Orientation verticale (portrait)
+Compatible avec la plupart des logiciels de traitement de texte
+Format universitaire standard
+
+Utilisation recommandée :
+
+Thèses de doctorat
+Mémoires universitaires
+Rapports professionnels
+Manuels techniques
+Documents pédagogiques
+Livres académiques
+Portfolios en format portrait
+
+Format A5 Portrait - 14,8 x 21 cm
+Description complète :
+Le format A5 est exactement la moitié d'une feuille A4, offrant un compromis idéal entre portabilité et lisibilité.
+Caractéristiques :
+
+Dimensions : 14,8 cm × 21 cm
+Moitié du format A4 standard
+Format très populaire pour l'édition
+Confortable pour la lecture prolongée
+
+Utilisation recommandée :
+
+Romans format standard
+Essais
+Livres de non-fiction
+Cahiers personnalisés
+Journaux intimes imprimés
+Livres de recettes
+
+Format Carré - 21 x 21 cm
+Description complète :
+Le format carré offre une esthétique moderne et contemporaine, particulièrement adapté aux contenus visuels.
+Caractéristiques :
+
+Dimensions égales : 21 cm × 21 cm
+Format original et esthétique
+Excellent pour la mise en page créative
+Particulièrement adapté aux livres photo
+
+Utilisation recommandée :
+
+Livres photo professionnels
+Albums photo de mariage
+Portfolios artistiques
+Livres d'art
+Albums pour enfants illustrés
+Coffee table books
+Catalogues d'exposition
+
+Format A5 Paysage - 21 x 14,8 cm
+Description complète :
+Le format A5 Paysage (orientation horizontale) est idéal pour les contenus panoramiques et les images en format large.
+Caractéristiques :
+
+Dimensions : 21 cm de largeur × 14,8 cm de hauteur
+Orientation horizontale (paysage)
+Format panoramique
+Adapté aux photographies en format large
+
+Utilisation recommandée :
+
+Albums photo panoramiques
+Livres de photographie de paysages
+Catalogues d'art
+Portfolios photographiques
+Livres pour enfants illustrés en format large
+Bandes dessinées format italien
+
+
+PAPIER INTÉRIEUR - OPTIONS ET CARACTÉRISTIQUES
+Papier Standard 90g Blanc (Option par défaut recommandée)
+Description détaillée :
+Le papier standard 90g blanc est le choix le plus courant et le plus polyvalent pour l'impression de livres. Il offre un excellent équilibre entre qualité, coût et praticité.
+Caractéristiques techniques :
+
+Grammage : 90 grammes par mètre carré
+Couleur : Blanc pur
+Texture : Lisse et uniforme
+Opacité : Excellente, évitant la transparence du texte
+
+Équivalence :
+Ce papier est strictement équivalent au papier standard utilisé dans les imprimantes A4 de bureau, garantissant une familiarité et une qualité reconnue.
+Utilisation recommandée :
+
+Romans de tous genres
+Livres de poche
+Essais
+Livres de non-fiction
+Tout ouvrage principalement textuel
+
+Sensation au toucher :
+Le toucher est similaire au papier d'imprimante classique, offrant une expérience de lecture familière et confortable.
+Avantages :
+
+Excellent rapport qualité-prix
+Classique et répandu
+Facilite la lecture sans fatigue visuelle
+Poids optimal pour la manipulation
+
+Limitations importantes :
+⚠️ ATTENTION : Ce papier n'est PAS adapté lorsqu'il y a des photos en couleur dans votre livre. Les photos en couleur nécessitent un papier de qualité supérieure pour un rendu optimal des nuances et des détails.
+Papier Doux 80g Blanc
+Description :
+Papier légèrement plus léger que le standard, offrant une finesse particulière.
+Caractéristiques :
+
+Grammage : 80g/m²
+Couleur : Blanc
+Plus fin et plus léger
+Permet d'augmenter le nombre de pages sans trop alourdir le livre
+
+Utilisation recommandée :
+
+Romans volumineux
+Livres de poche épais
+Éditions économiques
+
+Papier Crème/Ancien 80g Beige
+Description :
+Papier de couleur beige/crème donnant un aspect vintage et élégant au livre.
+Caractéristiques :
+
+Grammage : 80g/m²
+Couleur : Beige/Crème (ton ancien)
+Aspect nostalgique et chaleureux
+Réduit la fatigue oculaire grâce à la couleur plus douce
+
+Utilisation recommandée :
+
+Romans classiques
+Livres de poésie
+Éditions de luxe avec aspect vintage
+Livres recherchant une esthétique particulière
+Rééditions d'œuvres anciennes
+
+Avantages :
+
+Moins agressif pour les yeux que le blanc pur
+Esthétique élégante et raffinée
+Donne un cachet particulier au livre
+
+Papier Lisse Satin/Photo 115g Blanc
+Description complète :
+Papier de qualité supérieure spécialement conçu pour l'impression de photographies et d'illustrations en couleur.
+Caractéristiques techniques :
+
+Grammage : 115g/m² (plus épais et plus lourd)
+Couleur : Blanc brillant
+Finition : Lisse et satinée
+Surface optimisée pour l'impression photo
+
+Qualité d'impression :
+Ce papier offre un rendu exceptionnel des couleurs, des contrastes et des détails photographiques. La surface lisse permet une reproduction fidèle des images avec une netteté maximale.
+Utilisation OBLIGATOIRE pour :
+
+Livres photo professionnels
+Albums photo de mariage, naissance, voyage
+Portfolios photographiques
+Livres d'art avec reproductions couleur
+Livres illustrés en couleur (enfants, BD couleur)
+Catalogues produits avec photos
+Tout ouvrage contenant des photographies en couleur
+
+Avantages :
+
+Rendu couleur exceptionnel
+Papier plus épais donnant une sensation de qualité premium
+Surface lisse facilitant la reproduction des détails fins
+Résistance accrue à l'usure
+Finition professionnelle
+
+Toucher et sensation :
+Texture veloutée rappelant la peau de pêche, offrant une expérience tactile agréable et luxueuse lors de la manipulation du livre.
+
+PELLICULAGE DE COUVERTURE - FINITIONS
+Pelliculage Brillant - Effet Glossy
+Description détaillée :
+Le pelliculage brillant consiste à appliquer un film plastique transparent et brillant sur la couverture du livre, créant un effet glossy éclatant.
+Caractéristiques :
+
+Finition : Brillante, réfléchissante
+Aspect : Glossy, éclatant
+Protection : Film plastique résistant
+
+Effet visuel :
+La lumière se reflète sur la couverture, créant des reflets lumineux et donnant un aspect très professionnel et attractif. Les couleurs apparaissent plus vives et saturées.
+Avantages :
+
+Rendu visuel très attractif
+Couleurs éclatantes et vibrantes
+Aspect premium et professionnel
+Protection efficace contre les rayures légères
+Résistance à l'humidité
+
+Utilisation recommandée :
+
+Livres photo
+Magazines
+Catalogues commerciaux
+Livres pour enfants
+Romans commerciaux grand public
+Tout livre recherchant un impact visuel fort
+
+Pelliculage Mat - Effet Matifié (Recommandé)
+Description détaillée :
+Le pelliculage mat est la finition recommandée par CoolLibri. Il donne un aspect matifié élégant et sobre à la couverture du livre.
+Caractéristiques :
+
+Finition : Mate, non réfléchissante
+Aspect : Sobre, élégant, haut de gamme
+Toucher : Doux et velouté
+Protection : Film anti-reflet
+
+Effet visuel :
+La couverture ne réfléchit pas la lumière, éliminant les reflets gênants. L'aspect est sobre et professionnel, donnant une impression de qualité supérieure.
+Avantage majeur - Protection contre les traces :
+⭐ IMPORTANT : Le pelliculage mat offre une protection optimale contre les traces visibles. Contrairement au pelliculage brillant où les empreintes digitales et traces de doigts sont très visibles, le mat permet de manipuler le livre sans laisser de marques apparentes.
+Recommandation professionnelle :
+Si votre création est composée d'une couleur de fond foncée (noir, bleu marine, bordeaux, etc.), CoolLibri conseille fortement de privilégier le pelliculage brillant pour éviter que les traces de manipulation ne soient trop visibles sur la couverture sombre.
+Avantages :
+
+Aspect haut de gamme et sophistiqué
+Aucune trace de doigts visible
+Toucher agréable et velouté
+Lecture facile sans reflets gênants
+Esthétique contemporaine et élégante
+Vieillissement esthétique du livre
+
+Utilisation recommandée :
+
+Romans littéraires
+Essais
+Livres académiques
+Éditions de prestige
+Portfolios professionnels
+Livres d'art
+Tout livre recherchant une esthétique raffinée
+
+Pelliculage Soft Touch - Toucher Velours/Peau de Pêche
+Description détaillée :
+Le pelliculage Soft Touch est la finition la plus luxueuse et haut de gamme proposée. Il offre une expérience tactile exceptionnelle.
+Caractéristiques :
+
+Finition : Ultra mate avec toucher velouté
+Texture : Rappelant la peau de pêche ou le velours
+Sensation : Douce, chaude, agréable
+Protection : Film premium anti-traces
+
+Effet tactile :
+Au toucher, la couverture offre une sensation unique de douceur et de chaleur, créant une expérience sensorielle mémorable. C'est la finition la plus agréable à manipuler.
+Avantages :
+
+Expérience tactile exceptionnelle et mémorable
+Aspect ultra-premium
+Différenciation immédiate des autres livres
+Protection maximale contre les traces
+Image de marque haut de gamme
+Invitation à la manipulation du livre
+
+Utilisation recommandée :
+
+Éditions de luxe
+Livres collectors
+Portfolios d'artistes reconnus
+Livres cadeaux premium
+Éditions limitées
+Ouvrages d'art
+Livres photo haut de gamme (mariages, naissances VIP)
+
+Positionnement :
+Cette finition positionne immédiatement votre livre dans la catégorie premium et crée une première impression forte et positive.
+
+IMPRESSION INTÉRIEUR - CHOIX DES COULEURS
+Option 1 : COULEUR - Impression Couleur de l'Intérieur
+Description complète :
+En choisissant l'option COULEUR, l'intégralité des pages intérieures de votre livre sera imprimée en quadrichromie (CMJN - Cyan, Magenta, Jaune, Noir).
+Caractéristiques :
+
+Impression : Quadrichromie CMJN complète
+Rendu : Toutes les couleurs du spectre disponibles
+Pages concernées : TOUTES les pages intérieures du livre
+
+Ce que cela signifie :
+Chaque page de votre livre aura la possibilité d'afficher des couleurs, que vous les utilisiez ou non. Les pages peuvent contenir :
+
+Des photographies en couleur
+Des illustrations colorées
+Des graphiques et diagrammes en couleur
+Du texte en couleur
+Des fonds de page colorés
+Des encadrés et mise en page colorée
+
+Utilisation recommandée :
+
+Livres photo
+Albums photo personnels (mariage, voyage, famille)
+Livres pour enfants illustrés
+Portfolios artistiques
+Livres d'art
+Manuels avec schémas en couleur
+Livres de cuisine avec photos de recettes
+Catalogues commerciaux
+Tout livre contenant des images couleur
+
+Avantages :
+
+Liberté créative totale
+Rendu visuel attractif
+Valorisation des photographies
+Possible de mixer texte noir et images couleur
+
+Important :
+Pour un rendu optimal des couleurs, il est fortement recommandé d'utiliser le papier Lisse Satin/Photo 115g blanc.
+Option 2 : NOIR ET BLANC - Impression N&B de l'Intérieur
+Description complète :
+En choisissant l'option NOIR ET BLANC, l'intégralité des pages intérieures de votre livre sera imprimée uniquement en noir et blanc.
+Caractéristiques :
+
+Impression : Monochrome (noir sur blanc uniquement)
+Rendu : Texte noir, images en niveaux de gris
+Pages concernées : TOUTES les pages intérieures
+
+Ce que cela signifie :
+Toutes les pages du livre seront imprimées en noir sur fond blanc, sans aucune couleur. Le contenu sera affiché en :
+
+Texte noir classique
+Images en niveaux de gris (noir, blanc et nuances de gris)
+Graphiques et schémas en noir et blanc
+Illustrations en noir et blanc
+
+Utilisation recommandée :
+
+Romans sans illustrations
+Essais littéraires
+Livres de non-fiction textuels
+Livres de poche
+Thèses et mémoires
+Documents techniques textuels
+Livres académiques
+Tout livre principalement composé de texte
+
+Avantages :
+
+Coût d'impression réduit
+Lisibilité optimale pour le texte
+Classique et intemporel
+Adapté à la lecture prolongée
+Format standard pour la littérature
+
+Important :
+Cette option convient parfaitement avec le papier Standard 90g blanc ou le papier Crème 80g.
+Note Importante sur la Couverture :
+⚠️ INFORMATION CRITIQUE :
+La couverture sera TOUJOURS imprimée en couleur, quel que soit votre choix pour l'intérieur du livre.
+Cela signifie que :
+
+Même si vous choisissez l'impression NOIR ET BLANC pour l'intérieur
+La couverture (recto et verso) sera toujours en couleur
+Vous pouvez avoir une couverture colorée avec un intérieur noir et blanc
+Cela permet d'avoir une couverture attractive tout en réduisant les coûts d'impression intérieure
+
+
+OPTIONS DE LIVRAISON
+Livraison à Domicile
+Description :
+Livraison de vos livres imprimés directement à votre adresse personnelle.
+Tarif :
+
+Coût de livraison : 7,50 € TTC il s'agit des frais de livraison a domicile ou point relais (Toutes Taxes Comprises)
+Frais fixes quel que soit le nombre de livres commandés a domicile ou point relais
+
+Avantages :
+
+Réception confortable à domicile
+Pas de déplacement nécessaire
+Suivi de livraison disponible
+
+Délai :
+IMPORTANT - DÉLAIS DE PRODUCTION ET LIVRAISON
+
+Les délais de traitement et de production de votre commande dépendent de plusieurs facteurs importants :
+
+• TYPE DE COMMANDE : Qu'il s'agisse d'un unique exemplaire ou d'une commande de plusieurs livres, le volume impacte le délai de traitement.
+• FORMAT ET NOMBRE DE PAGES : Un petit livre de 50 pages n'aura pas le même délai de production qu'un ouvrage de 300 pages avec illustrations haute résolution.
+• SPÉCIFICATIONS TECHNIQUES : Le type de papier choisi, le type de reliure (broché, relié, spiralé), la présence d'éléments spécialisés (vernis, dorure, embossage) influencent directement le délai de traitement.
+• COMPLEXITÉ DE MISE EN PAGE : La complexité de votre manuscrit (nombreuses images, graphiques, mise en forme personnalisée) peut allonger le délai de vérification et de préparation pour l'impression.
+• CONTRÔLE QUALITÉ : Tous nos livres subissent un processus rigoureux de contrôle qualité pour garantir votre satisfaction, ce qui peut nécessiter du temps supplémentaire.
+• CHARGE DE PRODUCTION : Le volume global de commandes en cours peut également influencer les délais.
+
+DÉLAI MOYEN RECOMMANDÉ : 
+
+Prévoyez entre 2 à 3 SEMAINES à partir du jour du paiement complet de votre commande, incluant les phases de :
+- Validation et vérification de vos fichiers (1-2 jours)
+- Préparation et mise en page pour impression (2-3 jours)
+- Production et impression (3-5 jours selon le volume)
+- Reliure et façonnage (2-3 jours)
+- Préparation pour expédition et livraison (3-7 jours selon votre localisation et le transporteur)
+
+POUR UN DÉLAI PRÉCIS : Avant de payer votre commande, vous recevrez une estimation détaillée spécifique à votre projet prenant en compte TOUS ces paramètres. Cette estimation est basée sur vos choix de format, de papier, de reliure et de volume.
+Livraison en Point Relais
+Description :
+Livraison de vos livres dans un point relais proche de votre domicile ou lieu de travail.
+Tarif :
+
+Coût : 7,50 € TTC
+Même tarif que la livraison à domicile
+
+Avantages :
+
+Horaires d'ouverture étendus des points relais
+Retrait flexible selon votre emploi du temps
+Sécurité : colis conservé jusqu'à retrait
+
+Fonctionnement :
+Vous recevez une notification lorsque votre colis est disponible dans le point relais choisi, puis vous disposez généralement de 10 à 14 jours pour le récupérer.
+Livraison Gratuite - Click & Collect Toulouse (NOUVEAU)
+Description :
+Option de retrait gratuit dans les locaux de CoolLibri à Toulouse.
+Tarif :
+
+Coût : GRATUIT (0 €)
+Aucun frais de livraison
+
+Localisation :
+
+Disponible uniquement dans les locaux toulousains de CoolLibri
+Adresse exacte communiquée lors de la commande
+
+Avantages :
+
+Économie des frais de livraison
+Retrait immédiat après production
+Contact direct possible avec l'équipe CoolLibri
+Vérification de la qualité sur place avant de partir
+
+Conditions :
+Disponible uniquement si vous êtes dans la région toulousaine ou si vous pouvez vous déplacer à Toulouse.
+
+DÉLAIS DE TRAITEMENT
+Traitement STANDARD - Gratuit
+Description :
+Délai de production standard sans surcoût.
+Tarif :
+
+Coût : Gratuit (inclus dans le prix de base)
+Aucun supplément
+
+Délai de production :
+IMPORTANT - DÉLAIS DE PRODUCTION ET LIVRAISON
+
+Les délais de traitement et de production de votre commande dépendent de plusieurs facteurs importants :
+
+• TYPE DE COMMANDE : Qu'il s'agisse d'un unique exemplaire ou d'une commande de plusieurs livres, le volume impacte le délai de traitement.
+• FORMAT ET NOMBRE DE PAGES : Un petit livre de 50 pages n'aura pas le même délai de production qu'un ouvrage de 300 pages avec illustrations haute résolution.
+• SPÉCIFICATIONS TECHNIQUES : Le type de papier choisi, le type de reliure (broché, relié, spiralé), la présence d'éléments spécialisés (vernis, dorure, embossage) influencent directement le délai de traitement.
+• COMPLEXITÉ DE MISE EN PAGE : La complexité de votre manuscrit (nombreuses images, graphiques, mise en forme personnalisée) peut allonger le délai de vérification et de préparation pour l'impression.
+• CONTRÔLE QUALITÉ : Tous nos livres subissent un processus rigoureux de contrôle qualité pour garantir votre satisfaction, ce qui peut nécessiter du temps supplémentaire.
+• CHARGE DE PRODUCTION : Le volume global de commandes en cours peut également influencer les délais.
+
+DÉLAI MOYEN RECOMMANDÉ : 
+
+Prévoyez entre 2 à 3 SEMAINES à partir du jour du paiement complet de votre commande, incluant les phases de :
+- Validation et vérification de vos fichiers (1-2 jours)
+- Préparation et mise en page pour impression (2-3 jours)
+- Production et impression (3-5 jours selon le volume)
+- Reliure et façonnage (2-3 jours)
+- Préparation pour expédition et livraison (3-7 jours selon votre localisation et le transporteur)
+
+POUR UN DÉLAI PRÉCIS : Avant de payer votre commande, vous recevrez une estimation détaillée spécifique à votre projet prenant en compte TOUS ces paramètres. Cette estimation est basée sur vos choix de format, de papier, de reliure et de volume.
+Avantages :
+
+Aucun coût supplémentaire
+Qualité identique aux autres options
+Adapté si vous n'êtes pas pressé
+
+Utilisation recommandée :
+
+Commandes anticipées
+Projets sans date limite urgente
+Commandes en volume
+Budget optimisé
+
+Traitement EXPRESS - +12,50 € TTC
+Description :
+Production accélérée de votre commande avec priorité dans la file de production.
+Tarif :
+
+Coût : +12,50 € TTC
+Supplément ajouté au prix de base du livre
+
+Délai de production :
+IMPORTANT - DÉLAIS DE PRODUCTION ET LIVRAISON
+
+Les délais de traitement et de production de votre commande dépendent de plusieurs facteurs importants :
+
+• TYPE DE COMMANDE : Qu'il s'agisse d'un unique exemplaire ou d'une commande de plusieurs livres, le volume impacte le délai de traitement.
+• FORMAT ET NOMBRE DE PAGES : Un petit livre de 50 pages n'aura pas le même délai de production qu'un ouvrage de 300 pages avec illustrations haute résolution.
+• SPÉCIFICATIONS TECHNIQUES : Le type de papier choisi, le type de reliure (broché, relié, spiralé), la présence d'éléments spécialisés (vernis, dorure, embossage) influencent directement le délai de traitement.
+• COMPLEXITÉ DE MISE EN PAGE : La complexité de votre manuscrit (nombreuses images, graphiques, mise en forme personnalisée) peut allonger le délai de vérification et de préparation pour l'impression.
+• CONTRÔLE QUALITÉ : Tous nos livres subissent un processus rigoureux de contrôle qualité pour garantir votre satisfaction, ce qui peut nécessiter du temps supplémentaire.
+• CHARGE DE PRODUCTION : Le volume global de commandes en cours peut également influencer les délais.
+
+DÉLAI MOYEN RECOMMANDÉ : 
+
+Prévoyez entre 2 à 3 SEMAINES à partir du jour du paiement complet de votre commande, incluant les phases de :
+- Validation et vérification de vos fichiers (1-2 jours)
+- Préparation et mise en page pour impression (2-3 jours)
+- Production et impression (3-5 jours selon le volume)
+- Reliure et façonnage (2-3 jours)
+- Préparation pour expédition et livraison (3-7 jours selon votre localisation et le transporteur)
+
+POUR UN DÉLAI PRÉCIS : Avant de payer votre commande, vous recevrez une estimation détaillée spécifique à votre projet prenant en compte TOUS ces paramètres. Cette estimation est basée sur vos choix de format, de papier, de reliure et de volume.
+Avantages :
+
+Priorité dans la chaîne de production
+Réception beaucoup plus rapide
+Idéal pour les commandes urgentes
+Même qualité que le traitement standard
+
+Utilisation recommandée :
+
+Cadeaux de dernière minute
+Événements avec date fixe (mariage, anniversaire)
+Besoins professionnels urgents
+Correction d'une première version et besoin rapide de la nouvelle édition
+
+
+INFORMATIONS COMPLÉMENTAIRES
+Options de Format sur Mesure
+Si aucun des formats standards proposés ne correspond exactement à vos besoins, CoolLibri offre la possibilité de créer un format personnalisé sur mesure.
+Pour demander un format personnalisé :
+Contactez directement le service client CoolLibri pour discuter de vos besoins spécifiques.
+Gabarits et Templates
+Pour faciliter la création de votre livre, CoolLibri met à disposition des gabarits (templates) préformatés :
+Formats disponibles :
+
+Gabarit format 11x17 cm (poche) en Word (.doc)
+Gabarit format 11x17 cm (poche) en Adobe InDesign (.indd)
+
+Ces gabarits incluent :
+
+Les dimensions exactes et marges recommandées
+Le format de page correct
+Les zones de sécurité pour le texte
+Les repères de coupe
+
+Téléchargement :
+Les gabarits sont téléchargeables directement depuis le site CoolLibri ou fournis sur demande.
+Papier Intérieur sur Mesure
+Si vous avez des besoins spécifiques concernant le papier intérieur qui ne correspondent pas aux options standard proposées, CoolLibri peut étudier des solutions personnalisées.
+Pour demander un papier spécifique :
+Contactez le service client en précisant :
+
+Le grammage souhaité
+La couleur ou texture désirée
+L'utilisation prévue du livre
+La quantité de livres à imprimer
+
+
+CONSEILS PRATIQUES ET RECOMMANDATIONS
+Choix de la Reliure
+Pour un roman ou essai :
+→ Choisissez le Dos Carré Collé pour un rendu professionnel
+Pour un livre photo ou album :
+→ Préférez le format Carré (21x21) avec papier Photo 115g et pelliculage Mat ou Soft Touch
+Pour une thèse ou mémoire :
+→ Optez pour le format A4 Portrait avec reliure Spirale pour faciliter la consultation
+Pour un livre pour enfants :
+→ Le format Carré ou Grand Livre avec impression couleur et pelliculage brillant est idéal
+Choix du Papier Intérieur
+Règle d'or :
+
+Texte uniquement → Papier Standard 90g blanc ou Crème 80g
+Photos en couleur → Papier Lisse Satin/Photo 115g blanc OBLIGATOIRE
+
+Choix du Pelliculage
+Règle générale :
+
+Couverture claire ou multicolore → Pelliculage Mat (recommandé)
+Couverture sombre ou fond noir → Pelliculage Brillant (évite les traces)
+Édition premium ou cadeau → Pelliculage Soft Touch (effet wow garanti)
+
+Optimisation des Coûts
+Pour réduire les coûts :
+
+Choisissez l'impression Noir et Blanc pour l'intérieur si possible
+Utilisez le papier Standard 90g
+Optez pour le traitement Standard (gratuit)
+Choisissez le Click & Collect si vous êtes à Toulouse
+
+La couverture restera en couleur dans tous les cas, vous gardez donc un aspect professionnel.
+Qualité et Professionnalisme
+Pour un rendu optimal professionnel :
+
+Reliure : Dos Carré Collé
+Format : 16x24 cm (Grand Livre) ou selon contenu
+Papier intérieur : Adapté au contenu (Standard pour texte, Photo pour images)
+Pelliculage : Mat ou Soft Touch
+Impression intérieur : Selon le contenu
+
+
+CONTACT ET SUPPORT
+Pour toute question, demande de format personnalisé, ou besoin d'assistance :
+Contactez le service client CoolLibri
+L'équipe est disponible pour vous accompagner dans :
+
+Le choix des options techniques
+La préparation de vos fichiers
+Les demandes de formats personnalisés
+Les questions sur les délais
+Le suivi de commande
+Les conseils de mise en page
+
+
+APERÇU 3D ET LIVRE VIRTUEL - INFORMATIONS IMPORTANTES
+=====================================================
+
+LE RENDU 3D ET LE LIVRE VIRTUEL SONT DES APERÇUS NON CONTRACTUELS
+
+Le rendu 3D sur le site ne ressemble pas exactement à ce que vous attendez ? C'est normal.
+
+Voici ce qu'il faut savoir sur le rendu 3D CoolLibri :
+
+1. LE RENDU 3D EST NON CONTRACTUEL
+   - C'est un aperçu indicatif seulement
+   - Il ne matérialise PAS les marges de fabrication exactes
+   - Des différences peuvent exister entre l'aperçu 3D et l'impression finale
+   - Les couleurs affichées à l'écran peuvent différer des couleurs imprimées
+   - Certains détails peuvent apparaître différemment une fois imprimés
+
+2. CE QUE LE RENDU 3D PERMET DE VISUALISER :
+   - L'aspect général du livre (couverture, dos, épaisseur)
+   - L'enchaînement des pages
+   - Le positionnement global des éléments
+
+3. POUR AVOIR UNE IDÉE EXACTE DU RENDU FINAL :
+   - CONSEIL : Imprimez une ou deux pages en taille réelle sur votre imprimante personnelle pour vérifier
+   - Utilisez notre outil de mise en page en ligne pour personnaliser la maquette
+   - Cela permet d'avoir un aperçu plus réaliste avant la commande
+
+4. POURQUOI DES DIFFÉRENCES ENTRE L'ÉCRAN ET L'IMPRESSION ?
+   - Le rendu écran dépend de la calibration de votre moniteur
+   - Les couleurs varient selon l'écran utilisé (chaque écran affiche différemment)
+   - L'impression physique utilise des encres CMJN différentes des couleurs RVB de l'écran
+   - Les marges de fabrication et tolérances d'impression ne sont pas visibles sur l'aperçu
+
+CONSEIL IMPORTANT : Pour une meilleure précision sur le résultat final de votre livre imprimé, nous vous recommandons d'imprimer une page test en taille réelle sur votre imprimante personnelle avant de valider la commande.

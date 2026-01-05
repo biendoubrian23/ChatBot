@@ -76,6 +76,22 @@ async def startup_event():
     # Embedding service
     embedding_service = EmbeddingService(settings.embedding_model)
     
+    # Vérifier si le vectorstore existe, sinon le générer
+    import os
+    vectorstore_exists = os.path.exists(settings.vectorstore_path) and \
+                        os.path.exists(os.path.join(settings.vectorstore_path, "chroma.sqlite3"))
+    
+    if not vectorstore_exists:
+        print("\n⚠️  Vectorstore non trouvé. Génération automatique...")
+        print("📄 Indexation des documents...")
+        from scripts.index_documents import index_all_documents
+        try:
+            index_all_documents()
+            print("✅ Vectorstore généré avec succès!")
+        except Exception as e:
+            print(f"❌ Erreur lors de la génération du vectorstore: {e}")
+            print("⚠️  L'API démarrera sans RAG (mode dégradé)")
+    
     # Vector store
     vectorstore = VectorStoreService(
         persist_directory=settings.vectorstore_path,

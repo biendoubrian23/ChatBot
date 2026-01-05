@@ -1,0 +1,50 @@
+﻿Source: https://www.coollibri.com/Infos/AideEnLigne
+======================================================================
+
+AIDE - PASSAGE DE COMMANDE SUR COOLLIBRI.COM
+
+CRÉER UN COMPTE
+
+1. Cliquez sur  Mon compte  en haut à droite
+2. Cliquez sur  Je m'inscris 
+3. Renseignez vos informations (nom, prénom, email, téléphone, mot de passe)
+4. Cliquez sur  Je valide 
+
+ÉTAPES DE CRÉATION D'UN LIVRE
+
+1. IMPRIMER MON LIVRE / DEVIS
+   - Menu  IMPRIMER UN LIVRE 
+   - Sélectionnez : reliure, format, papier, nombre de pages, couleur, livraison
+   - Cliquez  Créer mon projet 
+
+2. INFORMATIONS DE L'AUTEUR
+   - Nom, prénom, email, site internet, biographie
+   - Ces infos (sauf email) apparaîtront si vous publiez en ligne
+
+3. INFORMATIONS DU LIVRE
+   - Titre (obligatoire), sous-titre, éditeur
+   - Mots-clés pour le référencement
+   - Option de vente sur la bibliothèque CoolLibri
+
+4. TÉLÉCHARGER MON ISBN
+   - Obligatoire si vous vendez votre livre
+   - Gratuit sur CoolLibri
+   - À apposer sur la couverture
+
+5. TÉLÉCHARGER MES FICHIERS
+   - Formats acceptés : Word, PDF
+   - Options : couverture séparée, couverture + intérieur combinés, ou intérieur seul
+   - Vérification automatique de vos fichiers
+
+6. CRÉER MA COUVERTURE (optionnel)
+   - Si pas de couverture, utilisez nos modèles gratuits
+   - 100% personnalisable avec 300+ photos libres de droits
+
+MES PROJETS
+
+Une fois toutes les étapes complétées, vous pouvez :
+- Ajouter votre projet au panier
+- Passer commande
+- Un fil d'Ariane indique votre progression
+
+Vos projets sont automatiquement sauvegardés après chaque étape.

@@ -34,6 +34,42 @@ def move_scraped_files():
     return moved_count
 
 
+def index_all_documents():
+    """Index all documents (callable function for imports)."""
+    # Check if docs directory exists
+    docs_path = Path(settings.docs_path)
+    if not docs_path.exists():
+        docs_path.mkdir(parents=True, exist_ok=True)
+        raise FileNotFoundError(f"Documents directory created but empty: {docs_path}")
+    
+    # Initialize services
+    pdf_processor = PDFProcessor(
+        chunk_size=settings.chunk_size,
+        chunk_overlap=settings.chunk_overlap
+    )
+    
+    embedding_service = EmbeddingService(settings.embedding_model)
+    
+    vectorstore = VectorStoreService(
+        persist_directory=settings.vectorstore_path,
+        embedding_service=embedding_service
+    )
+    
+    # Process PDFs
+    documents = pdf_processor.process_directory(str(docs_path))
+    
+    if not documents:
+        raise ValueError("No documents found to index")
+    
+    # Clear existing vector store
+    vectorstore.clear()
+    
+    # Add documents to vector store
+    vectorstore.add_documents(documents)
+    
+    return vectorstore.count()
+
+
 def main():
     """Index PDF documents."""
     print("📚 LibriAssist - Document Indexer")

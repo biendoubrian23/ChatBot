@@ -1,0 +1,510 @@
+Source: https://www.coollibri.com/faq
+======================================================================
+
+FAQ (foire aux questions) - CoolLibri
+Pour la réalisation de mon livre
+
+Service client : 05 31 61 60 42 | par mail
+Disponible du lundi au vendredi de 8h30 à 18h
+
+======================================================================
+LE FORMAT DE L'OUVRAGE
+======================================================================
+
+Quels sont les formats proposés sur Coollibri ?
+
+Voilà la liste des formats proposés sur le site, pour chaque format, nous fournissons un gabarit vierge.
+
+IMPORTANT - RELIURE REMBORDÉ :
+Pour un livre avec une reliure en Rembordé (couverture cartonnée type BD), nos formats techniquement possibles sont UNIQUEMENT :
+- A4 portrait (21×29,7 cm)
+- A4 paysage (29,7×21 cm)
+- 21×21 cm (format carré)
+Ce sont les 3 seuls formats disponibles pour la reliure Rembordé.
+
+Pour les autres reliures (dos carré collé, spirale, agrafé), si vous ne trouvez pas le format souhaité, vous pouvez nous consulter pour une demande de devis spécifique.
+
+---
+
+11 X 17 cm (Format Poche)
+Ce format est adapté pour un livre de poche.
+Le format 11×17 cm (poche) est une option plus compacte et économique pour les romans.
+Télécharger le gabarit du format : Word, Adobe Indesign
+
+---
+
+16 X 24 cm (Format Roman - RECOMMANDÉ)
+Ce format est LE FORMAT RECOMMANDÉ pour un roman.
+Le format 16×24 cm est le plus adapté pour un roman car il offre un bon confort de lecture et un rendu professionnel.
+C'est le format le plus utilisé par les éditeurs pour les romans.
+Télécharger le gabarit du format : Word, Adobe Indesign
+
+---
+
+21 X 21 cm (Format Carré - IDÉAL LIVRE PHOTO)
+Ce format carré (21×21 cm) est LE FORMAT STAR pour un livre photo.
+Le format 21×21 cm carré est souvent utilisé pour un livre photo car il permet de mettre en valeur les images de manière équilibrée.
+C'est le format idéal pour les albums photos, livres de mariage, portfolios.
+Télécharger le gabarit du format : Word, Adobe Indesign
+
+---
+
+A4 PORTRAIT 21 X 29,7 cm
+Ce format est utilisé pour un magazine, ou pour un beau livre.
+Télécharger le gabarit du format : Word, Adobe Indesign
+
+---
+
+A4 PAYSAGE 29,7 X 21 cm
+Ce format atypique est souvent utilisé pour un livre photo.
+Le format A4 paysage (29,7×21 cm) est recommandé pour les beaux livres photos et albums avec des images panoramiques.
+Utilisez du papier couché satin 115g blanc pour un rendu optimal des photos couleur.
+Télécharger le gabarit du format : Word, Adobe Indesign
+
+---
+
+A5 PORTRAIT 14,8 X 21 cm
+Ce format est souvent utilisé pour un roman, ou pour un guide de poche.
+Le format A5 portrait (14,8×21 cm) convient également aux romans et guides, c'est une alternative au format 16×24.
+Télécharger le gabarit du format : Word, Adobe Indesign
+
+---
+
+A5 PAYSAGE 21 X 14,8 cm
+Ce format atypique est souvent utilisé pour livre photo.
+Le format A5 Paysage peut être utilisé pour des livres photos mais le format 21×21 cm (carré) est préférable pour les albums photos car il offre un meilleur équilibre visuel.
+Télécharger le gabarit du format : Word, Adobe Indesign
+
+---
+
+Est-il possible de créer un livre à double lecture ?
+
+Non, ce type de livre n'est pas compatible avec notre chaîne de fabrication.
+Notre système ne peut pas identifier correctement le sens de lecture lorsque le fichier est conçu pour être lu des deux côtés.
+Nous vous conseillons de créer deux livres distincts si vous souhaitez proposer deux lectures différentes.
+
+======================================================================
+L'INTÉRIEUR DE L'OUVRAGE
+======================================================================
+
+Comment est-ce que je peux préparer l'intérieur de mon ouvrage ?
+
+Vous devez créer le fichier avec vos propres outils.
+Vous pouvez par exemple utiliser Word qui est le logiciel le plus facile d'accès.
+Nous proposons des gabarits pour créer les fichiers directement au bon format.
+
+Avec Word, vous pourrez créer des chapitres, des paragraphes, des notes, un sommaire, vous pourrez également ajouter des images dans votre mise en page.
+
+Par ailleurs, si vous utilisez un logiciel professionnel, vous devrez le paramétrer avec :
+- 3mm de fonds perdus tout autour du fichier
+- 2cm de marges
+- Ne pas mettre de traits de coupe
+- Dans l'idéal fournir un fichier CMJN
+
+Le logiciel le plus utilisé pour réaliser des mises en page est Adobe InDesign.
+
+---
+
+Quel fichier est-ce que je dois fournir pour l'intérieur de mon livre ?
+
+Nous acceptons les fichiers Word et PDF mais l'idéal est le PDF car la conversion en PDF permet de figer votre mise en page.
+La taille maximale acceptée pour les fichiers est de 700 Mo.
+
+Le fichier fourni doit être finalisé et prêt à reproduire.
+Nous allons l'imprimer tel quel :
+- Nous ne rajoutons pas les numéros de page
+- Nous ne faisons pas de relecture orthographique
+- Nous ne faisons pas de contrôle de centrage
+
+---
+
+Quelles marges dois-je laisser dans mon document Word ?
+
+Vous devez laisser 2 cm de marges tout autour du document.
+Aucun élément important ne doit se trouver dans cette zone de sécurité sous peine d'être dans la reliure ou coupée lors du façonnage.
+
+---
+
+Est-ce que vous fournissez des modèles pour bâtir les fichiers ?
+
+Nous fournissons des gabarits vierges pour tous les formats proposés sur la page « J'imprime mon livre ».
+Ce ne sont pas des modèles mais des gabarits vierges.
+
+---
+
+Est-ce que la mise en page de mon ouvrage va être vérifiée ?
+
+Nous ne vérifions pas la mise en page des ouvrages, que ce soit le centrage, la taille des polices, les marges.
+Une analyse automatique des fichiers est faite par un logiciel pour vérifier les principaux points techniques.
+Nous vous invitons à lire attentivement ces indications et à corriger votre fichier en fonction.
+
+---
+
+J'ai plusieurs fichiers pour l'intérieur de mon ouvrage, puis-je vous les envoyer séparément ?
+
+Il n'est pas possible de nous envoyer plusieurs fichiers pour l'intérieur.
+Vous devez les réunir en un seul fichier qui contient toutes les pages de l'intérieur dans l'ordre d'impression.
+
+---
+
+Comment réunir en un seul PDF plusieurs PDF ?
+
+Il existe des logiciels ou des sites qui permettent de réunir plusieurs PDF en un seul.
+Par exemple le site www.ilovepdf.com/fr
+
+---
+
+Est-ce que vous rajoutez des éléments sur mon fichier ?
+
+Nous rajoutons une seule chose : l'achevé d'imprimer, c'est une mention obligatoire.
+Si votre dernière page est vide, nous rajoutons l'achevé d'imprimer sur cette page.
+Sinon, nous rajoutons des pages à votre fichier.
+
+---
+
+Est-ce que vous allez ajouter les numéros de page (folios) ?
+
+Non, nous ne rajouterons pas les numéros de page sur le fichier de votre intérieur.
+Nous imprimerons les fichiers tels qu'ils sont fournis et validés sur le livre virtuel.
+
+---
+
+Est-ce que vous allez faire une relecture orthographique de mon livre ?
+
+Non, nous ne relisons pas les ouvrages.
+Nous listons sur notre site des correcteurs qui se sont spontanément présentés à nous.
+CoolLibri se désengage des prestations qui peuvent être réalisées avec les prestataires listés.
+https://www.coollibri.com/blog/correcteur-relecteur/
+
+---
+
+Les photos et images de mon intérieur doivent-elles être d'une qualité spécifique ?
+
+Nous demandons un minimum de 300 ppp (pixel par pouce) pour une impression de qualité.
+
+======================================================================
+LA COUVERTURE DE L'OUVRAGE
+======================================================================
+
+Comment est-ce que je peux préparer la couverture de mon ouvrage ?
+
+Vous pouvez soit :
+- La préparer par vos propres outils
+- Soit utiliser un de nos modèles personnalisables grâce à notre outil gratuit de personnalisation disponible en ligne
+
+De nombreux modèles gratuits sont à votre disposition.
+Pour cela, rendez-vous sur la page « Créer votre couverture ».
+
+---
+
+Quel fichier dois-je fournir pour la couverture si je la prépare moi-même ?
+
+CAS n°1 - Fichier combiné (couverture + intérieur) :
+• La page 1 de votre fichier est la couverture (première de couverture)
+• La page 2 de votre fichier doit être totalement vierge
+• La page 3 correspond à la première page de l'intérieur de votre ouvrage
+• Les pages suivantes sont toutes les pages de l'intérieur
+• L'avant-dernière page de votre fichier doit être totalement vierge
+• La dernière page de votre fichier est la 4ème de couverture
+
+CAS n°2 - Couverture dans un fichier à part :
+- PDF de 2 pages : une page pour la 1re de couverture et une page pour la 4e de couverture
+- Ou PDF d'une page avec la couverture à plat, déjà maquettée (4e à gauche, dos au centre, 1re à droite)
+
+Dans tous les cas, pensez à ne pas mettre d'éléments importants trop proches du bord de la couverture.
+
+---
+
+Est-ce que le verso de ma couverture est imprimé ?
+
+Les verso des couvertures ne sont pas imprimés.
+Dans le cas d'une brochure agrafée nous pouvons imprimer l'intérieur des couvertures sur demande.
+
+---
+
+Comment sont nommées les différentes parties de la couverture ?
+
+- La première de couverture : Page de titre avec le visuel, le titre du livre, le nom de l'auteur. C'est la vitrine du livre.
+
+- La quatrième de couverture : Face opposée à la première. On y trouve généralement un résumé du livre, une présentation de l'auteur, l'ISBN et le prix.
+
+- Le dos : Partie qui recouvre l'épaisseur du livre. Visible quand le livre est rangé en bibliothèque. On y retrouve le titre et le nom de l'auteur.
+
+---
+
+Les photos et images de ma couverture doivent-elles être d'une qualité spécifique ?
+
+Nous demandons un minimum de 300 ppp (pixel par pouce) pour une impression de qualité.
+
+======================================================================
+LA RELIURE
+======================================================================
+
+Quelles sont les reliures possibles pour mon ouvrage ?
+
+Nous proposons 4 types de reliure, qui sont à choisir en fonction du résultat souhaité et du nombre de pages de votre ouvrage.
+
+---
+
+1. RELIURE DOS CARRÉ COLLÉ
+Vous obtiendrez un livre type roman.
+La couverture est plus épaisse que le papier de l'intérieur du livre mais reste souple.
+- Nombre de pages mini : 60 ou 80 pages suivant le papier choisi
+- Nombre de pages maxi : entre 500 et 700 pages suivant le papier choisi
+
+---
+
+2. RELIURE REMBORDÉ (couverture cartonnée rigide)
+Vous obtiendrez un livre type BD.
+La couverture est rigide et cartonnée.
+- Nombre de pages mini : 24 pages
+- Nombre de pages maxi : 100 ou 150 pages suivant le papier choisi
+- FORMATS POSSIBLES : A4 portrait, A4 paysage ou 21×21 cm UNIQUEMENT
+Nous ne pouvons pas proposer de formats différents ou de pagination supérieure sur ce produit.
+
+---
+
+3. RELIURE AGRAFÉ (Piqûre à cheval)
+L'agrafé ou le piqué à cheval (PAC) est une reliure utilisée pour les magazines.
+Vous aurez un rendu identique aux magazines que vous achetez en kiosque.
+La couverture du livre est souple.
+- Nombre de pages mini : 8 pages
+- Nombre de pages maxi : 60 pages
+
+---
+
+4. RELIURE SPIRALE
+Une spirale en métal relie les feuilles.
+La couverture du livre est souple.
+Le livre peut être ouvert complètement à plat.
+- Nombre de pages mini : 1 page
+- Nombre de pages maxi : 290 à 500 pages suivant le papier choisi
+
+======================================================================
+LE PAPIER
+======================================================================
+
+Quels sont les papiers possibles et leurs caractéristiques ?
+
+CoolLibri propose 4 TYPES DE PAPIER pour l'intérieur du livre :
+
+---
+
+1. STANDARD 80G BLANC
+Le papier Standard 80g blanc est équivalent au papier d'imprimante A4.
+Choisissez ce papier pour imprimer un roman ou un livre de poche.
+
+---
+
+2. BOUFFANT 90G BLANC (doux, cotonneux)
+Le papier Bouffant 90g blanc est légèrement cotonneux.
+Choisissez ce papier pour imprimer un roman ou un livre de poche.
+ATTENTION : Il n'est pas adapté lorsqu'il y a des photos en couleur.
+Au toucher, vous aurez une sensation de douceur.
+
+---
+
+3. BOUFFANT 90G CRÈME (rendu ancien)
+Le papier Bouffant 90g crème est légèrement cotonneux et a une couleur donnant un rendu ancien.
+Choisissez ce papier pour imprimer un roman avec un aspect vintage.
+ATTENTION : Il n'est pas adapté lorsqu'il y a des photos en couleur.
+Au toucher, vous aurez une sensation de douceur.
+
+---
+
+4. COUCHÉ SATIN 115G BLANC (Lisse, idéal photos couleur)
+Le papier couché satin 115g blanc a un toucher lisse.
+C'est LE PAPIER IDÉAL POUR LES LIVRES PHOTOS et les ouvrages avec des images en couleur.
+Choisissez ce papier pour imprimer un livre photo, une bande dessinée, ou un ouvrage illustré.
+Il saura mettre en valeur vos photos en couleur.
+
+---
+
+Nous pouvons proposer des papiers différents (du 135g couché satin par exemple) en passant par un devis sur mesure.
+
+======================================================================
+CONTRÔLE AVANT IMPRESSION
+======================================================================
+
+Est-ce que je vais avoir un BAT, une épreuve de contrôle pour mon livre ?
+
+Nous ne fournissons pas d'épreuve papier de contrôle.
+
+Avant la validation de votre commande, nous vous permettons de feuilleter votre livre via un livre virtuel.
+Prenez bien le temps de regarder toutes les pages de ce livre virtuel.
+
+Il faut garder une zone de sécurité tout autour du texte de 2 cm.
+
+IMPORTANT : Les livres dans la réalité ne peuvent pas être ouverts complètement à plat comme sur le livre virtuel.
+
+======================================================================
+ISBN ET DÉPÔT LÉGAL
+======================================================================
+
+Qu'est-ce qu'un ISBN ?
+
+L'ISBN (International Standard Book Number) est un numéro unique à 13 caractères qui permet d'identifier de manière non équivoque un ouvrage.
+Ce numéro est utilisé par tous les acteurs de la chaîne du livre.
+L'ISBN permet également de protéger le contenu du livre.
+
+---
+
+Est-ce que je dois mettre un ISBN sur mon livre ?
+
+L'ISBN est obligatoire si vous envisagez de vendre votre livre.
+
+---
+
+Comment obtenir un ISBN ?
+
+Nous fournissons gratuitement un numéro ISBN si vous répondez « oui » à la question « Souhaitez-vous vendre votre livre ? » posée à l'étape du devis.
+Nous vous fournissons une image comportant le code-barres de l'ISBN, il vous faudra positionner cette image vous-même sur le verso de votre couverture.
+
+---
+
+Est-ce que je dois payer pour avoir un ISBN ?
+
+Sur notre site, nous fournissons gratuitement le numéro ISBN.
+
+---
+
+Qu'est-ce que le dépôt légal de mon livre ?
+
+Le dépôt légal fait par l'Auteur permet de protéger le contenu intellectuel du livre.
+Le livre est enregistré dans une base de données propre à la BNF (Bibliothèque Nationale de France).
+
+Le dépôt légal ne signifie pas un référencement dans le réseau de libraires et de bibliothèques.
+Pour apparaître sur ces bases, il faut passer par des prestataires payants, comme DILICOM par exemple.
+
+---
+
+Comment faire le dépôt légal de mon livre ?
+
+Les formalités sont à accomplir auprès de la BNF en suivant leurs instructions :
+https://www.bnf.fr/sites/default/files/2018-11/DLE_editeur-livres2018.pdf
+
+---
+
+Est-ce qu'en imprimant sur COOLLIBRI, je conserve la propriété du contenu de mon livre ?
+
+Oui, l'Auteur conserve la propriété du contenu de son livre en imprimant son livre sur Coollibri.
+Nous sommes uniquement imprimeur, nous ne sommes pas éditeur.
+
+======================================================================
+LA VENTE DE MON LIVRE
+======================================================================
+
+Qui va s'occuper de la vente de mon livre ?
+
+C'est à vous Auteur de faire la promotion de votre ouvrage.
+Les réseaux sociaux par exemple peuvent être un bon moyen de faire connaître votre livre.
+En complément, Coollibri vous propose une bibliothèque en ligne pour référencer ou vendre votre ouvrage.
+
+---
+
+Est-ce qu'avec un ISBN mon livre va être référencé en librairie ?
+
+Non, l'ISBN est seulement une condition préalable pour le référencement dans les bases des libraires.
+Le référencement dans ces bases constitue un autre service.
+Pour y apparaître, il faut passer par des prestataires payants, comme DILICOM par exemple.
+
+---
+
+Quelle est la TVA sur la vente du livre ?
+
+Le livre bénéficie du taux de TVA réduit, soit de 5.5% pour une vente en France.
+
+---
+
+À quel prix vendre mon livre ?
+
+C'est à vous Auteur de définir le prix de vente de votre livre.
+Plusieurs facteurs peuvent être pris en compte :
+- Le coût de la fabrication du livre
+- D'autres coûts (relecture, mise en page)
+- La concurrence
+- La marge que vous souhaitez conserver
+- Les frais administratifs de 1€ TTC par livre pour la bibliothèque commerciale
+
+Une fois ce prix fixé, il est imprimé sur le livre qui doit être vendu à ce prix à tous vos clients, avec une remise maximale de 5%.
+
+======================================================================
+BIBLIOTHÈQUE COMMERCIALE - VENTE DE LIVRES
+======================================================================
+
+Comment fonctionne la Bibliothèque commerciale ?
+
+La bibliothèque commerciale permet la vente directe de votre livre, sans intervention de votre part, par un système d'impression à la demande.
+Le lecteur achète votre livre, nous le fabriquons et nous lui expédions.
+Nous facturons le service 1€ TTC par vente.
+
+Exemple de calcul du bénéfice :
+- Prix de vente TTC : 20€
+- Coût de fabrication TTC : -8,50€
+- Frais administratifs : -1€
+- Bénéfice : 10,50€
+
+Ce bénéfice vous est payé par virement, dès que le minimum de 10€ TTC de bénéfice cumulé est atteint, une fois par mois.
+
+---
+
+Comment et quand est-ce que je vais être payé ?
+
+L'auteur du livre sera payé par virement, dès que le minimum de 10€ TTC de bénéfice cumulé est atteint, une fois par mois.
+Pour cela, l'auteur devra renseigner son IBAN dans la rubrique Mes Ventes et Paiements.
+
+======================================================================
+LIVRE NUMÉRIQUE / EBOOK
+======================================================================
+
+Comment est-ce que je peux obtenir un EBOOK de mon livre ?
+
+Si vous avez passé une commande en impression papier et que vous souhaitez avoir l'ePub en plus : 15€
+Si vous souhaitez uniquement l'ePub : 50€
+Le format du livre eBook est un ePub 3.
+
+---
+
+Quels sont les avantages d'un EBOOK ?
+
+- Le prix à la revente : Un eBook est vendu 30 à 50% moins cher que sa version papier.
+- Le stockage : Une liseuse peut contenir plus de 1000 livres.
+
+======================================================================
+INFORMATIONS JURIDIQUES
+======================================================================
+
+Comment protéger mon œuvre ?
+
+Vous avez plusieurs possibilités pour protéger votre œuvre :
+
+- Protection implicite : Envoyez-vous votre manuscrit en courrier recommandé, sans décacheter l'enveloppe à réception. La date du cachet fait foi.
+
+- Protection explicite : Dépôt auprès d'un notaire, d'un huissier, de la SGDL, ou via un copyright sur copyrightdepot.com.
+
+---
+
+Quelles sont les informations légales à faire apparaître dans mon livre ?
+
+Sur la 4ème de couverture :
+- Le code ISBN
+- Le prix de vente du livre
+
+A l'intérieur du livre :
+- Le numéro ISBN
+- La date du dépôt légal
+- Le nom et l'adresse de l'éditeur
+- L'achevé d'imprimer (ajouté automatiquement par CoolLibri)
+
+======================================================================
+CONTACT
+======================================================================
+
+Vous ne trouvez pas la réponse à vos questions ?
+N'hésitez pas à nous contacter.
+
+Service client : 05 31 61 60 42
+Email : contact@coollibri.com
+Du lundi au vendredi de 8h30 à 18h
+
+======================================================================
