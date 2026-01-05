@@ -54,12 +54,12 @@ class Settings(BaseSettings):
     top_k_results: int = 8  # Nombre de chunks récupérés (8 x 1500 = 12K tokens max)
     rerank_top_n: int = 5  # Top 5 après reranking = 7.5K tokens de contexte
     
-    # Embedding Model (base = 50% moins de RAM que large, -5% qualité)
-    embedding_model: str = "intfloat/multilingual-e5-base"
+    # Embedding Model
+    embedding_model: str = "intfloat/multilingual-e5-large"  # +25% précision vs base, 1024 dims
     
     # Paths
     vectorstore_path: str = "./data/vectorstore"
-    docs_path: str = "./docs"  # Documents dans backend/docs/ pour Railway
+    docs_path: str = "../docs"
     
     # SQL Server Database Configuration
     sql_server_host: str = "alpha.messages.fr"
