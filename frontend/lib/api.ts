@@ -1,7 +1,23 @@
 import axios from 'axios'
 import type { ChatRequest, ChatResponse, HealthResponse } from '@/types/chat'
+import { generateFingerprint, getFingerprint } from './fingerprint'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'
+
+// Initialiser le fingerprint au chargement du module
+let clientFingerprint: string = 'initializing'
+if (typeof window !== 'undefined') {
+  generateFingerprint().then(fp => {
+    clientFingerprint = fp
+  })
+}
+
+/**
+ * Récupère le fingerprint actuel (synchrone après initialisation)
+ */
+function getClientFingerprint(): string {
+  return clientFingerprint !== 'initializing' ? clientFingerprint : getFingerprint()
+}
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -10,6 +26,12 @@ const apiClient = axios.create({
     'ngrok-skip-browser-warning': 'true',
   },
   timeout: 60000, // 60 seconds for LLM responses
+})
+
+// Ajouter le fingerprint à chaque requête axios
+apiClient.interceptors.request.use((config) => {
+  config.headers['X-Client-Fingerprint'] = getClientFingerprint()
+  return config
 })
 
 export const chatAPI = {
@@ -38,6 +60,7 @@ export const chatAPI = {
         headers: {
           'Content-Type': 'application/json',
           'ngrok-skip-browser-warning': 'true',
+          'X-Client-Fingerprint': getClientFingerprint(),
         },
         body: JSON.stringify(request),
       })

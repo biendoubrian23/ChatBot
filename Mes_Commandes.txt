@@ -2,7 +2,7 @@
 cd X:\MesApplis\BiendouCorp\ChatBot\backend ; python scripts/index_documents.py
 
 2. Backend (FastAPI) :
-cd X:\MesApplis\BiendouCorp\ChatBot\backend ; python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000
+cd d:\MesApplis\BiendouCorp\ChatBot\backend; d:\MesApplis\BiendouCorp\ChatBot\.venv\Scripts\python.exe -m uvicorn main:app --reload --host 0.0.0.0 --port 8000
 
 cd d:\MesApplis\BiendouCorp\ChatBot\backend; d:\MesApplis\BiendouCorp\ChatBot\.venv\Scripts\python.exe -m uvicorn main:app --host 0.0.0.0 --port 8000 
 

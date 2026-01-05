@@ -15,6 +15,7 @@ from app.services.vectorstore import VectorStoreService
 from app.services.llm import OllamaService
 from app.services.rag_pipeline import RAGPipeline
 from app.services.request_batcher import init_batcher, shutdown_batcher
+from app.middleware.rate_limit import RateLimitMiddleware, get_rate_limit_stats
 
 # Configurer le logging pour ignorer les erreurs de socket déconnectés
 logging.getLogger("uvicorn.error").setLevel(logging.WARNING)
@@ -52,6 +53,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Configure Rate Limiting (protection anti-spam)
+app.add_middleware(RateLimitMiddleware)
 
 
 @app.get("/health")
@@ -138,6 +142,19 @@ async def root():
         "version": settings.app_version,
         "status": "running",
         "docs": "/docs"
+    }
+
+
+@app.get("/api/rate-limit-stats")
+async def rate_limit_stats():
+    """
+    Endpoint pour voir les statistiques de rate limiting.
+    Utile pour le monitoring et le debugging.
+    """
+    stats = get_rate_limit_stats()
+    return {
+        "status": "ok",
+        "rate_limiting": stats
     }
 
 
