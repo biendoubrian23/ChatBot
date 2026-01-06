@@ -21,9 +21,14 @@ from app.core.supabase import get_supabase
 
 logger = logging.getLogger(__name__)
 
-# Embeddings (modèle léger - 384 dimensions)
-EMBEDDINGS_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
-EMBEDDING_DIMENSION = 384
+# Embeddings - Configuration
+# OPTION 1: Modèle haute qualité (1024 dims) - ACTIF
+EMBEDDINGS_MODEL = "intfloat/multilingual-e5-large"
+EMBEDDING_DIMENSION = 1024
+
+# OPTION 2: Modèle léger (384 dims) - désactivé
+# EMBEDDINGS_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
+# EMBEDDING_DIMENSION = 384
 embeddings = None
 
 

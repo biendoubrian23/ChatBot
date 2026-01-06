@@ -30,6 +30,7 @@ class RAGConfigUpdate(BaseModel):
     enable_cache: Optional[bool] = None
     cache_ttl: Optional[int] = None
     similarity_threshold: Optional[float] = None
+    system_prompt: Optional[str] = None  # Prompt personnalisé du chatbot
 
 
 async def get_user_from_token(authorization: str) -> dict:

@@ -13,7 +13,12 @@ import {
   Eye,
   EyeOff,
   AlertTriangle,
-  Clock
+  Clock,
+  Database,
+  RefreshCw,
+  CheckCircle2,
+  XCircle,
+  Loader2
 } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
 
@@ -28,6 +33,20 @@ interface ApiKey {
   expires_at: string | null
 }
 
+interface DatabaseConfig {
+  configured: boolean
+  id?: string
+  db_type: string
+  db_host: string
+  db_name: string
+  db_user: string
+  db_port: number
+  schema_type: string
+  is_enabled: boolean
+  last_test_status?: string
+  last_test_at?: string
+}
+
 export default function ApiKeysPage() {
   const params = useParams()
   const [apiKeys, setApiKeys] = useState<ApiKey[]>([])
@@ -37,11 +56,145 @@ export default function ApiKeysPage() {
   const [newKey, setNewKey] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
 
+  // États pour la base de données
+  const [dbConfig, setDbConfig] = useState<DatabaseConfig>({
+    configured: false,
+    db_type: 'sqlserver',
+    db_host: '',
+    db_name: '',
+    db_user: '',
+    db_port: 1433,
+    schema_type: 'coollibri',
+    is_enabled: false
+  })
+  const [dbPassword, setDbPassword] = useState('')
+  const [showDbPassword, setShowDbPassword] = useState(false)
+  const [dbLoading, setDbLoading] = useState(false)
+  const [dbTestLoading, setDbTestLoading] = useState(false)
+  const [dbTestResult, setDbTestResult] = useState<{success: boolean; message: string; database?: string} | null>(null)
+  const [dbSaveSuccess, setDbSaveSuccess] = useState(false)
+
   useEffect(() => {
+    loadDatabaseConfig()
     // Simuler le chargement des clés API
     setLoading(false)
     // Dans une vraie implémentation, on chargerait depuis une table api_keys
   }, [params.id])
+
+  const getToken = async () => {
+    const { data: { session } } = await supabase.auth.getSession()
+    return session?.access_token || ''
+  }
+
+  const loadDatabaseConfig = async () => {
+    try {
+      const token = await getToken()
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/workspaces/${params.id}/database`,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      )
+      
+      if (response.ok) {
+        const data = await response.json()
+        // Fusionner avec les valeurs par défaut pour éviter les undefined
+        setDbConfig(prev => ({
+          configured: data.configured || false,
+          db_type: data.db_type || prev.db_type || 'sqlserver',
+          db_host: data.db_host || prev.db_host || '',
+          db_name: data.db_name || prev.db_name || '',
+          db_user: data.db_user || prev.db_user || '',
+          db_port: data.db_port || prev.db_port || 1433,
+          schema_type: data.schema_type || prev.schema_type || 'coollibri',
+          is_enabled: data.is_enabled ?? prev.is_enabled ?? false,
+          last_test_status: data.last_test_status,
+          last_test_at: data.last_test_at
+        }))
+      }
+    } catch (error) {
+      console.error('Erreur chargement config DB:', error)
+    }
+  }
+
+  const saveDatabaseConfig = async () => {
+    setDbLoading(true)
+    setDbSaveSuccess(false)
+    setDbTestResult(null)  // Effacer l'ancien résultat de test
+    
+    try {
+      const token = await getToken()
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/workspaces/${params.id}/database`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            db_type: dbConfig.db_type,
+            db_host: dbConfig.db_host,
+            db_name: dbConfig.db_name,
+            db_user: dbConfig.db_user,
+            db_password: dbPassword,
+            db_port: dbConfig.db_port,
+            schema_type: dbConfig.schema_type,
+            is_enabled: dbConfig.is_enabled
+          })
+        }
+      )
+      
+      if (response.ok) {
+        setDbSaveSuccess(true)
+        setDbConfig(prev => ({ ...prev, configured: true, last_test_status: undefined, last_test_at: undefined }))
+        // Recharger la config après sauvegarde
+        await loadDatabaseConfig()
+        setTimeout(() => setDbSaveSuccess(false), 3000)
+      }
+    } catch (error) {
+      console.error('Erreur sauvegarde config DB:', error)
+    } finally {
+      setDbLoading(false)
+    }
+  }
+
+  const testDatabaseConnection = async () => {
+    setDbTestLoading(true)
+    setDbTestResult(null)
+    
+    try {
+      const token = await getToken()
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/workspaces/${params.id}/database/test`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            db_type: dbConfig.db_type,
+            db_host: dbConfig.db_host,
+            db_name: dbConfig.db_name,
+            db_user: dbConfig.db_user,
+            db_password: dbPassword,
+            db_port: dbConfig.db_port,
+            schema_type: dbConfig.schema_type
+          })
+        }
+      )
+      
+      const result = await response.json()
+      setDbTestResult(result)
+    } catch (error) {
+      setDbTestResult({ success: false, message: 'Erreur de connexion au serveur' })
+    } finally {
+      setDbTestLoading(false)
+    }
+  }
 
   const createApiKey = () => {
     // Simuler la création d'une clé
@@ -196,6 +349,236 @@ export default function ApiKeysPage() {
           </table>
         </div>
       )}
+
+      {/* ============================================= */}
+      {/* SECTION BASE DE DONNÉES */}
+      {/* ============================================= */}
+      <div className="border-t border-gray-200 pt-8 mt-8">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+            <Database size={20} className="text-blue-600" />
+          </div>
+          <div>
+            <h2 className="text-xl font-semibold text-gray-900">Base de données externe</h2>
+            <p className="text-sm text-gray-500">
+              Connectez votre base de données pour le suivi des commandes
+            </p>
+          </div>
+        </div>
+
+        <div className="bg-white border border-gray-200 rounded-xl p-6 space-y-6">
+          {/* Toggle activation */}
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="font-medium text-gray-900">Activer le suivi des commandes</div>
+              <div className="text-sm text-gray-500">
+                Le chatbot pourra consulter les commandes dans votre base de données
+              </div>
+            </div>
+            <button
+              onClick={() => setDbConfig(prev => ({ ...prev, is_enabled: !prev.is_enabled }))}
+              className={`relative w-12 h-6 rounded-full transition-colors ${
+                dbConfig.is_enabled ? 'bg-blue-600' : 'bg-gray-200'
+              }`}
+            >
+              <div
+                className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${
+                  dbConfig.is_enabled ? 'translate-x-6' : 'translate-x-0'
+                }`}
+              />
+            </button>
+          </div>
+
+          {/* Type de schéma */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Site / Tenant
+            </label>
+            <select
+              value={dbConfig.schema_type}
+              onChange={(e) => setDbConfig(prev => ({ ...prev, schema_type: e.target.value }))}
+              className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm bg-white"
+            >
+              <optgroup label="Impression de livres">
+                <option value="coollibri">CoolLibri</option>
+                <option value="jimprimeenfrance">J'imprime en France</option>
+                <option value="monpackaging">Mon Packaging</option>
+              </optgroup>
+              <optgroup label="Événementiel">
+                <option value="jedecore">Je Décore</option>
+                <option value="unjourunique">Un Jour Unique</option>
+              </optgroup>
+              <optgroup label="Montres">
+                <option value="chrono24">Chrono24</option>
+              </optgroup>
+              <optgroup label="Autre">
+                <option value="generic">Générique (personnalisé)</option>
+              </optgroup>
+            </select>
+            <p className="text-xs text-gray-500 mt-1">
+              Le site définit le schéma de base de données à utiliser
+            </p>
+          </div>
+
+          {/* Type de BDD */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Type de base de données
+            </label>
+            <select
+              value={dbConfig.db_type}
+              onChange={(e) => setDbConfig(prev => ({ 
+                ...prev, 
+                db_type: e.target.value,
+                db_port: e.target.value === 'sqlserver' ? 1433 : e.target.value === 'mysql' ? 3306 : 5432
+              }))}
+              className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm bg-white"
+            >
+              <option value="sqlserver">SQL Server</option>
+              <option value="mysql">MySQL</option>
+              <option value="postgres">PostgreSQL</option>
+            </select>
+          </div>
+
+          {/* Formulaire de connexion */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Hôte (host)
+              </label>
+              <input
+                type="text"
+                value={dbConfig.db_host}
+                onChange={(e) => setDbConfig(prev => ({ ...prev, db_host: e.target.value }))}
+                placeholder="ex: alpha.messages.fr ou 192.168.1.100"
+                className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Port
+              </label>
+              <input
+                type="number"
+                value={dbConfig.db_port}
+                onChange={(e) => setDbConfig(prev => ({ ...prev, db_port: parseInt(e.target.value) || 1433 }))}
+                placeholder="1433"
+                className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Nom de la base
+              </label>
+              <input
+                type="text"
+                value={dbConfig.db_name}
+                onChange={(e) => setDbConfig(prev => ({ ...prev, db_name: e.target.value }))}
+                placeholder="ex: IMP_COOLLIBRI"
+                className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Utilisateur
+              </label>
+              <input
+                type="text"
+                value={dbConfig.db_user}
+                onChange={(e) => setDbConfig(prev => ({ ...prev, db_user: e.target.value }))}
+                placeholder="ex: sa ou db_user"
+                className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Mot de passe
+              </label>
+              <div className="relative">
+                <input
+                  type={showDbPassword ? 'text' : 'password'}
+                  value={dbPassword}
+                  onChange={(e) => setDbPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full px-4 py-2 pr-10 border border-gray-200 rounded-lg text-sm"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowDbPassword(!showDbPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  {showDbPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Résultat du test */}
+          {dbTestResult && (
+            <div className={`flex items-start gap-3 p-4 rounded-lg ${
+              dbTestResult.success 
+                ? 'bg-green-50 border border-green-200' 
+                : 'bg-red-50 border border-red-200'
+            }`}>
+              {dbTestResult.success ? (
+                <CheckCircle2 size={20} className="text-green-600 flex-shrink-0 mt-0.5" />
+              ) : (
+                <XCircle size={20} className="text-red-600 flex-shrink-0 mt-0.5" />
+              )}
+              <div className={dbTestResult.success ? 'text-green-800' : 'text-red-800'}>
+                <div className="font-medium">{dbTestResult.message}</div>
+                {dbTestResult.success && dbTestResult.database && (
+                  <div className="text-sm mt-1 opacity-80">
+                    Base de données : {dbTestResult.database}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Statut du dernier test */}
+          {dbConfig.last_test_status && (
+            <div className="text-sm text-gray-500 flex items-center gap-2">
+              <Clock size={14} />
+              Dernier test: {dbConfig.last_test_status === 'success' ? '✅ Réussi' : '❌ Échoué'}
+              {dbConfig.last_test_at && ` - ${new Date(dbConfig.last_test_at).toLocaleString('fr-FR')}`}
+            </div>
+          )}
+
+          {/* Boutons d'action */}
+          <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
+            <Button
+              variant="outline"
+              onClick={testDatabaseConnection}
+              disabled={dbTestLoading || !dbConfig.db_host || !dbConfig.db_name}
+            >
+              {dbTestLoading ? (
+                <Loader2 size={16} className="mr-2 animate-spin" />
+              ) : (
+                <RefreshCw size={16} className="mr-2" />
+              )}
+              Tester la connexion
+            </Button>
+            
+            <Button
+              className="bg-black hover:bg-gray-800 text-white"
+              onClick={saveDatabaseConfig}
+              disabled={dbLoading || !dbConfig.db_host || !dbConfig.db_name}
+            >
+              {dbLoading ? (
+                <Loader2 size={16} className="mr-2 animate-spin" />
+              ) : dbSaveSuccess ? (
+                <Check size={16} className="mr-2" />
+              ) : null}
+              {dbSaveSuccess ? 'Enregistré !' : 'Enregistrer'}
+            </Button>
+          </div>
+        </div>
+      </div>
 
       {/* Modal de création */}
       {showCreateModal && (

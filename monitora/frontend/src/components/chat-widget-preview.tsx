@@ -4,6 +4,58 @@ import { useState, useRef, useEffect } from 'react'
 import { MessageCircle, X, Send, ChevronDown, ThumbsUp, ThumbsDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
+// Formate le contenu du message : emails, téléphones, listes à puces, gras
+function formatMessageContent(content: string): JSX.Element {
+  // Séparer par lignes pour gérer les listes
+  const lines = content.split('\n')
+  
+  const formattedLines = lines.map((line, idx) => {
+    let formatted = line
+      // Emails -> liens cliquables mailto
+      .replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g, 
+        '<a href="mailto:$1" class="text-blue-600 underline hover:text-blue-800">$1</a>')
+      // Numéros de téléphone français (05 31 61 60 42) -> liens tel:
+      .replace(/(\d{2}\s\d{2}\s\d{2}\s\d{2}\s\d{2})/g,
+        '<a href="tel:$1" class="text-blue-600 underline hover:text-blue-800">$1</a>')
+      // Gras **texte**
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    
+    // Détecter les listes à puces (-, •, *, ✓, ✔, →)
+    const bulletMatch = formatted.match(/^(\s*)([-•*✓✔→])\s+(.*)$/)
+    if (bulletMatch) {
+      const [, indent, , text] = bulletMatch
+      const indentLevel = Math.floor(indent.length / 2)
+      const marginLeft = indentLevel * 16
+      return `<div style="display: flex; align-items: flex-start; margin-left: ${marginLeft}px; margin-top: 4px;">
+        <span style="color: #6366f1; margin-right: 8px; font-weight: bold;">•</span>
+        <span>${text}</span>
+      </div>`
+    }
+    
+    // Détecter les listes numérotées (1., 2., etc.)
+    const numberedMatch = formatted.match(/^(\s*)(\d+)[.)]\s+(.*)$/)
+    if (numberedMatch) {
+      const [, indent, num, text] = numberedMatch
+      const indentLevel = Math.floor(indent.length / 2)
+      const marginLeft = indentLevel * 16
+      return `<div style="display: flex; align-items: flex-start; margin-left: ${marginLeft}px; margin-top: 4px;">
+        <span style="color: #6366f1; margin-right: 8px; font-weight: bold; min-width: 20px;">${num}.</span>
+        <span>${text}</span>
+      </div>`
+    }
+    
+    // Ligne vide
+    if (!formatted.trim()) {
+      return '<div style="height: 8px;"></div>'
+    }
+    
+    // Ligne normale
+    return `<div style="margin-top: 2px;">${formatted}</div>`
+  }).join('')
+  
+  return <div dangerouslySetInnerHTML={{ __html: formattedLines }} />
+}
+
 interface Message {
   role: 'user' | 'assistant'
   content: string
@@ -206,7 +258,7 @@ export function ChatWidgetPreview({
                             : 'bg-white text-gray-700 rounded-2xl rounded-bl-md shadow-sm border border-gray-100'
                         )}
                       >
-                        {msg.content}
+                        {msg.role === 'assistant' ? formatMessageContent(msg.content) : msg.content}
                       </div>
                       {msg.role === 'assistant' && (
                         <div className="flex items-center gap-1 mt-1 ml-1">
@@ -364,7 +416,7 @@ export function ChatWidgetPreview({
                       : 'bg-white text-gray-700 rounded-2xl rounded-bl-md shadow-sm border border-gray-100'
                   )}
                 >
-                  {msg.content}
+                  {msg.role === 'assistant' ? formatMessageContent(msg.content) : msg.content}
                 </div>
                 {/* Boutons feedback pour les messages assistant */}
                 {msg.role === 'assistant' && (

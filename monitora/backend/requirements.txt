@@ -18,14 +18,17 @@ httpx>=0.25.0
 # RAG & Vectorstore
 faiss-cpu>=1.7.4
 sentence-transformers>=2.2.0
-langchain>=0.1.0
-langchain-community>=0.0.10
-langchain-huggingface>=0.0.1
+langchain>=0.3.0
+langchain-core>=0.3.0
+langchain-community>=0.3.0
+langchain-huggingface>=0.1.0
+langchain-text-splitters>=0.3.0
 
 # Document processing
 pypdf>=3.0.0
 python-docx>=1.0.0
 unstructured>=0.10.0
 
-# Utils
-numpy>=1.24.0
+# Database connectors
+pyodbc>=5.0.0
+

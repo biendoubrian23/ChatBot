@@ -153,6 +153,8 @@ interface RAGConfig {
   chunk_size: number
   chunk_overlap: number
   top_k: number
+  enable_cache: boolean
+  cache_ttl: number
 }
 
 export default function DocumentsPage() {
@@ -169,7 +171,9 @@ export default function DocumentsPage() {
   const [ragConfig, setRagConfig] = useState<RAGConfig>({
     chunk_size: 1500,
     chunk_overlap: 300,
-    top_k: 8
+    top_k: 8,
+    enable_cache: true,
+    cache_ttl: 7200
   })
   const [ragLoading, setRagLoading] = useState(true)
   const [ragSaving, setRagSaving] = useState(false)
@@ -189,7 +193,9 @@ export default function DocumentsPage() {
         setRagConfig({
           chunk_size: data.rag_config.chunk_size ?? 1500,
           chunk_overlap: data.rag_config.chunk_overlap ?? 300,
-          top_k: data.rag_config.top_k ?? 8
+          top_k: data.rag_config.top_k ?? 8,
+          enable_cache: data.rag_config.enable_cache ?? true,
+          cache_ttl: data.rag_config.cache_ttl ?? 7200
         })
       }
       setRagLoading(false)
@@ -731,6 +737,74 @@ export default function DocumentsPage() {
                   step={1}
                 />
               </div>
+
+              {/* Séparateur Cache */}
+              <div className="border-t border-gray-200 pt-4 mt-4">
+                <h4 className="text-sm font-medium text-gray-900 mb-4 flex items-center gap-2">
+                  ⚡ Cache sémantique
+                  <span className="text-xs font-normal text-gray-500">(économise les appels API)</span>
+                </h4>
+              </div>
+
+              {/* Enable Cache */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-gray-700">Activer le cache</span>
+                  <div className="group relative">
+                    <Info size={14} className="text-gray-400 cursor-help" />
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 p-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                      Questions similaires = réponse instantanée depuis le cache.
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setRagConfig(prev => ({ ...prev, enable_cache: !prev.enable_cache }))}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    ragConfig.enable_cache ? 'bg-green-500' : 'bg-gray-300'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      ragConfig.enable_cache ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
+              </div>
+
+              {/* Cache TTL */}
+              {ragConfig.enable_cache && (
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium text-gray-700">Durée du cache</span>
+                      <div className="group relative">
+                        <Info size={14} className="text-gray-400 cursor-help" />
+                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                          Durée de validité des réponses en cache.
+                        </div>
+                      </div>
+                    </div>
+                    <span className="text-sm text-gray-500">
+                      {ragConfig.cache_ttl >= 86400 
+                        ? `${Math.round(ragConfig.cache_ttl / 86400)}j` 
+                        : ragConfig.cache_ttl >= 3600 
+                          ? `${Math.round(ragConfig.cache_ttl / 3600)}h` 
+                          : `${Math.round(ragConfig.cache_ttl / 60)}min`}
+                    </span>
+                  </div>
+                  <Slider
+                    value={ragConfig.cache_ttl}
+                    onChange={(value) => setRagConfig(prev => ({ ...prev, cache_ttl: value }))}
+                    min={1800}
+                    max={2592000}
+                    step={3600}
+                  />
+                  <div className="flex justify-between text-xs text-gray-400 mt-1">
+                    <span>30min</span>
+                    <span>1 mois</span>
+                  </div>
+                </div>
+              )}
 
               {/* Bouton Enregistrer */}
               <div className="pt-4 border-t border-gray-100 space-y-3">

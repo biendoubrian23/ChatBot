@@ -331,16 +331,74 @@
     }
   }
 
+  // Formate le contenu du message : emails, téléphones, listes à puces, gras
+  function formatMessageContent(text) {
+    // Séparer par lignes pour gérer les listes
+    const lines = text.split('\n');
+    
+    const formattedLines = lines.map(line => {
+      let formatted = line
+        // Emails en texte brut -> liens cliquables mailto
+        .replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g, 
+          '<a href="mailto:$1" style="color: #2563eb; text-decoration: underline;">$1</a>')
+        // Numéros de téléphone français (05 31 61 60 42) -> liens tel:
+        .replace(/(\d{2}\s\d{2}\s\d{2}\s\d{2}\s\d{2})/g,
+          '<a href="tel:$1" style="color: #2563eb; text-decoration: underline;">$1</a>')
+        // Liens markdown [text](url) -> liens HTML
+        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, 
+          '<a href="$2" target="_blank" rel="noopener" style="color: #2563eb; text-decoration: underline;">$1</a>')
+        // Gras **texte**
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      
+      // Détecter les listes à puces (-, •, *, ✓, ✔, →)
+      const bulletMatch = formatted.match(/^(\s*)([-•*✓✔→])\s+(.*)$/);
+      if (bulletMatch) {
+        const indent = bulletMatch[1];
+        const bulletText = bulletMatch[3];
+        const indentLevel = Math.floor(indent.length / 2);
+        const marginLeft = indentLevel * 16;
+        return '<div style="display: flex; align-items: flex-start; margin-left: ' + marginLeft + 'px; margin-top: 4px;">' +
+          '<span style="color: #6366f1; margin-right: 8px; font-weight: bold;">•</span>' +
+          '<span>' + bulletText + '</span></div>';
+      }
+      
+      // Détecter les listes numérotées (1., 2., etc.)
+      const numberedMatch = formatted.match(/^(\s*)(\d+)[.)]\s+(.*)$/);
+      if (numberedMatch) {
+        const indent = numberedMatch[1];
+        const num = numberedMatch[2];
+        const numText = numberedMatch[3];
+        const indentLevel = Math.floor(indent.length / 2);
+        const marginLeft = indentLevel * 16;
+        return '<div style="display: flex; align-items: flex-start; margin-left: ' + marginLeft + 'px; margin-top: 4px;">' +
+          '<span style="color: #6366f1; margin-right: 8px; font-weight: bold; min-width: 20px;">' + num + '.</span>' +
+          '<span>' + numText + '</span></div>';
+      }
+      
+      // Ligne vide
+      if (!formatted.trim()) {
+        return '<div style="height: 8px;"></div>';
+      }
+      
+      // Ligne normale
+      return '<div style="margin-top: 2px;">' + formatted + '</div>';
+    }).join('');
+    
+    return formattedLines;
+  }
+
   function addMessage(role, content) {
     const messageDiv = document.createElement('div');
     messageDiv.className = `monitora-message ${role}`;
+    // Formater le contenu (emails cliquables, liens, gras)
+    const formattedContent = formatMessageContent(content);
     messageDiv.innerHTML = `
       <div class="monitora-message-avatar">
         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
         </svg>
       </div>
-      <div class="monitora-message-content">${content}</div>
+      <div class="monitora-message-content">${formattedContent}</div>
     `;
     messagesContainer.appendChild(messageDiv);
     messagesContainer.scrollTop = messagesContainer.scrollHeight;

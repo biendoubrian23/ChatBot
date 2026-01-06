@@ -7,6 +7,7 @@ from app.api.workspaces import router as workspaces_router
 from app.api.chat import router as chat_router
 from app.api.widget import router as widget_router
 from app.api.insights import router as insights_router
+from app.api.database_config import router as database_router
 
 # Importer le bon module documents selon le mode de stockage
 if settings.STORAGE_MODE == "supabase":
@@ -22,4 +23,5 @@ router.include_router(documents_router, prefix="/documents", tags=["Documents"])
 router.include_router(chat_router, prefix="/chat", tags=["Chat"])
 router.include_router(widget_router, prefix="/widget", tags=["Widget"])
 router.include_router(insights_router, prefix="/insights", tags=["Insights"])
+router.include_router(database_router, prefix="/workspaces", tags=["Database"])
 

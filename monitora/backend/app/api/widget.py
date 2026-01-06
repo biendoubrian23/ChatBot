@@ -1,15 +1,20 @@
 """
 Routes API pour le Widget (accès public)
 Ce sont les endpoints appelés par le widget injecté sur les sites clients
-Inclut: fingerprint, score RAG, feedback 👍/👎
+Inclut: fingerprint, score RAG, feedback 👍/👎, suivi de commandes
 """
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse, Response
 from pydantic import BaseModel
 from typing import Optional, List
 import json
+import base64
+import logging
 from app.core.supabase import get_supabase
-from app.services.rag_pipeline import RAGPipeline
+from app.services.rag_pipeline import RAGPipeline, fix_email_format
+from app.services.intent_detector import IntentDetector
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -78,6 +83,7 @@ async def widget_chat(
     """
     Endpoint de chat pour le widget.
     - Identifie l'utilisateur via visitor_id (fingerprint)
+    - Détecte les questions de suivi de commande
     - Stocke le score RAG avec chaque réponse
     - Retourne session_id + message_id pour le feedback
     """
@@ -114,6 +120,45 @@ async def widget_chat(
         "messages_count": conversation.get("messages_count", 0) + 1
     }).eq("id", conversation["id"]).execute()
     
+    # ========================================================
+    # DÉTECTION D'INTENTION DE COMMANDE
+    # ========================================================
+    order_response = await _check_order_intent(supabase, workspace_id, data.message)
+    
+    if order_response:
+        # Sauvegarder la réponse de commande
+        msg_result = supabase.table("messages").insert({
+            "conversation_id": conversation["id"],
+            "role": "assistant",
+            "content": order_response,
+            "rag_score": 1.0,  # Réponse directe de la BDD
+            "sources": []
+        }).execute()
+        
+        message_id = msg_result.data[0]["id"] if msg_result.data else None
+        
+        if data.stream:
+            async def stream_order_response():
+                # Streamer la réponse de commande
+                for char in order_response:
+                    yield f"data: {json.dumps({'type': 'token', 'content': char})}\n\n"
+                yield f"data: {json.dumps({'type': 'done', 'session_id': conversation['id'], 'message_id': message_id, 'rag_score': 1.0})}\n\n"
+            
+            return StreamingResponse(
+                stream_order_response(),
+                media_type="text/event-stream"
+            )
+        else:
+            return {
+                "response": order_response,
+                "session_id": conversation["id"],
+                "message_id": message_id,
+                "rag_score": 1.0
+            }
+    
+    # ========================================================
+    # RÉPONSE RAG CLASSIQUE
+    # ========================================================
     # Récupérer l'historique (limité aux 6 derniers messages)
     history_result = supabase.table("messages")\
         .select("role, content")\
@@ -235,14 +280,99 @@ async def _get_or_create_conversation(supabase, workspace_id: str, session_id: s
     return conv_result.data[0]
 
 
+async def _check_order_intent(supabase, workspace_id: str, message: str) -> Optional[str]:
+    """
+    Vérifie si le message est une question de suivi de commande.
+    Si oui, interroge la BDD externe et retourne la réponse formatée.
+    Sinon, retourne None pour continuer avec le RAG.
+    
+    Flux identique au chatbot CoolLibri original.
+    """
+    # 1. Détecter l'intention (comme MessageAnalyzer original)
+    intent_detector = IntentDetector()
+    intent = intent_detector.detect(message)
+    
+    if intent["intent"] != "order_tracking":
+        return None
+    
+    order_number = intent.get("order_number")
+    
+    # Si pas de numéro, demander poliment (comme l'original)
+    if not order_number:
+        return (
+            "Pour suivre votre commande, j'ai besoin de votre **numéro de commande**. 📦\n\n"
+            "Vous pouvez le retrouver dans l'email de confirmation de commande.\n\n"
+            "Exemple : `13456` ou `commande 13456`"
+        )
+    
+    # 2. Vérifier si la BDD externe est configurée et activée
+    db_result = supabase.table("workspace_databases")\
+        .select("*")\
+        .eq("workspace_id", workspace_id)\
+        .eq("is_enabled", True)\
+        .execute()
+    
+    if not db_result.data or len(db_result.data) == 0:
+        return (
+            f"Je vois que vous cherchez des informations sur la commande **{order_number}**.\n\n"
+            f"Malheureusement, le système de suivi automatique n'est pas encore configuré.\n\n"
+            f"Veuillez contacter notre service client :\n"
+            f"📧 **Email** : contact@coollibri.com\n"
+            f"📞 **Téléphone** : 05 31 61 60 42"
+        )
+    
+    db_config = db_result.data[0]
+    
+    # 3. Se connecter à la BDD externe et récupérer la commande
+    try:
+        from app.services.external_database import get_order_service
+        
+        db_creds = {
+            "db_type": db_config["db_type"],
+            "db_host": db_config["db_host"],
+            "db_port": db_config["db_port"],
+            "db_name": db_config["db_name"],
+            "db_user": db_config["db_user"],
+            "db_password": base64.b64decode(db_config["db_password_encrypted"].encode()).decode(),
+            "schema_type": db_config["schema_type"]
+        }
+        
+        # Factory pour obtenir le bon service selon le tenant
+        order_service = get_order_service(db_creds)
+        
+        # Récupérer les détails de la commande
+        order_details = order_service.get_order_details(order_number)
+        
+        if not order_details:
+            return (
+                f"Je n'ai pas trouvé de commande avec le numéro **{order_number}**. 🔍\n\n"
+                f"Vérifiez que vous avez bien saisi le numéro correct.\n\n"
+                f"Si le problème persiste, contactez notre service client :\n"
+                f"📧 **Email** : contact@coollibri.com\n"
+                f"📞 **Téléphone** : 05 31 61 60 42"
+            )
+        
+        # Formater la réponse (identique au format original)
+        return order_service.format_order_response(order_details)
+        
+    except Exception as e:
+        logger.error(f"Erreur interrogation BDD externe: {e}")
+        return (
+            f"Une erreur technique est survenue lors de la recherche de votre commande **{order_number}**. 😔\n\n"
+            f"Veuillez réessayer dans quelques instants ou contacter notre service client :\n"
+            f"📧 **Email** : contact@coollibri.com\n"
+            f"📞 **Téléphone** : 05 31 61 60 42"
+        )
+
+
 async def _get_response_with_score(rag: RAGPipeline, message: str, history: list):
     """Génère une réponse et calcule le score RAG"""
-    # Générer la réponse
-    response, sources = await rag.get_response(message, history)
+    # Générer la réponse (peut venir du cache)
+    response, sources, from_cache = await rag.get_response(message, history)
     
-    # Le score RAG est calculé à partir des documents récupérés
-    # On utilise 0.5 comme valeur par défaut
-    rag_score = 0.5
+    # Si depuis le cache, score = 1.0 (réponse validée)
+    # Sinon score par défaut 0.5
+    rag_score = 1.0 if from_cache else 0.5
     
     return response, sources, rag_score
 
@@ -263,6 +393,9 @@ async def _stream_response_with_score(supabase, rag: RAGPipeline, message: str, 
             rag_score = chunk.get("score", 0.5)
         elif chunk.get("type") == "error":
             yield f"data: {json.dumps(chunk)}\n\n"
+    
+    # Post-traitement: corriger les emails malformés
+    full_response = fix_email_format(full_response)
     
     # Sauvegarder la réponse avec le score RAG
     msg_result = supabase.table("messages").insert({
