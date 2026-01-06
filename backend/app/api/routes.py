@@ -93,6 +93,10 @@ async def chat_stream(http_request: Request, request: ChatRequest, pipeline=Depe
     Returns:
         Streaming response with answer chunks
     """
+    # Debug logging
+    print(f"[DEBUG] /chat/stream called with question: {request.question[:50] if request.question else 'EMPTY'}...")
+    print(f"[DEBUG] History length: {len(request.history) if request.history else 0}")
+    
     # Track la requête active pour les métriques
     system_metrics.active_chatbot_requests["count"] += 1
     if system_metrics.active_chatbot_requests["count"] > system_metrics.active_chatbot_requests["peak"]:

@@ -18,7 +18,7 @@ class CustomerValidationRequest(BaseModel):
 
 class ChatRequest(BaseModel):
     """Chat request model."""
-    question: str = Field(..., min_length=1, max_length=1000, description="User question")
+    question: str = Field(..., min_length=1, max_length=5000, description="User question")
     conversation_id: Optional[str] = Field(None, description="Conversation ID for context")
     history: Optional[List[Message]] = Field(default_factory=list, description="Conversation history")
 

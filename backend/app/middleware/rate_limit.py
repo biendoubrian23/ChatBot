@@ -25,8 +25,8 @@ class RateLimitConfig:
     """Configuration du rate limiting."""
     
     # Limites par fenêtre de temps
-    REQUESTS_PER_MINUTE = 20       # Max 20 requêtes/minute
-    REQUESTS_PER_HOUR = 200        # Max 200 requêtes/heure
+    REQUESTS_PER_MINUTE = 60       # Max 60 requêtes/minute (augmenté pour dev)
+    REQUESTS_PER_HOUR = 500        # Max 500 requêtes/heure (augmenté pour dev)
     
     # Endpoints exemptés (health checks, etc.)
     EXEMPT_PATHS = [
@@ -34,13 +34,17 @@ class RateLimitConfig:
         "/docs",
         "/openapi.json",
         "/favicon.ico",
+        "/api/v1/tracking",   # Tracking requests (parallel monitor)
+        "/api/v1/order",      # Order-related endpoints
+        "/widget",            # Widget resources
+        "/static",            # Static files
     ]
     
     # Durée du ban temporaire en secondes
     BAN_DURATION = 300  # 5 minutes
     
     # Seuil pour déclencher un ban
-    BAN_THRESHOLD = 50  # Si plus de 50 requêtes en 1 minute = ban
+    BAN_THRESHOLD = 100  # Si plus de 100 requêtes en 1 minute = ban (augmenté)
 
 
 class RateLimitStore:
@@ -179,6 +183,10 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
     """
     
     async def dispatch(self, request: Request, call_next):
+        # Toujours laisser passer les requêtes OPTIONS (preflight CORS)
+        if request.method == "OPTIONS":
+            return await call_next(request)
+        
         # Ignorer certains paths
         path = request.url.path
         if any(path.startswith(exempt) for exempt in RateLimitConfig.EXEMPT_PATHS):
@@ -186,6 +194,14 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         
         # Générer le fingerprint
         fingerprint = generate_fingerprint(request)
+        
+        # Headers CORS à ajouter aux réponses d'erreur
+        cors_headers = {
+            "Access-Control-Allow-Origin": request.headers.get("Origin", "*"),
+            "Access-Control-Allow-Credentials": "true",
+            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+            "Access-Control-Allow-Headers": "*",
+        }
         
         # Vérifier si banni
         if rate_limit_store.is_banned(fingerprint):
@@ -198,7 +214,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                     "message": f"Vous avez été temporairement bloqué. Réessayez dans {remaining} secondes.",
                     "retry_after": remaining
                 },
-                headers={"Retry-After": str(remaining)}
+                headers={"Retry-After": str(remaining), **cors_headers}
             )
         
         # Incrémenter et vérifier les limites
@@ -214,7 +230,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                     "message": f"Activité suspecte détectée. Vous êtes bloqué pour {RateLimitConfig.BAN_DURATION // 60} minutes.",
                     "retry_after": RateLimitConfig.BAN_DURATION
                 },
-                headers={"Retry-After": str(RateLimitConfig.BAN_DURATION)}
+                headers={"Retry-After": str(RateLimitConfig.BAN_DURATION), **cors_headers}
             )
         
         # Vérifier limite par minute
@@ -228,7 +244,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                     "message": f"Maximum {RateLimitConfig.REQUESTS_PER_MINUTE} requêtes par minute. Réessayez dans {int(wait_time)} secondes.",
                     "retry_after": int(wait_time)
                 },
-                headers={"Retry-After": str(int(wait_time))}
+                headers={"Retry-After": str(int(wait_time)), **cors_headers}
             )
         
         # Vérifier limite par heure
@@ -242,7 +258,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                     "message": f"Maximum {RateLimitConfig.REQUESTS_PER_HOUR} requêtes par heure. Réessayez plus tard.",
                     "retry_after": int(wait_time)
                 },
-                headers={"Retry-After": str(int(wait_time))}
+                headers={"Retry-After": str(int(wait_time)), **cors_headers}
             )
         
         # Ajouter les headers de rate limit à la réponse

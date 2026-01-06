@@ -1,8 +1,12 @@
 """Main application entry point."""
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse, JSONResponse
+from fastapi.exceptions import RequestValidationError
 import uvicorn
 import logging
+import os
 
 from app.core.config import settings
 from app.api import routes
@@ -45,6 +49,22 @@ app = FastAPI(
     description="LibriAssist - Chatbot RAG intelligent pour CoolLibri"
 )
 
+# Handler pour loguer les erreurs de validation (422)
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    """Log validation errors for debugging."""
+    print(f"[VALIDATION ERROR] Path: {request.url.path}")
+    print(f"[VALIDATION ERROR] Details: {exc.errors()}")
+    try:
+        body = await request.body()
+        print(f"[VALIDATION ERROR] Body: {body.decode()[:500]}")
+    except:
+        pass
+    return JSONResponse(
+        status_code=422,
+        content={"detail": exc.errors()}
+    )
+
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
@@ -55,7 +75,36 @@ app.add_middleware(
 )
 
 # Configure Rate Limiting (protection anti-spam)
+# NOTE: Ajouté APRÈS CORS car les middlewares FastAPI s'exécutent en ordre inverse
+# (le dernier ajouté est exécuté en premier)
+# Donc: Request → RateLimit → CORS → App → CORS → RateLimit → Response
 app.add_middleware(RateLimitMiddleware)
+
+# Servir les fichiers statiques (widget embeddable)
+static_dir = os.path.join(os.path.dirname(__file__), "static")
+if os.path.exists(static_dir):
+    app.mount("/static", StaticFiles(directory=static_dir), name="static")
+
+
+@app.get("/widget.js")
+async def get_widget():
+    """Serve the embeddable widget script."""
+    widget_path = os.path.join(os.path.dirname(__file__), "static", "widget.js")
+    return FileResponse(
+        widget_path,
+        media_type="application/javascript",
+        headers={
+            "Cache-Control": "public, max-age=3600",
+            "Access-Control-Allow-Origin": "*"
+        }
+    )
+
+
+@app.get("/widget-demo")
+async def widget_demo():
+    """Serve the widget demo page."""
+    demo_path = os.path.join(os.path.dirname(__file__), "static", "demo.html")
+    return FileResponse(demo_path, media_type="text/html")
 
 
 @app.get("/health")

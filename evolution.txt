@@ -1,0 +1,179 @@
+📊 Analyse Professionnelle - Multi-Site Chatbot Strategy
+🔍 État actuel de ton architecture
+Points forts actuels :
+
+✅ Widget embeddable bien structuré avec configuration via LIBRIASSIST_CONFIG
+✅ Architecture RAG propre (FastAPI + ChromaDB + LLM)
+✅ Streaming des réponses déjà implémenté
+✅ Tracking basique des requêtes (request_tracking.py)
+✅ Système d'analyse d'intention (order_tracking vs general_question)
+Manques critiques pour multi-site :
+
+❌ Pas de concept de tenant/site dans le code
+❌ Pas d'authentification utilisateur côté widget
+❌ Pas de stockage d'analytics persistant
+❌ Vectorstore unique (pas multi-tenant)
+🏢 1. Architecture Multi-Tenant (8 sites)
+Mon avis professionnel :
+Option A : Un backend partagé (RECOMMANDÉ)
+Backend unique → tenant_id pour chaque site
+
+✅ Avantages : Un seul déploiement, maintenance simplifiée, économie de ressources
+⚠️ Contrainte : Nécessite d'ajouter tenant_id partout
+Option B : Un backend par site
+
+❌ Non recommandé : 8x plus de maintenance, 8x plus de coûts
+Ce que tu dois faire :
+Créer une table tenants avec :
+
+tenant_id, site_name, api_key, config (couleurs, textes, vectorstore_path)
+Widget : ajouter un siteId ou apiKey dans la config :
+
+window.LIBRIASSIST_CONFIG = {
+  apiKey: "coollibri_xxx123",  // Identifie le tenant
+  backendUrl: "...",
+}
+
+Vectorstores séparés : data/vectorstore/{tenant_id}/
+🔐 2. Sécurité des commandes (Connecté vs Non-connecté)
+Problème que tu poses :
+"Éviter que les utilisateurs entrent des numéros de commande au hasard"
+
+Mon avis professionnel :
+La validation doit se faire côté BACKEND, pas côté widget.
+
+Le développeur du site doit juste te passer un JWT ou token de session que TU valides.
+
+Architecture recommandée :
+┌─────────────────────────────────────────────────────────┐
+│ UTILISATEUR NON CONNECTÉ                                │
+│ → Widget sans token                                      │
+│ → Questions générales uniquement (FAQ, produits)        │
+│ → Pas d'accès aux commandes                             │
+└─────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────┐
+│ UTILISATEUR CONNECTÉ                                     │
+│ → Site envoie user_token au widget                      │
+│ → Widget inclut le token dans chaque requête            │
+│ → Backend valide le token avec l'API du site            │
+│ → Backend récupère les commandes de CET utilisateur     │
+│ → L'utilisateur ne peut voir QUE ses propres commandes  │
+└─────────────────────────────────────────────────────────┘
+
+Ce que le développeur du site doit faire :
+window.LIBRIASSIST_CONFIG = {
+  apiKey: "coollibri_xxx",
+  userToken: "eyJhbGciOiJIUzI1...",  // JWT de l'utilisateur connecté
+  userId: "12345"  // Optionnel
+}
+
+
+Ce que TOI tu dois faire (côté backend) :
+Endpoint de validation : /api/v1/validate-user
+Validation du token : Appeler l'API du site client OU partager une clé JWT
+Filtrage des commandes : WHERE customer_id = {validated_user_id}
+Implémentation suggérée :
+Scénario	Token présent ?	Accès commandes
+Visiteur anonyme	❌	Aucun - Questions FAQ uniquement
+Utilisateur connecté	✅ Valide	Ses propres commandes
+Token invalide/expiré	❌	Refusé, demande reconnexion
+📈 3. Monitoring & Analytics Dashboard
+Ce que tu dois collecter :
+Niveau Widget (côté client) :
+
+widget_opened : Nombre d'ouvertures
+session_duration : Temps passé
+messages_sent : Nombre de messages
+Niveau Backend (côté serveur) :
+
+tenant_id : Quel site
+question : Texte de la question
+intent : order_tracking / general_question
+response_time_ms : Latence
+tokens_used : Consommation
+sources_used : Quels documents RAG
+success : true/false
+Architecture Analytics recommandée :
+
+
+┌────────────────────────────────────────────────────────┐
+│                    WIDGET                               │
+│  → Envoie événements: widget_open, message_sent, etc.  │
+└───────────────────────┬────────────────────────────────┘
+                        │
+                        ▼
+┌────────────────────────────────────────────────────────┐
+│              BACKEND - Analytics Collector              │
+│  POST /api/v1/analytics/event                          │
+│  {tenant_id, event_type, data, timestamp}              │
+└───────────────────────┬────────────────────────────────┘
+                        │
+                        ▼
+┌────────────────────────────────────────────────────────┐
+│           BASE DE DONNÉES ANALYTICS                     │
+│  Table: chatbot_events                                  │
+│  - id, tenant_id, event_type, payload, created_at      │
+│                                                         │
+│  Table: chatbot_conversations                           │
+│  - id, tenant_id, session_id, started_at, messages     │
+└────────────────────────────────────────────────────────┘
+
+
+
+Dashboard - Métriques clés par tenant :
+Métrique	Description
+Utilisateurs actifs	Sessions uniques / jour
+Messages total	Volume de requêtes
+Temps de réponse moyen	P50, P95, P99
+Top 10 questions	Questions les plus fréquentes
+Taux de satisfaction	👍/👎 sur les réponses
+Intents distribution	% order_tracking vs FAQ
+Commandes consultées	Combien de tracking/jour
+Erreurs	Taux d'échec
+🛠️ 4. Ce que le développeur du site doit faire VS toi
+Responsabilités du DÉVELOPPEUR SITE :
+Tâche	Responsable
+Inclure le script widget	Développeur
+Passer le userToken si connecté	Développeur
+Gérer la connexion utilisateur	Développeur
+Personnaliser les couleurs via config	Développeur
+Responsabilités de TOI (Backend) :
+Tâche	Responsable
+Valider le token utilisateur	Toi
+Sécuriser l'accès aux commandes	Toi
+Gérer le multi-tenant	Toi
+Stocker les analytics	Toi
+Fournir l'API dashboard	Toi
+Maintenir les vectorstores par site	Toi
+📋 5. Plan d'implémentation recommandé
+Phase 1 : Multi-tenant (1-2 semaines)
+Ajouter tenant_id dans les configs
+Créer table tenants avec clés API
+Séparer les vectorstores par tenant
+Modifier le widget pour accepter apiKey
+Phase 2 : Sécurité utilisateurs (1 semaine)
+Ajouter userToken au widget
+Créer endpoint de validation
+Filtrer les commandes par customer_id
+Gérer les cas non-connecté
+Phase 3 : Analytics (1-2 semaines)
+Créer tables analytics (PostgreSQL/SQLite)
+Endpoint POST /analytics/event
+Tracking côté widget
+Dashboard admin basique
+Phase 4 : Dashboard (2 semaines)
+Interface React/Next.js pour admin
+Vues par tenant
+Graphiques temps réel
+Export des données
+💡 Mes recommandations finales
+Ne donne PAS aux développeurs la responsabilité de sécuriser les commandes - C'est trop risqué. Fais-le toi-même côté backend.
+
+Utilise des API Keys par tenant plutôt que des URL différentes - Plus simple à gérer.
+
+Stocke les analytics dès maintenant - Même si tu n'as pas le dashboard, collecte les données. Tu pourras les exploiter plus tard.
+
+Prévois un onboarding automatisé - Un admin panel où tu crées un nouveau tenant avec : nom, couleurs, API key générée, et tu récupères le script à copier.
+
+Limite les risques dès le début - Rate limiting par tenant, validation stricte des tokens

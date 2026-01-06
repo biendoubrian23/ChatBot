@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Démo Widget LibriAssist</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 20px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .section {
+            margin-bottom: 60px;
+        }
+
+        h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .code-block .comment {
+            color: #6a9955;
+        }
+
+        .code-block .tag {
+            color: #569cd6;
+        }
+
+        .code-block .attr {
+            color: #9cdcfe;
+        }
+
+        .code-block .string {
+            color: #ce9178;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .feature {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .feature h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .feature p {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .btn {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.2s;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            background: #5a6fd6;
+        }
+
+        .config-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .config-table th,
+        .config-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .config-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+
+        .config-table code {
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 30px;
+        }
+
+        footer a {
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <h1>🤖 LibriAssist Widget</h1>
+        <p>Intégrez un chatbot intelligent sur votre site en quelques secondes avec un simple script.</p>
+    </div>
+
+    <div class="container">
+        <section class="section">
+            <h2>🚀 Installation rapide</h2>
+            <p>Copiez et collez ce code juste avant la fermeture de la balise <code>&lt;/body&gt;</code> :</p>
+            
+            <div class="code-block">
+<span class="comment">&lt;!-- Configuration LibriAssist (optionnel) --&gt;</span>
+&lt;<span class="tag">script</span>&gt;
+  window.LIBRIASSIST_CONFIG = {
+    <span class="attr">backendUrl</span>: <span class="string">'https://votre-url-ngrok.ngrok-free.app'</span>,
+    <span class="attr">primaryColor</span>: <span class="string">'#6366f1'</span>,
+    <span class="attr">title</span>: <span class="string">'LibriAssist'</span>,
+    <span class="attr">subtitle</span>: <span class="string">'Assistant CoolLibri'</span>,
+    <span class="attr">welcomeMessage</span>: <span class="string">'Bonjour ! Comment puis-je vous aider ?'</span>
+  };
+&lt;/<span class="tag">script</span>&gt;
+
+<span class="comment">&lt;!-- Widget LibriAssist --&gt;</span>
+&lt;<span class="tag">script</span> <span class="attr">src</span>=<span class="string">"https://votre-url-ngrok.ngrok-free.app/widget.js"</span>&gt;&lt;/<span class="tag">script</span>&gt;
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>✨ Fonctionnalités</h2>
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-icon">💬</div>
+                    <h3>Chat en temps réel</h3>
+                    <p>Réponses en streaming pour une expérience fluide et naturelle.</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🎨</div>
+                    <h3>Personnalisable</h3>
+                    <p>Couleurs, textes et messages entièrement configurables.</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">📱</div>
+                    <h3>Responsive</h3>
+                    <p>S'adapte parfaitement à tous les écrans.</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Léger</h3>
+                    <p>Moins de 15KB, chargement instantané.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>⚙️ Options de configuration</h2>
+            <table class="config-table">
+                <thead>
+                    <tr>
+                        <th>Option</th>
+                        <th>Type</th>
+                        <th>Défaut</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>backendUrl</code></td>
+                        <td>string</td>
+                        <td><code>http://localhost:8000</code></td>
+                        <td>URL de votre backend (ngrok)</td>
+                    </tr>
+                    <tr>
+                        <td><code>primaryColor</code></td>
+                        <td>string</td>
+                        <td><code>#6366f1</code></td>
+                        <td>Couleur principale du widget</td>
+                    </tr>
+                    <tr>
+                        <td><code>title</code></td>
+                        <td>string</td>
+                        <td><code>LibriAssist</code></td>
+                        <td>Titre affiché dans l'en-tête</td>
+                    </tr>
+                    <tr>
+                        <td><code>subtitle</code></td>
+                        <td>string</td>
+                        <td><code>Assistant CoolLibri</code></td>
+                        <td>Sous-titre affiché dans l'en-tête</td>
+                    </tr>
+                    <tr>
+                        <td><code>welcomeMessage</code></td>
+                        <td>string</td>
+                        <td><code>Bonjour ! Comment puis-je vous aider ?</code></td>
+                        <td>Message de bienvenue initial</td>
+                    </tr>
+                    <tr>
+                        <td><code>placeholder</code></td>
+                        <td>string</td>
+                        <td><code>Posez votre question...</code></td>
+                        <td>Placeholder du champ de saisie</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="section">
+            <h2>🔧 API JavaScript</h2>
+            <p>Vous pouvez contrôler le widget via JavaScript :</p>
+            
+            <div class="code-block">
+<span class="comment">// Ouvrir le chat</span>
+LibriAssist.open();
+
+<span class="comment">// Fermer le chat</span>
+LibriAssist.close();
+
+<span class="comment">// Basculer l'état</span>
+LibriAssist.toggle();
+
+<span class="comment">// Envoyer un message automatiquement</span>
+LibriAssist.sendMessage(<span class="string">'Quels sont les formats disponibles ?'</span>);
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>🌐 Utilisation avec ngrok</h2>
+            <p>Pour que le widget fonctionne sur des sites externes, utilisez ngrok :</p>
+            
+            <div class="code-block">
+<span class="comment"># 1. Lancez votre backend</span>
+cd backend && python -m uvicorn main:app --host 0.0.0.0 --port 8000
+
+<span class="comment"># 2. Dans un autre terminal, lancez ngrok</span>
+ngrok http 8000
+
+<span class="comment"># 3. Utilisez l'URL ngrok dans votre configuration</span>
+<span class="comment"># Exemple: https://abc123.ngrok-free.app</span>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>Créé avec ❤️ par <a href="https://coollibri.fr">CoolLibri</a></p>
+    </footer>
+
+    <!-- Demo: le widget est chargé ici -->
+    <script>
+        // Détecte automatiquement l'URL du backend basée sur l'URL courante
+        const currentOrigin = window.location.origin;
+        
+        window.LIBRIASSIST_CONFIG = {
+            backendUrl: currentOrigin,
+            primaryColor: '#667eea',
+            title: 'LibriAssist',
+            subtitle: 'Assistant CoolLibri',
+            welcomeMessage: 'Bonjour ! 👋 Je suis LibriAssist, votre assistant pour l\'impression de livres. Comment puis-je vous aider ?'
+        };
+    </script>
+    <script src="/widget.js"></script>
+</body>
+</html>
