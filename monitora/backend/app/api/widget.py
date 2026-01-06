@@ -229,8 +229,7 @@ async def _get_or_create_conversation(supabase, workspace_id: str, session_id: s
     conv_result = supabase.table("conversations").insert({
         "workspace_id": workspace_id,
         "visitor_id": visitor_id,
-        "messages_count": 0,
-        "metadata": {"source": "widget"}
+        "messages_count": 0
     }).execute()
     
     return conv_result.data[0]
