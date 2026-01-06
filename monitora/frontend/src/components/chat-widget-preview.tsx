@@ -16,6 +16,8 @@ interface ChatWidgetPreviewProps {
   accentColor?: string
   showInPhone?: boolean
   workspaceId?: string  // Pour appeler le vrai backend
+  widgetWidth?: number
+  widgetHeight?: number
 }
 
 // Fonction helper pour ajuster la couleur (plus sombre)
@@ -33,7 +35,9 @@ export function ChatWidgetPreview({
   welcomeMessage = 'Bonjour ! 👋 Comment puis-je vous aider aujourd\'hui ?',
   accentColor = '#6366f1',
   showInPhone = false,
-  workspaceId
+  workspaceId,
+  widgetWidth = 360,
+  widgetHeight = 500
 }: ChatWidgetPreviewProps) {
   const [isOpen, setIsOpen] = useState(showInPhone ? true : false)
   const [messages, setMessages] = useState<Message[]>([
@@ -293,10 +297,13 @@ export function ChatWidgetPreview({
   return (
     <div className="fixed bottom-6 right-6 z-50">
       {/* Chat Window */}
-      <div className={cn(
-        'absolute bottom-20 right-0 w-[360px] bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden transition-all duration-300 origin-bottom-right',
-        isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0 pointer-events-none'
-      )}>
+      <div 
+        className={cn(
+          'absolute bottom-20 right-0 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden transition-all duration-300 origin-bottom-right',
+          isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0 pointer-events-none'
+        )}
+        style={{ width: `${widgetWidth}px` }}
+      >
         {/* Header avec dégradé */}
         <div 
           className="px-5 py-4 flex items-center justify-between"
@@ -325,7 +332,10 @@ export function ChatWidgetPreview({
         </div>
 
         {/* Messages */}
-        <div className="h-80 overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-gray-50 to-white">
+        <div 
+          className="overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-gray-50 to-white"
+          style={{ height: `${widgetHeight - 140}px` }}
+        >
           {messages.map((msg, i) => (
             <div
               key={i}

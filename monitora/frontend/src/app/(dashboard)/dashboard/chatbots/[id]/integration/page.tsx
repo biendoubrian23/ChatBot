@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { supabase, Workspace } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
@@ -23,6 +23,8 @@ export default function IntegrationPage() {
   const [chatbot, setChatbot] = useState<Chatbot | null>(null)
   const [copied, setCopied] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [saved, setSaved] = useState(false)
+  const [hasChanges, setHasChanges] = useState(false)
   const [widgetConfig, setWidgetConfig] = useState({
     position: 'bottom-right',
     primaryColor: '#000000',
@@ -54,7 +56,14 @@ export default function IntegrationPage() {
     }
   }
 
-  const saveConfig = useCallback(async () => {
+  // Marquer comme modifié quand la config change
+  const updateConfig = (updates: Partial<typeof widgetConfig>) => {
+    setWidgetConfig(prev => ({ ...prev, ...updates }))
+    setHasChanges(true)
+    setSaved(false)
+  }
+
+  const saveConfig = async () => {
     if (!chatbot?.id) return
     setSaving(true)
     
@@ -64,13 +73,12 @@ export default function IntegrationPage() {
       .eq('id', chatbot.id)
     
     setSaving(false)
-  }, [chatbot?.id, widgetConfig])
-
-  // Auto-save quand la config change
-  useEffect(() => {
-    const timeout = setTimeout(saveConfig, 1000)
-    return () => clearTimeout(timeout)
-  }, [widgetConfig, saveConfig])
+    setSaved(true)
+    setHasChanges(false)
+    
+    // Réinitialiser le message "Sauvegardé" après 2 secondes
+    setTimeout(() => setSaved(false), 2000)
+  }
 
   const getWidgetCode = () => {
     return `<!-- MONITORA Widget -->
@@ -116,12 +124,39 @@ export default function IntegrationPage() {
         {/* Configuration du widget */}
         <div className="space-y-6">
           <div className="bg-white rounded-xl border border-gray-200 p-6">
-            <div className="flex items-center gap-3 mb-6">
-              <Settings2 size={20} className="text-gray-700" />
-              <div>
-                <h3 className="font-medium text-gray-900">Personnalisation</h3>
-                <p className="text-sm text-gray-500">Configurez l'apparence du widget</p>
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <Settings2 size={20} className="text-gray-700" />
+                <div>
+                  <h3 className="font-medium text-gray-900">Personnalisation</h3>
+                  <p className="text-sm text-gray-500">Configurez l'apparence du widget</p>
+                </div>
               </div>
+              <Button
+                onClick={saveConfig}
+                disabled={saving || !hasChanges}
+                className={`${
+                  saved 
+                    ? 'bg-green-600 hover:bg-green-700' 
+                    : hasChanges 
+                      ? 'bg-black hover:bg-gray-800' 
+                      : 'bg-gray-300'
+                }`}
+              >
+                {saving ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                    Sauvegarde...
+                  </>
+                ) : saved ? (
+                  <>
+                    <Check size={16} className="mr-2" />
+                    Sauvegardé
+                  </>
+                ) : (
+                  'Sauvegarder'
+                )}
+              </Button>
             </div>
 
             <div className="space-y-6">
@@ -137,7 +172,7 @@ export default function IntegrationPage() {
                   ].map((pos) => (
                     <button
                       key={pos.value}
-                      onClick={() => setWidgetConfig(prev => ({ ...prev, position: pos.value }))}
+                      onClick={() => updateConfig({ position: pos.value })}
                       className={`
                         px-4 py-2 rounded-lg border-2 text-sm font-medium transition-colors
                         ${widgetConfig.position === pos.value 
@@ -161,13 +196,13 @@ export default function IntegrationPage() {
                   <input
                     type="color"
                     value={widgetConfig.primaryColor}
-                    onChange={(e) => setWidgetConfig(prev => ({ ...prev, primaryColor: e.target.value }))}
+                    onChange={(e) => updateConfig({ primaryColor: e.target.value })}
                     className="w-10 h-10 rounded-lg border border-gray-200 cursor-pointer"
                   />
                   <input
                     type="text"
                     value={widgetConfig.primaryColor}
-                    onChange={(e) => setWidgetConfig(prev => ({ ...prev, primaryColor: e.target.value }))}
+                    onChange={(e) => updateConfig({ primaryColor: e.target.value })}
                     className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm"
                   />
                 </div>
@@ -183,7 +218,7 @@ export default function IntegrationPage() {
                   min="300"
                   max="500"
                   value={widgetConfig.widgetWidth}
-                  onChange={(e) => setWidgetConfig(prev => ({ ...prev, widgetWidth: parseInt(e.target.value) }))}
+                  onChange={(e) => updateConfig({ widgetWidth: parseInt(e.target.value) })}
                   className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-black"
                 />
               </div>
@@ -197,7 +232,7 @@ export default function IntegrationPage() {
                   min="400"
                   max="700"
                   value={widgetConfig.widgetHeight}
-                  onChange={(e) => setWidgetConfig(prev => ({ ...prev, widgetHeight: parseInt(e.target.value) }))}
+                  onChange={(e) => updateConfig({ widgetHeight: parseInt(e.target.value) })}
                   className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-black"
                 />
               </div>
@@ -209,7 +244,7 @@ export default function IntegrationPage() {
                 </label>
                 <textarea
                   value={widgetConfig.welcomeMessage}
-                  onChange={(e) => setWidgetConfig(prev => ({ ...prev, welcomeMessage: e.target.value }))}
+                  onChange={(e) => updateConfig({ welcomeMessage: e.target.value })}
                   rows={2}
                   className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm resize-none"
                 />
@@ -223,7 +258,7 @@ export default function IntegrationPage() {
                 <input
                   type="text"
                   value={widgetConfig.placeholder}
-                  onChange={(e) => setWidgetConfig(prev => ({ ...prev, placeholder: e.target.value }))}
+                  onChange={(e) => updateConfig({ placeholder: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
                 />
               </div>

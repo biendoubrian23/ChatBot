@@ -112,6 +112,8 @@ export default function ChatbotLayout({
         botName={chatbot.widget_config?.chatbot_name || chatbot.name}
         welcomeMessage={chatbot.widget_config?.welcomeMessage || `Bonjour ! Je suis ${chatbot.name}. Comment puis-je vous aider ?`}
         accentColor={chatbot.widget_config?.primaryColor || "#000000"}
+        widgetWidth={chatbot.widget_config?.widgetWidth || 360}
+        widgetHeight={chatbot.widget_config?.widgetHeight || 500}
       />
     </div>
   )
