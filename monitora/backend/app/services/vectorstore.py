@@ -41,21 +41,40 @@ def get_vectorstore_path(workspace_id: str) -> str:
     return os.path.join(settings.VECTORSTORE_PATH, workspace_id)
 
 
+def delete_vectorstore(workspace_id: str) -> bool:
+    """
+    Supprime complètement le vectorstore d'un workspace.
+    Utilisé avant une réindexation complète.
+    """
+    import shutil
+    vs_path = get_vectorstore_path(workspace_id)
+    
+    if os.path.exists(vs_path):
+        try:
+            shutil.rmtree(vs_path)
+            logger.info(f"Vectorstore supprimé: {vs_path}")
+            return True
+        except Exception as e:
+            logger.error(f"Erreur suppression vectorstore {vs_path}: {e}")
+            return False
+    return True
+
+
 def load_document(file_path: str, file_type: str) -> List[Document]:
     """Charge un document selon son type"""
-    loaders = {
-        "txt": TextLoader,
-        "pdf": PyPDFLoader,
-        "md": UnstructuredMarkdownLoader,
-        "csv": CSVLoader
-    }
-    
-    loader_class = loaders.get(file_type)
-    if not loader_class:
-        raise ValueError(f"Type de fichier non supporté: {file_type}")
-    
     try:
-        loader = loader_class(file_path)
+        if file_type == "txt":
+            # Forcer l'encodage UTF-8 pour les fichiers texte
+            loader = TextLoader(file_path, encoding='utf-8')
+        elif file_type == "pdf":
+            loader = PyPDFLoader(file_path)
+        elif file_type == "md":
+            loader = UnstructuredMarkdownLoader(file_path)
+        elif file_type == "csv":
+            loader = CSVLoader(file_path, encoding='utf-8')
+        else:
+            raise ValueError(f"Type de fichier non supporté: {file_type}")
+        
         return loader.load()
     except Exception as e:
         logger.error(f"Erreur chargement {file_path}: {e}")
@@ -121,19 +140,42 @@ async def vectorize_document(document_id: str, workspace_id: str, file_path: str
         
         chunks = split_documents(documents, chunk_size, chunk_overlap)
         
-        logger.info(f"Document {filename}: {len(documents)} pages -> {len(chunks)} chunks")
+        logger.info(f"Document {filename}: {len(documents)} pages -> {len(chunks)} chunks (chunk_size={chunk_size}, overlap={chunk_overlap})")
         
         # Charger ou créer le vectorstore
         vs_path = get_vectorstore_path(workspace_id)
         
         if os.path.exists(vs_path):
-            # Charger et ajouter
+            # Charger le vectorstore existant
             vectorstore = FAISS.load_local(
                 vs_path, 
                 get_embeddings(),
                 allow_dangerous_deserialization=True
             )
-            vectorstore.add_documents(chunks)
+            
+            # Supprimer les anciens chunks de ce document (pour réindexation)
+            # On reconstruit un nouveau vectorstore sans les chunks de ce document
+            try:
+                # Récupérer tous les documents du vectorstore
+                all_docs = []
+                docstore = vectorstore.docstore
+                for doc_id in vectorstore.index_to_docstore_id.values():
+                    doc = docstore.search(doc_id)
+                    # Garder seulement les docs qui ne sont PAS de ce document_id
+                    if doc and doc.metadata.get("document_id") != document_id:
+                        all_docs.append(doc)
+                
+                if all_docs:
+                    # Recréer le vectorstore avec les docs existants + nouveaux chunks
+                    vectorstore = FAISS.from_documents(all_docs + chunks, get_embeddings())
+                else:
+                    # Pas d'autres docs, créer avec seulement les nouveaux chunks
+                    vectorstore = FAISS.from_documents(chunks, get_embeddings())
+                    
+                logger.info(f"Réindexation: {len(all_docs)} chunks existants conservés, {len(chunks)} nouveaux ajoutés")
+            except Exception as e:
+                logger.warning(f"Erreur lors de la suppression des anciens chunks, ajout simple: {e}")
+                vectorstore.add_documents(chunks)
         else:
             # Créer nouveau
             vectorstore = FAISS.from_documents(chunks, get_embeddings())
@@ -156,11 +198,9 @@ async def vectorize_document(document_id: str, workspace_id: str, file_path: str
     except Exception as e:
         logger.error(f"Erreur vectorisation {document_id}: {e}")
         
+        # Mettre à jour le statut en erreur (sans metadata car colonne inexistante)
         supabase.table("documents")\
-            .update({
-                "status": "error",
-                "metadata": {"error": str(e)}
-            })\
+            .update({"status": "error"})\
             .eq("id", document_id)\
             .execute()
 

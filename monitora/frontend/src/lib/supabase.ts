@@ -66,5 +66,29 @@ export interface Message {
   content: string
   sources: any | null
   response_time_ms: number | null
+  rag_score: number | null
+  feedback: number | null
+  is_resolved: boolean
   created_at: string
+}
+
+export interface InsightsCache {
+  id: string
+  workspace_id: string
+  satisfaction_rate: number | null
+  avg_rag_score: number | null
+  avg_messages_per_conversation: number
+  low_confidence_count: number
+  total_conversations: number
+  total_messages: number
+  calculated_at: string
+}
+
+export interface MessageTopic {
+  id: string
+  workspace_id: string
+  topic_name: string
+  message_count: number
+  sample_questions: string[]
+  last_updated: string
 }

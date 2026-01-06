@@ -6,11 +6,13 @@ from typing import Optional, List
 import os
 import uuid
 import aiofiles
+import logging
 from app.core.supabase import get_supabase
 from app.core.config import settings
 from app.api.workspaces import get_user_from_token
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 # Extensions autorisées
 ALLOWED_EXTENSIONS = {".txt", ".pdf", ".md", ".docx", ".csv"}
@@ -61,63 +63,126 @@ async def upload_document(
     authorization: str = Header(None)
 ):
     """Upload un document vers un workspace"""
-    user = await get_user_from_token(authorization)
-    workspace = await verify_workspace_access(workspace_id, user.id)
+    logger.info(f"=== Upload request: workspace={workspace_id}, file={file.filename}")
     
-    # Vérifier l'extension
-    ext = os.path.splitext(file.filename)[1].lower()
-    if ext not in ALLOWED_EXTENSIONS:
-        raise HTTPException(
-            status_code=400,
-            detail=f"Extension non autorisée. Autorisées: {', '.join(ALLOWED_EXTENSIONS)}"
-        )
+    try:
+        user = await get_user_from_token(authorization)
+        logger.info(f"User authenticated: {user.id}")
+        
+        workspace = await verify_workspace_access(workspace_id, user.id)
+        logger.info(f"Workspace verified: {workspace.get('name', 'unknown')}")
+        
+        # Vérifier l'extension
+        ext = os.path.splitext(file.filename)[1].lower()
+        if ext not in ALLOWED_EXTENSIONS:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Extension non autorisée. Autorisées: {', '.join(ALLOWED_EXTENSIONS)}"
+            )
+        
+        # Lire le contenu
+        content = await file.read()
+        logger.info(f"File read: {len(content)} bytes")
+        
+        # Vérifier la taille
+        if len(content) > MAX_FILE_SIZE:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Fichier trop volumineux. Max: {MAX_FILE_SIZE / 1024 / 1024}MB"
+            )
+        
+        # Créer le dossier de stockage
+        upload_dir = os.path.join(settings.UPLOADS_PATH, workspace_id)
+        os.makedirs(upload_dir, exist_ok=True)
+        logger.info(f"Upload dir: {upload_dir}")
+        
+        # Générer un nom unique
+        file_id = str(uuid.uuid4())
+        filename = f"{file_id}{ext}"
+        filepath = os.path.join(upload_dir, filename)
+        
+        # Sauvegarder le fichier
+        async with aiofiles.open(filepath, 'wb') as f:
+            await f.write(content)
+        logger.info(f"File saved: {filepath}")
+        
+        # Enregistrer en base
+        supabase = get_supabase()
+        
+        doc_data = {
+            "workspace_id": workspace_id,
+            "filename": file.filename,
+            "file_path": filepath,
+            "file_size": len(content),
+            "file_type": ext.replace(".", ""),
+            "status": "pending",
+            "chunk_count": 0
+        }
+        
+        result = supabase.table("documents")\
+            .insert(doc_data)\
+            .execute()
+        logger.info(f"Document inserted: {result.data[0]['id']}")
+        
+        # NE PAS vectoriser automatiquement - l'utilisateur doit cliquer sur "Indexer"
+        
+        return result.data[0]
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Upload error: {type(e).__name__}: {e}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/workspace/{workspace_id}/document/{document_id}/index")
+async def index_document(
+    workspace_id: str,
+    document_id: str,
+    authorization: str = Header(None)
+):
+    """Lance l'indexation/vectorisation d'un document"""
+    logger.info(f"=== Index request: workspace={workspace_id}, doc={document_id}")
     
-    # Lire le contenu
-    content = await file.read()
-    
-    # Vérifier la taille
-    if len(content) > MAX_FILE_SIZE:
-        raise HTTPException(
-            status_code=400,
-            detail=f"Fichier trop volumineux. Max: {MAX_FILE_SIZE / 1024 / 1024}MB"
-        )
-    
-    # Créer le dossier de stockage
-    upload_dir = os.path.join(settings.UPLOADS_PATH, workspace_id)
-    os.makedirs(upload_dir, exist_ok=True)
-    
-    # Générer un nom unique
-    file_id = str(uuid.uuid4())
-    filename = f"{file_id}{ext}"
-    filepath = os.path.join(upload_dir, filename)
-    
-    # Sauvegarder le fichier
-    async with aiofiles.open(filepath, 'wb') as f:
-        await f.write(content)
-    
-    # Enregistrer en base
-    supabase = get_supabase()
-    
-    doc_data = {
-        "workspace_id": workspace_id,
-        "filename": file.filename,
-        "file_path": filepath,
-        "file_size": len(content),
-        "file_type": ext.replace(".", ""),
-        "status": "pending",  # En attente de vectorisation
-        "chunk_count": 0
-    }
-    
-    result = supabase.table("documents")\
-        .insert(doc_data)\
-        .execute()
-    
-    # Lancer la vectorisation en arrière-plan
-    from app.services.vectorstore import vectorize_document
-    import asyncio
-    asyncio.create_task(vectorize_document(result.data[0]["id"], workspace_id, filepath))
-    
-    return result.data[0]
+    try:
+        user = await get_user_from_token(authorization)
+        await verify_workspace_access(workspace_id, user.id)
+        
+        supabase = get_supabase()
+        
+        # Récupérer le document
+        doc_result = supabase.table("documents")\
+            .select("*")\
+            .eq("id", document_id)\
+            .eq("workspace_id", workspace_id)\
+            .single()\
+            .execute()
+        
+        if not doc_result.data:
+            raise HTTPException(status_code=404, detail="Document non trouvé")
+        
+        doc = doc_result.data
+        
+        # Mettre à jour le statut
+        supabase.table("documents")\
+            .update({"status": "processing"})\
+            .eq("id", document_id)\
+            .execute()
+        
+        # Lancer la vectorisation en arrière-plan
+        from app.services.vectorstore import vectorize_document
+        import asyncio
+        asyncio.create_task(vectorize_document(document_id, workspace_id, doc["file_path"]))
+        
+        return {"status": "processing", "message": "Indexation lancée"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Index error: {type(e).__name__}: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.post("/workspace/{workspace_id}/upload-multiple")
@@ -289,3 +354,71 @@ async def reindex_document(
     )
     
     return {"message": "Vectorisation relancée", "status": "pending"}
+
+
+@router.post("/workspace/{workspace_id}/reindex-all")
+async def reindex_all_documents(
+    workspace_id: str,
+    authorization: str = Header(None)
+):
+    """
+    Réindexe TOUS les documents d'un workspace.
+    Supprime l'ancien vectorstore et recrée tout depuis zéro.
+    """
+    logger.info(f"=== Reindex ALL request: workspace={workspace_id}")
+    
+    try:
+        user = await get_user_from_token(authorization)
+        await verify_workspace_access(workspace_id, user.id)
+        
+        supabase = get_supabase()
+        
+        # Récupérer tous les documents du workspace
+        docs_result = supabase.table("documents")\
+            .select("*")\
+            .eq("workspace_id", workspace_id)\
+            .execute()
+        
+        documents = docs_result.data or []
+        
+        if not documents:
+            raise HTTPException(status_code=400, detail="Aucun document à réindexer")
+        
+        # Supprimer l'ancien vectorstore
+        from app.services.vectorstore import delete_vectorstore, vectorize_document
+        delete_vectorstore(workspace_id)
+        logger.info(f"Vectorstore supprimé pour workspace {workspace_id}")
+        
+        # Mettre tous les documents en status "processing"
+        for doc in documents:
+            supabase.table("documents")\
+                .update({"status": "processing", "chunk_count": 0})\
+                .eq("id", doc["id"])\
+                .execute()
+        
+        # Lancer la réindexation de tous les documents en séquence
+        import asyncio
+        
+        async def reindex_all():
+            for doc in documents:
+                try:
+                    await vectorize_document(doc["id"], workspace_id, doc["file_path"])
+                    logger.info(f"Document {doc['filename']} réindexé")
+                except Exception as e:
+                    logger.error(f"Erreur réindexation {doc['filename']}: {e}")
+        
+        asyncio.create_task(reindex_all())
+        
+        return {
+            "status": "processing",
+            "message": f"Réindexation de {len(documents)} documents lancée",
+            "document_count": len(documents)
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Reindex all error: {type(e).__name__}: {e}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))

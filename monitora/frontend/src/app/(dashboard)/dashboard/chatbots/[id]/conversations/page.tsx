@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
+import { ChatWidgetPreview } from '@/components/chat-widget-preview'
 import { 
   MessageSquare, 
   Search, 
@@ -119,16 +120,49 @@ export default function ConversationsPage() {
           </div>
         )}
 
-        {/* Empty state */}
+        {/* Empty state avec mockup téléphone */}
         {!loading && conversations.length === 0 && (
-          <div className="bg-white border border-gray-200 rounded-xl p-12 text-center">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <MessageSquare size={32} className="text-gray-400" />
+          <div className="flex flex-col lg:flex-row items-center justify-center gap-12 py-8">
+            {/* Mockup du chatbot dans un téléphone */}
+            <div className="flex-shrink-0">
+              <ChatWidgetPreview 
+                botName="Votre Assistant"
+                welcomeMessage="Bonjour ! 👋 Je suis votre assistant virtuel. Comment puis-je vous aider ?"
+                accentColor="#6366f1"
+                showInPhone={true}
+              />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Aucune conversation</h3>
-            <p className="text-gray-500 text-sm max-w-sm mx-auto">
-              Les conversations avec votre chatbot apparaîtront ici
-            </p>
+            
+            {/* Texte explicatif */}
+            <div className="text-center lg:text-left max-w-md">
+              <h3 className="text-2xl font-semibold text-gray-900 mb-3">
+                Aucune conversation pour le moment
+              </h3>
+              <p className="text-gray-500 mb-6 leading-relaxed">
+                Voici à quoi ressemblera votre chatbot pour vos utilisateurs. 
+                Les conversations apparaîtront ici dès que quelqu'un commencera à discuter avec votre assistant.
+              </p>
+              <div className="space-y-3">
+                <div className="flex items-center gap-3 text-sm text-gray-600">
+                  <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
+                    <MessageSquare size={16} className="text-indigo-600" />
+                  </div>
+                  <span>Intégrez le widget sur votre site</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm text-gray-600">
+                  <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                    <User size={16} className="text-green-600" />
+                  </div>
+                  <span>Les visiteurs posent leurs questions</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm text-gray-600">
+                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                    <Clock size={16} className="text-blue-600" />
+                  </div>
+                  <span>Suivez les échanges en temps réel</span>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 

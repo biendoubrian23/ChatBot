@@ -5,13 +5,14 @@ import { usePathname } from 'next/navigation'
 import { 
   LayoutDashboard,
   FileText,
-  MessageSquare,
+  Lightbulb,
   BarChart3,
   Settings,
   Sparkles,
   Key,
   Code,
-  ArrowLeft
+  ArrowLeft,
+  MessageSquare
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -28,7 +29,7 @@ export function ChatbotSidebar({ chatbotId, chatbotName, isActive = true }: Chat
   const navItems = [
     { href: basePath, icon: LayoutDashboard, label: 'Vue d\'ensemble', exact: true },
     { href: `${basePath}/documents`, icon: FileText, label: 'Documents' },
-    { href: `${basePath}/conversations`, icon: MessageSquare, label: 'Conversations' },
+    { href: `${basePath}/insights`, icon: Lightbulb, label: 'Insights' },
     { href: `${basePath}/analytics`, icon: BarChart3, label: 'Analytics' },
     { href: `${basePath}/configuration`, icon: Sparkles, label: 'Configuration IA' },
     { href: `${basePath}/integration`, icon: Code, label: 'Intégration' },

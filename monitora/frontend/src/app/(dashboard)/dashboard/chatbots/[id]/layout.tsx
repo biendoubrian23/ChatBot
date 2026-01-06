@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { supabase, Workspace } from '@/lib/supabase'
 import { ChatbotSidebar } from '@/components/chatbot-sidebar'
@@ -19,13 +19,7 @@ export default function ChatbotLayout({
   const [chatbot, setChatbot] = useState<Chatbot | null>(null)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    if (params.id) {
-      loadChatbot(params.id as string)
-    }
-  }, [params.id])
-
-  const loadChatbot = async (id: string) => {
+  const loadChatbot = useCallback(async (id: string) => {
     const { data, error } = await supabase
       .from('workspaces')
       .select('*')
@@ -39,7 +33,39 @@ export default function ChatbotLayout({
 
     setChatbot(data)
     setLoading(false)
-  }
+  }, [router])
+
+  useEffect(() => {
+    if (params.id) {
+      loadChatbot(params.id as string)
+    }
+  }, [params.id, loadChatbot])
+
+  // S'abonner aux changements en temps réel du workspace
+  useEffect(() => {
+    if (!params.id) return
+
+    const channel = supabase
+      .channel(`workspace-${params.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'workspaces',
+          filter: `id=eq.${params.id}`
+        },
+        (payload) => {
+          // Mettre à jour le chatbot quand widget_config change
+          setChatbot(prev => prev ? { ...prev, ...payload.new } : null)
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [params.id])
 
   if (loading) {
     return (
@@ -80,11 +106,12 @@ export default function ChatbotLayout({
         </main>
       </div>
 
-      {/* Widget de preview */}
+      {/* Widget de preview - utilise la config widget_config */}
       <ChatWidgetPreview
-        botName={chatbot.name}
-        welcomeMessage={`Bonjour ! Je suis ${chatbot.name}. Comment puis-je vous aider ?`}
-        accentColor="#000000"
+        workspaceId={chatbot.id}
+        botName={chatbot.widget_config?.chatbot_name || chatbot.name}
+        welcomeMessage={chatbot.widget_config?.welcomeMessage || `Bonjour ! Je suis ${chatbot.name}. Comment puis-je vous aider ?`}
+        accentColor={chatbot.widget_config?.primaryColor || "#000000"}
       />
     </div>
   )

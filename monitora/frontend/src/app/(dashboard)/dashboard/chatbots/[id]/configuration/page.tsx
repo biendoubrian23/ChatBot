@@ -54,9 +54,9 @@ export default function ConfigurationPage() {
 
     if (data) {
       setChatbot(data)
-      // Charger la config depuis settings si disponible
-      if (data.settings?.rag_config) {
-        setConfig(prev => ({ ...prev, ...data.settings.rag_config }))
+      // Charger la config depuis rag_config directement
+      if (data.rag_config) {
+        setConfig(prev => ({ ...prev, ...data.rag_config }))
       }
     }
   }
@@ -66,20 +66,17 @@ export default function ConfigurationPage() {
 
     setSaving(true)
 
+    // Sauvegarder rag_config directement (pas dans settings)
     const { error } = await supabase
       .from('workspaces')
-      .update({
-        settings: {
-          ...chatbot.settings,
-          rag_config: config
-        }
-      })
+      .update({ rag_config: config })
       .eq('id', chatbot.id)
 
     setSaving(false)
 
     if (!error) {
-      // Notification succès
+      // Mise à jour locale
+      setChatbot(prev => prev ? { ...prev, rag_config: config } : null)
     }
   }
 
@@ -95,7 +92,7 @@ export default function ConfigurationPage() {
   }
 
   return (
-    <div className="max-w-3xl space-y-8">
+    <div className="space-y-8">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -124,44 +121,48 @@ export default function ConfigurationPage() {
         </div>
       </div>
 
-      {/* Modèle LLM */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-            <Brain size={20} className="text-purple-600" />
-          </div>
-          <div>
-            <h3 className="font-medium text-gray-900">Modèle LLM</h3>
-            <p className="text-sm text-gray-500">Choisissez le modèle de langage</p>
-          </div>
-        </div>
+      {/* Layout 2 colonnes */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Colonne gauche - LLM + Génération */}
+        <div className="space-y-6">
+          {/* Modèle LLM */}
+          <div className="bg-white rounded-xl border border-gray-200 p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                <Brain size={20} className="text-purple-600" />
+              </div>
+              <div>
+                <h3 className="font-medium text-gray-900">Modèle LLM</h3>
+                <p className="text-sm text-gray-500">Choisissez le modèle de langage</p>
+              </div>
+            </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          {[
-            { value: 'mistral-small-latest', label: 'Mistral Small', desc: 'Rapide et économique' },
-            { value: 'mistral-medium-latest', label: 'Mistral Medium', desc: 'Équilibré' },
-            { value: 'mistral-large-latest', label: 'Mistral Large', desc: 'Plus puissant' }
-          ].map((model) => (
-            <button
-              key={model.value}
-              onClick={() => setConfig(prev => ({ ...prev, model: model.value }))}
-              className={`
-                p-4 rounded-lg border-2 text-left transition-colors
-                ${config.model === model.value 
-                  ? 'border-black bg-gray-50' 
-                  : 'border-gray-200 hover:border-gray-300'
-                }
-              `}
-            >
-              <p className="font-medium text-gray-900">{model.label}</p>
-              <p className="text-xs text-gray-500 mt-1">{model.desc}</p>
-            </button>
-          ))}
-        </div>
-      </div>
+            <div className="grid grid-cols-1 gap-3">
+              {[
+                { value: 'mistral-small-latest', label: 'Mistral Small', desc: 'Rapide et économique' },
+                { value: 'mistral-medium-latest', label: 'Mistral Medium', desc: 'Équilibré' },
+                { value: 'mistral-large-latest', label: 'Mistral Large', desc: 'Plus puissant' }
+              ].map((model) => (
+                <button
+                  key={model.value}
+                  onClick={() => setConfig(prev => ({ ...prev, model: model.value }))}
+                  className={`
+                    p-4 rounded-lg border-2 text-left transition-colors
+                    ${config.model === model.value 
+                      ? 'border-black bg-gray-50' 
+                      : 'border-gray-200 hover:border-gray-300'
+                    }
+                  `}
+                >
+                  <p className="font-medium text-gray-900">{model.label}</p>
+                  <p className="text-xs text-gray-500 mt-1">{model.desc}</p>
+                </button>
+              ))}
+            </div>
+          </div>
 
-      {/* Paramètres de génération */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+          {/* Paramètres de génération */}
+          <div className="bg-white rounded-xl border border-gray-200 p-6">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
             <Thermometer size={20} className="text-orange-600" />
@@ -228,87 +229,91 @@ export default function ConfigurationPage() {
           </div>
         </div>
       </div>
-
-      {/* Paramètres RAG */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-            <Scissors size={20} className="text-blue-600" />
-          </div>
-          <div>
-            <h3 className="font-medium text-gray-900">Indexation (RAG)</h3>
-            <p className="text-sm text-gray-500">Configuration du découpage des documents</p>
-          </div>
         </div>
 
-        <div className="space-y-8">
-          {/* Chunk size */}
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-gray-700">Taille des chunks</span>
-                <div className="group relative">
-                  <Info size={14} className="text-gray-400 cursor-help" />
-                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                    Nombre de caractères par segment. Plus grand = plus de contexte.
-                  </div>
-                </div>
+        {/* Colonne droite - Paramètres RAG */}
+        <div className="space-y-6">
+          <div className="bg-white rounded-xl border border-gray-200 p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                <Scissors size={20} className="text-blue-600" />
               </div>
-              <span className="text-sm text-gray-500">{config.chunk_size} caractères</span>
+              <div>
+                <h3 className="font-medium text-gray-900">Indexation (RAG)</h3>
+                <p className="text-sm text-gray-500">Configuration du découpage des documents</p>
+              </div>
             </div>
-            <Slider
-              value={config.chunk_size}
-              onChange={(value) => setConfig(prev => ({ ...prev, chunk_size: value }))}
-              min={200}
-              max={2000}
-              step={100}
-            />
-          </div>
 
-          {/* Chunk overlap */}
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-gray-700">Chevauchement</span>
-                <div className="group relative">
-                  <Info size={14} className="text-gray-400 cursor-help" />
-                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                    Nombre de caractères partagés entre chunks consécutifs.
+            <div className="space-y-8">
+              {/* Chunk size */}
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium text-gray-700">Taille des chunks</span>
+                    <div className="group relative">
+                      <Info size={14} className="text-gray-400 cursor-help" />
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                        Nombre de caractères par segment. Plus grand = plus de contexte.
+                      </div>
+                    </div>
                   </div>
+                  <span className="text-sm text-gray-500">{config.chunk_size} caractères</span>
                 </div>
+                <Slider
+                  value={config.chunk_size}
+                  onChange={(value) => setConfig(prev => ({ ...prev, chunk_size: value }))}
+                  min={200}
+                  max={2000}
+                  step={100}
+                />
               </div>
-              <span className="text-sm text-gray-500">{config.chunk_overlap} caractères</span>
-            </div>
-            <Slider
-              value={config.chunk_overlap}
-              onChange={(value) => setConfig(prev => ({ ...prev, chunk_overlap: value }))}
-              min={0}
-              max={500}
-              step={25}
-            />
-          </div>
 
-          {/* Top K */}
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-gray-700">Documents similaires (Top K)</span>
-                <div className="group relative">
-                  <Info size={14} className="text-gray-400 cursor-help" />
-                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                    Nombre de chunks similaires à récupérer pour chaque question.
+              {/* Chunk overlap */}
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium text-gray-700">Chevauchement</span>
+                    <div className="group relative">
+                      <Info size={14} className="text-gray-400 cursor-help" />
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                        Nombre de caractères partagés entre chunks consécutifs.
+                      </div>
+                    </div>
                   </div>
+                  <span className="text-sm text-gray-500">{config.chunk_overlap} caractères</span>
                 </div>
+                <Slider
+                  value={config.chunk_overlap}
+                  onChange={(value) => setConfig(prev => ({ ...prev, chunk_overlap: value }))}
+                  min={0}
+                  max={500}
+                  step={25}
+                />
               </div>
-              <span className="text-sm text-gray-500">{config.top_k}</span>
+
+              {/* Top K */}
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium text-gray-700">Documents similaires (Top K)</span>
+                    <div className="group relative">
+                      <Info size={14} className="text-gray-400 cursor-help" />
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                        Nombre de chunks similaires à récupérer pour chaque question.
+                      </div>
+                    </div>
+                  </div>
+                  <span className="text-sm text-gray-500">{config.top_k}</span>
+                </div>
+                <Slider
+                  value={config.top_k}
+                  onChange={(value) => setConfig(prev => ({ ...prev, top_k: value }))}
+                  min={1}
+                  max={20}
+                  step={1}
+                />
+              </div>
             </div>
-            <Slider
-              value={config.top_k}
-              onChange={(value) => setConfig(prev => ({ ...prev, top_k: value }))}
-              min={1}
-              max={20}
-              step={1}
-            />
           </div>
         </div>
       </div>
