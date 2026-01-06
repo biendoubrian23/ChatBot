@@ -7,14 +7,14 @@ import logging
 from typing import List, Optional
 from langchain_community.vectorstores import FAISS
 from langchain_huggingface import HuggingFaceEmbeddings
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import (
     TextLoader,
     PyPDFLoader,
     UnstructuredMarkdownLoader,
     CSVLoader
 )
-from langchain.schema import Document
+from langchain_core.documents import Document
 from app.core.config import settings
 from app.core.supabase import get_supabase
 

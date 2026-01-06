@@ -4,25 +4,46 @@ Combine vectorstore + LLM pour générer des réponses
 """
 import logging
 from typing import AsyncIterator, List, Dict, Tuple, Optional
-from app.services.vectorstore import search_vectorstore
 from app.services.llm_provider import get_llm_provider
 from app.core.config import settings, DEFAULT_RAG_CONFIG
+
+# Importer le bon module vectorstore selon le mode
+if settings.STORAGE_MODE == "supabase":
+    from app.services.vectorstore_supabase import search_vectorstore
+else:
+    from app.services.vectorstore import search_vectorstore
 
 logger = logging.getLogger(__name__)
 
 # Prompt système par défaut
-DEFAULT_SYSTEM_PROMPT = """Tu es un assistant virtuel intelligent et serviable.
-Tu réponds aux questions en te basant UNIQUEMENT sur le contexte fourni ci-dessous.
-Si l'information n'est pas dans le contexte, dis-le clairement et propose de reformuler la question.
+DEFAULT_SYSTEM_PROMPT = """Tu es un assistant virtuel chaleureux, professionnel et serviable.
+Tu es là pour aider les utilisateurs avec enthousiasme et bienveillance.
 
-RÈGLES:
-- Réponds de manière concise et précise
-- Utilise un ton professionnel mais amical
-- Si tu ne sais pas, dis "Je n'ai pas cette information dans ma base de connaissances"
-- Ne fabrique jamais d'informations
-- Cite les sources quand c'est pertinent
+🎯 RÈGLES DE COMPORTEMENT:
 
-CONTEXTE:
+1. **SALUTATIONS** - Réponds TOUJOURS chaleureusement aux salutations:
+   - "salut" → "Salut ! 😊 Ravi de te voir ! Comment puis-je t'aider aujourd'hui ?"
+   - "bonjour" → "Bonjour ! ☀️ Bienvenue ! Je suis là pour vous aider, que puis-je faire pour vous ?"
+   - "hello" → "Hello ! 👋 Super de vous avoir ! Qu'est-ce qui vous amène ?"
+   - "comment ça va ?" → "Je vais très bien, merci de demander ! 😊 Et vous, comment allez-vous ? Comment puis-je vous aider ?"
+
+2. **RÉPONSES AUX QUESTIONS**:
+   - Utilise le contexte fourni ci-dessous pour répondre aux questions
+   - Si l'info n'est pas dans le contexte, dis-le gentiment et propose de reformuler
+   - Sois précis mais chaleureux dans tes réponses
+
+3. **TON GÉNÉRAL**:
+   - Chaleureux et accueillant 🤗
+   - Professionnel mais pas froid
+   - Utilise des emojis avec modération pour être plus humain
+   - Termine souvent par une question pour maintenir le dialogue
+
+4. **CE QUE TU NE DOIS PAS FAIRE**:
+   - Ne sois jamais froid ou robotique
+   - Ne fabrique jamais d'informations
+   - Ne réponds jamais "Je n'ai pas d'informations" à une simple salutation
+
+CONTEXTE DISPONIBLE:
 {context}
 """
 
@@ -67,7 +88,17 @@ class RAGPipeline:
     
     def _build_prompt(self, context: str, custom_prompt: str = None) -> str:
         """Construit le prompt système"""
-        prompt = custom_prompt or DEFAULT_SYSTEM_PROMPT
+        # Utiliser le system_prompt personnalisé de la config s'il existe
+        if not custom_prompt:
+            custom_prompt = self.config.get("system_prompt", "")
+        
+        # Si toujours pas de prompt, utiliser le défaut
+        if not custom_prompt or not custom_prompt.strip():
+            prompt = DEFAULT_SYSTEM_PROMPT
+        else:
+            # Ajouter le contexte au prompt personnalisé
+            prompt = custom_prompt + "\n\nCONTEXTE DISPONIBLE:\n{context}"
+        
         return prompt.format(context=context)
     
     async def get_response(
@@ -87,11 +118,8 @@ class RAGPipeline:
         # Construire le contexte
         context, sources = self._build_context(documents)
         
-        if not context:
-            return "Je n'ai pas trouvé d'informations pertinentes dans ma base de connaissances pour répondre à votre question.", []
-        
-        # Construire le prompt
-        system_prompt = self._build_prompt(context, custom_prompt)
+        # Construire le prompt (même sans contexte, pour les salutations)
+        system_prompt = self._build_prompt(context if context else "Aucun document pertinent trouvé.", custom_prompt)
         
         # Générer la réponse
         try:
@@ -130,15 +158,8 @@ class RAGPipeline:
         if sources:
             yield {"type": "sources", "sources": sources}
         
-        if not context:
-            yield {
-                "type": "token",
-                "content": "Je n'ai pas trouvé d'informations pertinentes dans ma base de connaissances pour répondre à votre question."
-            }
-            return
-        
-        # Construire le prompt
-        system_prompt = self._build_prompt(context, custom_prompt)
+        # Construire le prompt (même sans contexte, pour les salutations)
+        system_prompt = self._build_prompt(context if context else "Aucun document pertinent trouvé.", custom_prompt)
         
         # Streamer la réponse
         try:

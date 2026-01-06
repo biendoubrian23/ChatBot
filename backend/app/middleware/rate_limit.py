@@ -34,6 +34,8 @@ class RateLimitConfig:
         "/docs",
         "/openapi.json",
         "/favicon.ico",
+        "/api/v1/tracking",  # Tracking pour le monitor
+        "/api/v1/order",     # Order tracking
     ]
     
     # Durée du ban temporaire en secondes

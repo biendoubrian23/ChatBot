@@ -124,6 +124,7 @@ async def startup_event():
     routes.rag_pipeline = rag_pipeline
     routes.ollama_service = ollama_service
     routes.vectorstore = vectorstore
+    print(f"✓ Services assigned to routes module: rag_pipeline={routes.rag_pipeline is not None}, ollama={routes.ollama_service is not None}, vectorstore={routes.vectorstore is not None}")
     
     # Initialiser le request batcher pour le parallélisme
     if settings.enable_request_batching:

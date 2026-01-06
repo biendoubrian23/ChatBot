@@ -30,6 +30,7 @@ vectorstore = None
 def get_rag_pipeline():
     """Dependency to get RAG pipeline instance."""
     if rag_pipeline is None:
+        print(f"❌ ERROR: rag_pipeline is None! Module routes id: {id(routes) if 'routes' in dir() else 'N/A'}")
         raise HTTPException(status_code=503, detail="RAG pipeline not initialized")
     return rag_pipeline
 

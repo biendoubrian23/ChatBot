@@ -1,32 +1,15 @@
-====================================================
-MONITORA - Commandes pour lancer le Backend
-====================================================
+COMMANDE POUR LANCER LE BACKEND MONITORA
+=========================================
 
-METHODE 1 - Commande simple (dans PowerShell)
----------------------------------------------
+Ouvrez un terminal PowerShell et exécutez :
+
 cd D:\MesApplis\BiendouCorp\ChatBot\monitora\backend
-.\.venv\Scripts\Activate.ps1
-python main.py
+D:\MesApplis\BiendouCorp\ChatBot\.venv\Scripts\python.exe main.py
 
+OU utilisez le script :
 
-METHODE 2 - Commande en une ligne
----------------------------------
-cd D:\MesApplis\BiendouCorp\ChatBot\monitora\backend; .\.venv\Scripts\Activate.ps1; python main.py
+cd D:\MesApplis\BiendouCorp\ChatBot\monitora\backend
+.\start.ps1
 
-
-METHODE 3 - Chemin absolu (sans cd)
------------------------------------
-D:\MesApplis\BiendouCorp\ChatBot\monitora\backend\.venv\Scripts\python.exe D:\MesApplis\BiendouCorp\ChatBot\monitora\backend\main.py
-
-
-====================================================
-Le backend tourne sur: http://localhost:8001
-Documentation API:     http://localhost:8001/docs
-====================================================
-
-Pour le Frontend (dans un autre terminal):
-------------------------------------------
-cd D:\MesApplis\BiendouCorp\ChatBot\monitora\frontend
-npm run dev
-
-Le frontend tourne sur: http://localhost:3001
+Le serveur démarrera sur http://localhost:8001
+Documentation API : http://localhost:8001/docs

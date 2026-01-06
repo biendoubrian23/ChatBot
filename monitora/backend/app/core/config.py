@@ -36,7 +36,10 @@ class Settings(BaseSettings):
     DEFAULT_CHUNK_SIZE: int = 1500
     DEFAULT_CHUNK_OVERLAP: int = 300
     
-    # Paths
+    # Storage mode: "local" (FAISS) ou "supabase" (pgvector + Storage)
+    STORAGE_MODE: str = "supabase"  # Changer en "local" pour dev sans Supabase Storage
+    
+    # Paths (utilisé seulement en mode local)
     VECTORSTORE_PATH: str = "./data/vectorstores"
     UPLOADS_PATH: str = "./data/uploads"
     
@@ -64,5 +67,6 @@ DEFAULT_RAG_CONFIG = {
     "rerank_top_n": 5,
     "enable_cache": True,
     "cache_ttl": 7200,
-    "similarity_threshold": 0.92
+    "similarity_threshold": 0.92,
+    "system_prompt": ""  # Prompt personnalisé défini par l'utilisateur
 }
