@@ -251,60 +251,83 @@ class CoolLibriOrderService:
         quantity = item.get("quantity", 1)
         pages = item.get("pages", "N/A")
         
-        # ⚠️ VALIDATION DU PAIEMENT - PRIORITÉ ABSOLUE (comme l'original)
+        # ⚠️ VALIDATION DU PAIEMENT - PRIORITÉ ABSOLUE
         if not payment_date:
             response = f"Bonjour {first_name} ! 👋\n\n"
-            response += f"J'ai bien retrouvé votre commande n°**{order_id}** concernant :\n"
-            response += f"📖 **{product_name}** ({pages} pages) - {quantity} exemplaire(s)\n\n"
-            response += "⏳ **Paiement en attente de validation**\n\n"
-            response += "Je constate que votre paiement est encore en attente de validation. "
-            response += "Votre commande sera mise en production dès que le paiement sera confirmé.\n\n"
-            response += "Dès que votre paiement sera validé, vous recevrez un email de confirmation "
-            response += "et je pourrai vous donner plus de détails sur l'avancement de votre commande.\n\n"
-            response += "Si vous avez effectué votre paiement récemment (par virement ou chèque), "
-            response += "pas d'inquiétude, la validation peut prendre quelques jours.\n\n"
-            response += "À très bientôt ! 😊"
+            response += f"J'ai retrouvé votre commande n°**{order_id}** pour "
+            response += f"un livre de {pages} pages.\n\n"
+            response += "⏳ Je vois que le paiement est encore en attente de validation. "
+            response += "Dès qu'il sera confirmé, votre commande passera en production !\n\n"
+            response += "Si vous avez payé récemment (virement ou chèque), pas d'inquiétude — "
+            response += "la validation peut prendre quelques jours.\n\n"
+            response += "Je reste à votre disposition ! 😊"
             return response
         
-        # ✅ PAIEMENT VALIDÉ - Réponse standard
-        response = f"Bonjour {first_name} ! 👋\n\n"
-        response += f"J'ai bien retrouvé votre commande n°**{order_id}**.\n\n"
-        
-        # Formatage de la date de paiement
-        if isinstance(payment_date, datetime):
-            payment_str = payment_date.strftime("%d/%m/%Y")
-        else:
-            payment_str = str(payment_date).split()[0] if payment_date else "N/A"
-        
-        response += f"✅ Votre paiement de **{total:.2f}€** a bien été validé le {payment_str}.\n\n"
-        
-        # Infos produit
-        response += f"📖 **Produit** : {product_name}\n"
-        response += f"📄 **Pages** : {pages}\n"
-        response += f"📦 **Quantité** : {quantity} exemplaire(s)\n\n"
-        
-        # Statut avec message personnalisé
-        response += f"{status_emoji} **Statut actuel : {status_name}**\n"
-        response += f"{status_message}\n\n"
-        
-        # Gestion des dates d'expédition et retards (comme SmartDateHandler)
+        # ✅ PAIEMENT VALIDÉ - Récupérer infos d'expédition
         estimated_shipping = item.get("estimated_shipping")
         tracking_url = item.get("tracking_url")
         
-        if tracking_url:
-            response += f"🚚 **Suivi de votre colis** : {tracking_url}\n\n"
-        
+        # Calculer si retard
+        is_late = False
+        delay_days = 0
         if estimated_shipping:
-            shipping_info = self._format_shipping_date_smart(estimated_shipping, order_id)
-            response += shipping_info + "\n\n"
+            try:
+                if isinstance(estimated_shipping, datetime):
+                    ship_date = estimated_shipping.date()
+                elif isinstance(estimated_shipping, date):
+                    ship_date = estimated_shipping
+                else:
+                    ship_date = datetime.strptime(str(estimated_shipping).split()[0], "%Y-%m-%d").date()
+                
+                today = date.today()
+                delay_days = (today - ship_date).days
+                is_late = delay_days > 0
+                date_str = ship_date.strftime("%d/%m/%Y")
+            except Exception:
+                ship_date = None
+                date_str = str(estimated_shipping)
         
-        response += "Besoin d'autre chose ? N'hésitez pas à demander ! 😊"
+        # Construire la réponse
+        response = f"Bonjour {first_name} ! 👋\n\n"
+        
+        if is_late:
+            # ⚠️ CAS RETARD - Ton rassurant
+            response += f"J'ai retrouvé votre commande n°**{order_id}** !\n\n"
+            response += f"Votre livre de {pages} pages était prévu pour le **{date_str}**. "
+            response += "Je vois qu'il y a un petit décalage, mais pas d'inquiétude — "
+            response += "votre commande est bien en cours et devrait arriver très prochainement ! 📬\n\n"
+            response += "Pour avoir des nouvelles précises sur la livraison, notre équipe sera ravie de vous aider :\n"
+            response += "📧 contact@coollibri.com\n"
+            response += "📞 05 31 61 60 42\n\n"
+            response += "On reste disponible si vous avez d'autres questions ! 😊"
+        else:
+            # ✅ CAS NORMAL - Tout va bien
+            response += f"Bonne nouvelle, j'ai retrouvé votre commande n°**{order_id}** ! 🎉\n\n"
+            
+            # Description concise du produit + statut
+            response += f"Tout est en ordre : votre livre de {pages} pages est actuellement en **{status_name.lower()}**"
+            if status_message:
+                # Ajouter une précision courte sur le statut
+                if status_id == 6:  # Façonnage
+                    response += " (découpe, pelliculage...)"
+                elif status_id == 7:  # Livraison
+                    response += " et en route vers vous"
+            response += ".\n\n"
+            
+            # Date d'expédition
+            if tracking_url:
+                response += f"🚚 **Suivez votre colis** : {tracking_url}\n\n"
+            elif estimated_shipping:
+                response += f"📦 **Expédition prévue le {date_str}** — vous devriez le recevoir très bientôt !\n\n"
+            
+            response += "Besoin d'autre chose ? Je suis là ! 😊"
         
         return response
     
     def _format_shipping_date_smart(self, shipping_date, order_id: str) -> str:
         """
-        Gestion intelligente des retards (comme SmartDateHandler original).
+        Gestion intelligente des retards (conservée pour compatibilité).
+        La logique principale est maintenant dans format_order_response.
         """
         try:
             if isinstance(shipping_date, datetime):
@@ -314,49 +337,140 @@ class CoolLibriOrderService:
             else:
                 ship_date = datetime.strptime(str(shipping_date).split()[0], "%Y-%m-%d").date()
             
-            today = date.today()
-            delay = (today - ship_date).days
             date_str = ship_date.strftime("%d/%m/%Y")
-            
-            # À l'heure ou en avance
-            if delay <= 0:
-                return f"📅 **Expédition prévue** : {date_str}"
-            
-            # Petit retard (1-3 jours)
-            elif 1 <= delay <= 3:
-                return (
-                    f"📅 **Expédition prévue** : {date_str}\n"
-                    f"⏳ Votre commande a un léger retard de {delay} jour(s). "
-                    f"Un délai supplémentaire de 1 à 2 semaines est possible. "
-                    f"Nous faisons notre maximum !"
-                )
-            
-            # Gros retard (> 3 jours) → Redirection hotline
-            else:
-                return (
-                    f"📅 **Expédition initialement prévue** : {date_str}\n"
-                    f"⚠️ Votre commande semble avoir pris du retard ({delay} jours).\n"
-                    f"Pour des informations précises, merci de contacter notre service client :\n"
-                    f"📧 **Email** : contact@coollibri.com\n"
-                    f"📞 **Téléphone** : 05 31 61 60 42"
-                )
+            return f"📦 Expédition prévue le {date_str}"
                 
         except Exception as e:
             logger.error(f"Erreur formatage date: {e}")
             return f"📅 **Date d'expédition** : {shipping_date}"
 
 
+# =====================================================
+# CLASSES DE SERVICE POUR LES AUTRES SITES
+# (Bientôt disponible - schéma de BDD spécifique à chaque site)
+# =====================================================
+
+class JimprimeEnFranceOrderService:
+    """
+    Service de suivi de commandes pour J'imprime en France.
+    
+    TODO: Implémenter quand le schéma de BDD sera défini.
+    - Tables: à définir
+    - Colonnes: à définir
+    - Statuts: à définir
+    """
+    
+    def __init__(self, db_config: Dict[str, Any]):
+        self.db_config = db_config
+        self.db = ExternalDatabaseService(db_config)
+    
+    def get_order_by_number(self, order_number: str) -> Optional[Dict[str, Any]]:
+        """Récupère une commande par son numéro."""
+        # TODO: Implémenter avec le schéma de BDD de J'imprime en France
+        logger.warning("JimprimeEnFranceOrderService: schéma de BDD non encore implémenté")
+        return None
+    
+    def format_order_response(self, order: Dict[str, Any]) -> str:
+        """Formate la réponse pour le chatbot."""
+        # TODO: Implémenter le formatage spécifique
+        return "Le suivi des commandes pour J'imprime en France sera bientôt disponible."
+
+
+class MonPackagingOrderService:
+    """
+    Service de suivi de commandes pour Mon Packaging.
+    
+    TODO: Implémenter quand le schéma de BDD sera défini.
+    - Tables: à définir
+    - Colonnes: à définir
+    - Statuts: à définir
+    """
+    
+    def __init__(self, db_config: Dict[str, Any]):
+        self.db_config = db_config
+        self.db = ExternalDatabaseService(db_config)
+    
+    def get_order_by_number(self, order_number: str) -> Optional[Dict[str, Any]]:
+        """Récupère une commande par son numéro."""
+        # TODO: Implémenter avec le schéma de BDD de Mon Packaging
+        logger.warning("MonPackagingOrderService: schéma de BDD non encore implémenté")
+        return None
+    
+    def format_order_response(self, order: Dict[str, Any]) -> str:
+        """Formate la réponse pour le chatbot."""
+        # TODO: Implémenter le formatage spécifique
+        return "Le suivi des commandes pour Mon Packaging sera bientôt disponible."
+
+
+class JeDecoreOrderService:
+    """
+    Service de suivi de commandes pour Je Décore.
+    
+    TODO: Implémenter quand le schéma de BDD sera défini.
+    - Tables: à définir
+    - Colonnes: à définir
+    - Statuts: à définir
+    """
+    
+    def __init__(self, db_config: Dict[str, Any]):
+        self.db_config = db_config
+        self.db = ExternalDatabaseService(db_config)
+    
+    def get_order_by_number(self, order_number: str) -> Optional[Dict[str, Any]]:
+        """Récupère une commande par son numéro."""
+        # TODO: Implémenter avec le schéma de BDD de Je Décore
+        logger.warning("JeDecoreOrderService: schéma de BDD non encore implémenté")
+        return None
+    
+    def format_order_response(self, order: Dict[str, Any]) -> str:
+        """Formate la réponse pour le chatbot."""
+        # TODO: Implémenter le formatage spécifique
+        return "Le suivi des commandes pour Je Décore sera bientôt disponible."
+
+
+class UnJourUniqueOrderService:
+    """
+    Service de suivi de commandes pour Un Jour Unique.
+    
+    TODO: Implémenter quand le schéma de BDD sera défini.
+    - Tables: à définir
+    - Colonnes: à définir
+    - Statuts: à définir
+    """
+    
+    def __init__(self, db_config: Dict[str, Any]):
+        self.db_config = db_config
+        self.db = ExternalDatabaseService(db_config)
+    
+    def get_order_by_number(self, order_number: str) -> Optional[Dict[str, Any]]:
+        """Récupère une commande par son numéro."""
+        # TODO: Implémenter avec le schéma de BDD de Un Jour Unique
+        logger.warning("UnJourUniqueOrderService: schéma de BDD non encore implémenté")
+        return None
+    
+    def format_order_response(self, order: Dict[str, Any]) -> str:
+        """Formate la réponse pour le chatbot."""
+        # TODO: Implémenter le formatage spécifique
+        return "Le suivi des commandes pour Un Jour Unique sera bientôt disponible."
+
+
 def get_order_service(db_config: Dict[str, Any]):
     """
     Factory pour obtenir le bon service de commandes selon le schéma.
+    Chaque site a sa propre classe de service adaptée à son schéma de BDD.
     """
     schema_type = db_config.get("schema_type", "coollibri")
     
-    # Pour l'instant, tous les sites d'impression utilisent le même schéma CoolLibri
-    if schema_type in ["coollibri", "jimprimeenfrance", "monpackaging", "jedecore", "unjourunique"]:
+    if schema_type == "coollibri":
         return CoolLibriOrderService(db_config)
-    elif schema_type == "chrono24":
-        # TODO: Implémenter Chrono24OrderService
-        return CoolLibriOrderService(db_config)
+    elif schema_type == "jimprimeenfrance":
+        return JimprimeEnFranceOrderService(db_config)
+    elif schema_type == "monpackaging":
+        return MonPackagingOrderService(db_config)
+    elif schema_type == "jedecore":
+        return JeDecoreOrderService(db_config)
+    elif schema_type == "unjourunique":
+        return UnJourUniqueOrderService(db_config)
     else:
+        # Schéma générique - utilise le format CoolLibri par défaut
         return CoolLibriOrderService(db_config)

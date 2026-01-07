@@ -113,6 +113,15 @@ async def get_database_config(
         return {"configured": False}
     
     db_config = result.data[0]  # Prendre le premier résultat
+    
+    # Décrypter le mot de passe pour l'afficher
+    decrypted_password = ""
+    if db_config.get("db_password_encrypted"):
+        try:
+            decrypted_password = decrypt_password(db_config["db_password_encrypted"])
+        except Exception:
+            pass
+    
     return {
         "configured": True,
         "id": db_config["id"],
@@ -121,8 +130,10 @@ async def get_database_config(
         "db_name": db_config["db_name"],
         "db_user": db_config["db_user"],
         "db_port": db_config["db_port"],
+        "db_password": decrypted_password,
         "schema_type": db_config["schema_type"],
         "is_enabled": db_config["is_enabled"],
+        "has_password": bool(db_config.get("db_password_encrypted")),
         "last_test_status": db_config.get("last_test_status"),
         "last_test_at": db_config.get("last_test_at")
     }

@@ -11,7 +11,9 @@ import {
   Settings,
   Globe,
   Bell,
-  Shield
+  Shield,
+  Plus,
+  X
 } from 'lucide-react'
 
 type Chatbot = Workspace
@@ -25,7 +27,7 @@ export default function SettingsPage() {
   const [deleteConfirm, setDeleteConfirm] = useState('')
   const [formData, setFormData] = useState({
     name: '',
-    domain: '',
+    allowed_domains: [''] as string[],
     is_active: true
   })
 
@@ -44,9 +46,16 @@ export default function SettingsPage() {
 
     if (data) {
       setChatbot(data)
+      // Convertir domain (ancien format) ou allowed_domains (nouveau format)
+      let domains: string[] = ['']
+      if (data.allowed_domains && Array.isArray(data.allowed_domains)) {
+        domains = data.allowed_domains.length > 0 ? data.allowed_domains : ['']
+      } else if (data.domain) {
+        domains = [data.domain]
+      }
       setFormData({
         name: data.name,
-        domain: data.domain || '',
+        allowed_domains: domains,
         is_active: data.is_active
       })
     }
@@ -57,11 +66,16 @@ export default function SettingsPage() {
 
     setSaving(true)
 
+    // Filtrer les domaines vides
+    const cleanDomains = formData.allowed_domains.filter(d => d.trim() !== '')
+
     const { error } = await supabase
       .from('workspaces')
       .update({
         name: formData.name,
-        domain: formData.domain || null,
+        allowed_domains: cleanDomains.length > 0 ? cleanDomains : null,
+        // Garder l'ancien champ domain pour compatibilité
+        domain: cleanDomains.length > 0 ? cleanDomains[0] : null,
         is_active: formData.is_active
       })
       .eq('id', chatbot.id)
@@ -71,6 +85,32 @@ export default function SettingsPage() {
     if (!error) {
       // Notification succès
     }
+  }
+
+  // Fonctions pour gérer les domaines
+  const addDomain = () => {
+    if (formData.allowed_domains.length < 5) {
+      setFormData(prev => ({
+        ...prev,
+        allowed_domains: [...prev.allowed_domains, '']
+      }))
+    }
+  }
+
+  const removeDomain = (index: number) => {
+    if (formData.allowed_domains.length > 1) {
+      setFormData(prev => ({
+        ...prev,
+        allowed_domains: prev.allowed_domains.filter((_, i) => i !== index)
+      }))
+    }
+  }
+
+  const updateDomain = (index: number, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      allowed_domains: prev.allowed_domains.map((d, i) => i === index ? value : d)
+    }))
   }
 
   const deleteChatbot = async () => {
@@ -99,9 +139,7 @@ export default function SettingsPage() {
       {/* Informations générales */}
       <div className="bg-white rounded-xl border border-gray-200 p-6">
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
-            <Settings size={20} className="text-gray-600" />
-          </div>
+          <Settings size={20} className="text-gray-600" />
           <div>
             <h3 className="font-medium text-gray-900">Informations générales</h3>
             <p className="text-sm text-gray-500">Nom et domaine du chatbot</p>
@@ -122,21 +160,53 @@ export default function SettingsPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Domaine autorisé
-            </label>
-            <div className="flex items-center">
-              <span className="px-3 py-2 bg-gray-100 border border-r-0 border-gray-200 rounded-l-lg text-sm text-gray-500">
-                https://
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-sm font-medium text-gray-700">
+                Domaines autorisés
+              </label>
+              <span className="text-xs text-gray-400">
+                {formData.allowed_domains.filter(d => d.trim()).length}/5 domaines
               </span>
-              <input
-                type="text"
-                value={formData.domain}
-                onChange={(e) => setFormData(prev => ({ ...prev, domain: e.target.value }))}
-                placeholder="exemple.com"
-                className="flex-1 px-4 py-2 border border-gray-200 rounded-r-lg text-sm focus:outline-none focus:ring-2 focus:ring-black/10"
-              />
             </div>
+            <p className="text-xs text-gray-500 mb-3">
+              Ajoutez les domaines où le widget est autorisé à fonctionner
+            </p>
+            <div className="space-y-2">
+              {formData.allowed_domains.map((domain, index) => (
+                <div key={index} className="flex items-center gap-2">
+                  <div className="flex items-center flex-1">
+                    <span className="px-3 py-2 bg-gray-100 border border-r-0 border-gray-200 rounded-l-lg text-sm text-gray-500">
+                      https://
+                    </span>
+                    <input
+                      type="text"
+                      value={domain}
+                      onChange={(e) => updateDomain(index, e.target.value)}
+                      placeholder="exemple.com"
+                      className="flex-1 px-4 py-2 border border-gray-200 rounded-r-lg text-sm focus:outline-none focus:ring-2 focus:ring-black/10"
+                    />
+                  </div>
+                  {formData.allowed_domains.length > 1 && (
+                    <button
+                      onClick={() => removeDomain(index)}
+                      className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                      title="Supprimer ce domaine"
+                    >
+                      <X size={18} />
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+            {formData.allowed_domains.length < 5 && (
+              <button
+                onClick={addDomain}
+                className="mt-3 flex items-center gap-2 text-sm text-gray-600 hover:text-black transition-colors"
+              >
+                <Plus size={16} />
+                Ajouter un domaine
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -144,9 +214,7 @@ export default function SettingsPage() {
       {/* Statut */}
       <div className="bg-white rounded-xl border border-gray-200 p-6">
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-            <Shield size={20} className="text-green-600" />
-          </div>
+          <Shield size={20} className="text-green-600" />
           <div>
             <h3 className="font-medium text-gray-900">Statut</h3>
             <p className="text-sm text-gray-500">Activer ou désactiver le chatbot</p>
@@ -199,9 +267,7 @@ export default function SettingsPage() {
       {/* Zone de danger */}
       <div className="bg-red-50 rounded-xl border border-red-200 p-6">
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-            <AlertTriangle size={20} className="text-red-600" />
-          </div>
+          <AlertTriangle size={20} className="text-red-600" />
           <div>
             <h3 className="font-medium text-red-900">Zone de danger</h3>
             <p className="text-sm text-red-600">Actions irréversibles</p>

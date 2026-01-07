@@ -3,13 +3,14 @@ Routes API pour le Widget (accès public)
 Ce sont les endpoints appelés par le widget injecté sur les sites clients
 Inclut: fingerprint, score RAG, feedback 👍/👎, suivi de commandes
 """
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import StreamingResponse, Response
 from pydantic import BaseModel
 from typing import Optional, List
 import json
 import base64
 import logging
+from urllib.parse import urlparse
 from app.core.supabase import get_supabase
 from app.services.rag_pipeline import RAGPipeline, fix_email_format
 from app.services.intent_detector import IntentDetector
@@ -17,6 +18,105 @@ from app.services.intent_detector import IntentDetector
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
+
+
+# =====================================================
+# VALIDATION DU DOMAINE
+# =====================================================
+
+def validate_domain(request: Request, allowed_domains: Optional[List[str]] = None, allowed_domain: Optional[str] = None) -> tuple[bool, str]:
+    """
+    Valide que la requête provient d'un domaine autorisé.
+    
+    Args:
+        request: La requête FastAPI
+        allowed_domains: Liste des domaines autorisés (nouveau format)
+        allowed_domain: Domaine autorisé unique (ancien format, pour compatibilité)
+    
+    Returns:
+        tuple (is_valid, error_message)
+    """
+    # Combiner les deux formats (nouveau et ancien)
+    domains_to_check = []
+    if allowed_domains and isinstance(allowed_domains, list):
+        domains_to_check.extend(allowed_domains)
+    if allowed_domain and allowed_domain not in domains_to_check:
+        domains_to_check.append(allowed_domain)
+    
+    # Récupérer l'origine de la requête
+    origin = request.headers.get("origin", "")
+    referer = request.headers.get("referer", "")
+    
+    # Utiliser origin en priorité, sinon referer
+    source_url = origin or referer
+    
+    if not source_url:
+        # Pas d'origine = probablement une requête directe (Postman, curl, etc.)
+        # On autorise pour le debug mais on log
+        logger.warning(f"Requête widget sans origine - Headers: {dict(request.headers)}")
+        return True, ""
+    
+    # Parser l'URL source
+    try:
+        parsed = urlparse(source_url)
+        source_host = parsed.hostname or ""
+        source_port = parsed.port
+    except Exception:
+        return False, "URL d'origine invalide"
+    
+    # Liste des domaines de développement toujours autorisés
+    dev_domains = [
+        "localhost",
+        "127.0.0.1",
+        "0.0.0.0",
+    ]
+    
+    # Autoriser localhost et ses variantes pour le développement
+    if source_host in dev_domains:
+        logger.debug(f"Domaine de développement autorisé: {source_host}")
+        return True, ""
+    
+    # Autoriser les requêtes depuis le dashboard MONITORA
+    monitora_domains = [
+        "localhost:3001",  # Frontend dev
+        "monitora.ai",
+        "www.monitora.ai",
+        "app.monitora.ai",
+    ]
+    
+    full_host = f"{source_host}:{source_port}" if source_port else source_host
+    if full_host in monitora_domains or source_host in monitora_domains:
+        return True, ""
+    
+    # Si pas de domaine configuré, autoriser tout (mais avertir)
+    if not domains_to_check:
+        logger.warning(f"Aucun domaine autorisé configuré - Requête depuis {source_host} autorisée par défaut")
+        return True, ""
+    
+    # Comparer avec chaque domaine autorisé
+    source_host_lower = source_host.lower()
+    
+    for domain in domains_to_check:
+        if not domain:
+            continue
+            
+        # Nettoyer le domaine autorisé (enlever https://, http://, etc.)
+        clean_allowed = domain.lower().strip()
+        clean_allowed = clean_allowed.replace("https://", "").replace("http://", "")
+        clean_allowed = clean_allowed.rstrip("/")
+        
+        # Vérifier correspondance exacte
+        if source_host_lower == clean_allowed:
+            return True, ""
+        
+        # Autoriser les sous-domaines (ex: www.exemple.com pour exemple.com)
+        if source_host_lower.endswith(f".{clean_allowed}"):
+            return True, ""
+    
+    # Domaine non autorisé
+    domains_list = ", ".join(domains_to_check)
+    logger.warning(f"Domaine non autorisé: {source_host} (autorisés: {domains_list})")
+    return False, f"Ce widget n'est pas autorisé sur ce domaine. Domaines autorisés: {domains_list}"
 
 
 # =====================================================
@@ -43,12 +143,12 @@ class WidgetConfig(BaseModel):
 
 
 @router.get("/{workspace_id}/config")
-async def get_widget_config(workspace_id: str):
+async def get_widget_config(workspace_id: str, request: Request):
     """Récupère la configuration publique du widget"""
     supabase = get_supabase()
     
     result = supabase.table("workspaces")\
-        .select("id, name, widget_config, is_active")\
+        .select("id, name, domain, allowed_domains, widget_config, rag_config, is_active")\
         .eq("id", workspace_id)\
         .single()\
         .execute()
@@ -60,8 +160,25 @@ async def get_widget_config(workspace_id: str):
     if not workspace.get("is_active", True):
         raise HTTPException(status_code=403, detail="Workspace désactivé")
     
+    # Valider le domaine d'origine (supporte les deux formats)
+    allowed_domains = workspace.get("allowed_domains")
+    allowed_domain = workspace.get("domain")
+    is_valid, error_msg = validate_domain(request, allowed_domains, allowed_domain)
+    if not is_valid:
+        # Construire la liste des domaines pour l'affichage
+        domains_display = allowed_domains if allowed_domains else ([allowed_domain] if allowed_domain else [])
+        raise HTTPException(
+            status_code=403, 
+            detail={
+                "error": "domain_not_allowed",
+                "message": error_msg,
+                "allowed_domains": domains_display
+            }
+        )
+    
     # Utiliser widget_config directement (sauvegardé par le frontend)
     widget_config = workspace.get("widget_config", {}) or {}
+    rag_config = workspace.get("rag_config", {}) or {}
     
     return {
         "workspace_id": workspace["id"],
@@ -71,14 +188,17 @@ async def get_widget_config(workspace_id: str):
         "placeholder": widget_config.get("placeholder", "Tapez votre message..."),
         "position": widget_config.get("position", "bottom-right"),
         "width": widget_config.get("widgetWidth", 380),
-        "height": widget_config.get("widgetHeight", 500)
+        "height": widget_config.get("widgetHeight", 500),
+        "branding_text": widget_config.get("brandingText", "Propulsé par MONITORA"),
+        "streaming_enabled": rag_config.get("streaming_enabled", True)
     }
 
 
 @router.post("/{workspace_id}/chat")
 async def widget_chat(
     workspace_id: str,
-    data: WidgetChatRequest
+    data: WidgetChatRequest,
+    request: Request
 ):
     """
     Endpoint de chat pour le widget.
@@ -91,7 +211,7 @@ async def widget_chat(
     
     # Vérifier que le workspace existe et est actif
     workspace_result = supabase.table("workspaces")\
-        .select("id, rag_config, settings, is_active")\
+        .select("id, domain, allowed_domains, rag_config, settings, is_active")\
         .eq("id", workspace_id)\
         .single()\
         .execute()
@@ -102,6 +222,21 @@ async def widget_chat(
     workspace = workspace_result.data
     if not workspace.get("is_active", True):
         raise HTTPException(status_code=403, detail="Workspace désactivé")
+    
+    # Valider le domaine d'origine (supporte les deux formats)
+    allowed_domains = workspace.get("allowed_domains")
+    allowed_domain = workspace.get("domain")
+    is_valid, error_msg = validate_domain(request, allowed_domains, allowed_domain)
+    if not is_valid:
+        domains_display = allowed_domains if allowed_domains else ([allowed_domain] if allowed_domain else [])
+        raise HTTPException(
+            status_code=403, 
+            detail={
+                "error": "domain_not_allowed",
+                "message": error_msg,
+                "allowed_domains": domains_display
+            }
+        )
     
     # Récupérer ou créer la conversation avec visitor_id
     conversation = await _get_or_create_conversation(
@@ -379,6 +514,8 @@ async def _get_response_with_score(rag: RAGPipeline, message: str, history: list
 
 async def _stream_response_with_score(supabase, rag: RAGPipeline, message: str, history: list, conversation_id: str):
     """Stream la réponse et stocke avec le score RAG"""
+    import asyncio
+    
     full_response = ""
     sources = []
     rag_score = 0.5  # Score par défaut
@@ -387,6 +524,8 @@ async def _stream_response_with_score(supabase, rag: RAGPipeline, message: str, 
         if chunk.get("type") == "token":
             full_response += chunk["content"]
             yield f"data: {json.dumps(chunk)}\n\n"
+            # Petit délai pour ralentir le streaming (20ms par token)
+            await asyncio.sleep(0.1)
         elif chunk.get("type") == "sources":
             sources = chunk.get("sources", [])
         elif chunk.get("type") == "rag_score":

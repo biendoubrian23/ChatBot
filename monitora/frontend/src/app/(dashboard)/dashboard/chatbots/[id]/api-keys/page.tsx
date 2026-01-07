@@ -43,6 +43,7 @@ interface DatabaseConfig {
   db_port: number
   schema_type: string
   is_enabled: boolean
+  has_password?: boolean
   last_test_status?: string
   last_test_at?: string
 }
@@ -110,9 +111,14 @@ export default function ApiKeysPage() {
           db_port: data.db_port || prev.db_port || 1433,
           schema_type: data.schema_type || prev.schema_type || 'coollibri',
           is_enabled: data.is_enabled ?? prev.is_enabled ?? false,
+          has_password: data.has_password || false,
           last_test_status: data.last_test_status,
           last_test_at: data.last_test_at
         }))
+        // Charger le mot de passe sauvegardé
+        if (data.db_password) {
+          setDbPassword(data.db_password)
+        }
       }
     } catch (error) {
       console.error('Erreur chargement config DB:', error)
@@ -234,349 +240,320 @@ export default function ApiKeysPage() {
   }
 
   return (
-    <div className="max-w-3xl space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-900">Clés API</h1>
-          <p className="text-gray-500 mt-1">
-            Gérez les clés d'accès à l'API de votre chatbot
-          </p>
-        </div>
-        <Button 
-          className="bg-black hover:bg-gray-800 text-white"
-          onClick={() => setShowCreateModal(true)}
-        >
-          <Plus size={16} className="mr-2" />
-          Nouvelle clé
-        </Button>
+    <div className="space-y-6">
+      {/* Header global */}
+      <div>
+        <h1 className="text-2xl font-semibold text-gray-900">Configuration</h1>
+        <p className="text-gray-500 mt-1">
+          Gérez la base de données et les clés API de votre chatbot
+        </p>
       </div>
 
-      {/* Avertissement */}
-      <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
-        <AlertTriangle size={20} className="text-amber-600 flex-shrink-0 mt-0.5" />
-        <div className="text-sm text-amber-800">
-          <strong>Important :</strong> Les clés API donnent accès à votre chatbot. 
-          Ne les partagez jamais publiquement et ne les incluez pas dans votre code côté client.
-        </div>
-      </div>
-
-      {/* Loading */}
-      {loading && (
-        <div className="flex items-center justify-center py-12">
-          <div className="animate-spin h-8 w-8 border-2 border-gray-300 border-t-black rounded-full" />
-        </div>
-      )}
-
-      {/* Empty state */}
-      {!loading && apiKeys.length === 0 && (
-        <div className="bg-white border border-gray-200 rounded-xl p-12 text-center">
-          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Key size={32} className="text-gray-400" />
+      {/* Layout 2 colonnes */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        {/* ============================================= */}
+        {/* COLONNE GAUCHE : BASE DE DONNÉES */}
+        {/* ============================================= */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-3">
+            <Database size={20} className="text-blue-600" />
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900">Base de données externe</h2>
+              <p className="text-sm text-gray-500">
+                Suivi des commandes
+              </p>
+            </div>
           </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">Aucune clé API</h3>
-          <p className="text-gray-500 text-sm mb-6 max-w-sm mx-auto">
-            Créez une clé API pour intégrer votre chatbot via l'API REST
-          </p>
-          <Button 
-            className="bg-black hover:bg-gray-800 text-white"
-            onClick={() => setShowCreateModal(true)}
-          >
-            <Plus size={16} className="mr-2" />
-            Créer ma première clé
-          </Button>
-        </div>
-      )}
 
-      {/* Liste des clés */}
-      {!loading && apiKeys.length > 0 && (
-        <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
-          <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-3">
-                  Nom
-                </th>
-                <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-3">
-                  Clé
-                </th>
-                <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-3">
-                  Dernière utilisation
-                </th>
-                <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-3">
-                  Créée le
-                </th>
-                <th className="text-right text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-3">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {apiKeys.map((apiKey) => (
-                <tr key={apiKey.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4">
+          <div className="bg-white border border-gray-200 rounded-xl p-5 space-y-5">
+            {/* Toggle activation */}
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="font-medium text-gray-900 text-sm">Activer le suivi</div>
+                <div className="text-xs text-gray-500">
+                  Consulter les commandes
+                </div>
+              </div>
+              <button
+                onClick={() => setDbConfig(prev => ({ ...prev, is_enabled: !prev.is_enabled }))}
+                className={`relative w-11 h-6 rounded-full transition-colors ${
+                  dbConfig.is_enabled ? 'bg-blue-600' : 'bg-gray-200'
+                }`}
+              >
+                <div
+                  className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${
+                    dbConfig.is_enabled ? 'translate-x-5' : 'translate-x-0'
+                  }`}
+                />
+              </button>
+            </div>
+
+            {/* Type de schéma */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                Site / Tenant
+              </label>
+              <select
+                value={dbConfig.schema_type}
+                onChange={(e) => {
+                  const disabledOptions = ['jimprimeenfrance', 'monpackaging', 'jedecore', 'unjourunique'];
+                  if (!disabledOptions.includes(e.target.value)) {
+                    setDbConfig(prev => ({ ...prev, schema_type: e.target.value }));
+                  }
+                }}
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white"
+              >
+                <optgroup label="Sans base de données externe">
+                  <option value="generic">Générique (données indexées uniquement)</option>
+                </optgroup>
+                <optgroup label="Impression de livres">
+                  <option value="coollibri">CoolLibri (BDD + données indexées)</option>
+                  <option value="jimprimeenfrance" disabled>J'imprime en France (BDD + données indexées - bientôt)</option>
+                  <option value="monpackaging" disabled>Mon Packaging (BDD + données indexées - bientôt)</option>
+                </optgroup>
+                <optgroup label="Événementiel">
+                  <option value="jedecore" disabled>Je Décore (BDD + données indexées - bientôt)</option>
+                  <option value="unjourunique" disabled>Un Jour Unique (BDD + données indexées - bientôt)</option>
+                </optgroup>
+              </select>
+            </div>
+
+            {/* Type de BDD */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                Type de base de données
+              </label>
+              <select
+                value={dbConfig.db_type}
+                onChange={(e) => setDbConfig(prev => ({ 
+                  ...prev, 
+                  db_type: e.target.value,
+                  db_port: e.target.value === 'sqlserver' ? 1433 : e.target.value === 'mysql' ? 3306 : 5432
+                }))}
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white"
+              >
+                <option value="sqlserver">SQL Server</option>
+                <option value="mysql">MySQL</option>
+                <option value="postgres">PostgreSQL</option>
+              </select>
+            </div>
+
+            {/* Formulaire de connexion */}
+            <div className="space-y-3">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Hôte</label>
+                <input
+                  type="text"
+                  value={dbConfig.db_host}
+                  onChange={(e) => setDbConfig(prev => ({ ...prev, db_host: e.target.value }))}
+                  placeholder="alpha.messages.fr"
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Port</label>
+                  <input
+                    type="number"
+                    value={dbConfig.db_port}
+                    onChange={(e) => setDbConfig(prev => ({ ...prev, db_port: parseInt(e.target.value) || 1433 }))}
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Base</label>
+                  <input
+                    type="text"
+                    value={dbConfig.db_name}
+                    onChange={(e) => setDbConfig(prev => ({ ...prev, db_name: e.target.value }))}
+                    placeholder="Coollibri_dev"
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Utilisateur</label>
+                  <input
+                    type="text"
+                    value={dbConfig.db_user}
+                    onChange={(e) => setDbConfig(prev => ({ ...prev, db_user: e.target.value }))}
+                    placeholder="lecteur-dev"
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Mot de passe</label>
+                  <div className="relative">
+                    <input
+                      type={showDbPassword ? 'text' : 'password'}
+                      value={dbPassword}
+                      onChange={(e) => setDbPassword(e.target.value)}
+                      placeholder={dbConfig.has_password ? '••••• (sauvegardé)' : 'Entrez le mot de passe'}
+                      className="w-full px-3 py-2 pr-9 border border-gray-200 rounded-lg text-sm"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowDbPassword(!showDbPassword)}
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    >
+                      {showDbPassword ? <EyeOff size={14} /> : <Eye size={14} />}
+                    </button>
+                  </div>
+                  {dbConfig.has_password && !dbPassword && (
+                    <p className="text-xs text-green-600 mt-1">✓ Mot de passe déjà enregistré</p>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Résultat du test */}
+            {dbTestResult && (
+              <div className={`flex items-start gap-2 p-3 rounded-lg text-sm ${
+                dbTestResult.success 
+                  ? 'bg-green-50 border border-green-200' 
+                  : 'bg-red-50 border border-red-200'
+              }`}>
+                {dbTestResult.success ? (
+                  <CheckCircle2 size={16} className="text-green-600 flex-shrink-0 mt-0.5" />
+                ) : (
+                  <XCircle size={16} className="text-red-600 flex-shrink-0 mt-0.5" />
+                )}
+                <div className={dbTestResult.success ? 'text-green-800' : 'text-red-800'}>
+                  <div className="font-medium">{dbTestResult.message}</div>
+                  {dbTestResult.success && dbTestResult.database && (
+                    <div className="text-xs mt-0.5 opacity-80">
+                      Base : {dbTestResult.database}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Statut du dernier test */}
+            {dbConfig.last_test_status && !dbTestResult && (
+              <div className="text-xs text-gray-500 flex items-center gap-1.5">
+                <Clock size={12} />
+                Dernier test: {dbConfig.last_test_status === 'success' ? '✅' : '❌'}
+                {dbConfig.last_test_at && ` - ${new Date(dbConfig.last_test_at).toLocaleString('fr-FR')}`}
+              </div>
+            )}
+
+            {/* Boutons d'action */}
+            <div className="flex gap-2 pt-3 border-t border-gray-100">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={testDatabaseConnection}
+                disabled={dbTestLoading || !dbConfig.db_host || !dbConfig.db_name}
+                className="flex-1"
+              >
+                {dbTestLoading ? (
+                  <Loader2 size={14} className="mr-1.5 animate-spin" />
+                ) : (
+                  <RefreshCw size={14} className="mr-1.5" />
+                )}
+                Tester
+              </Button>
+              
+              <Button
+                size="sm"
+                className="flex-1 bg-black hover:bg-gray-800 text-white"
+                onClick={saveDatabaseConfig}
+                disabled={dbLoading || !dbConfig.db_host || !dbConfig.db_name}
+              >
+                {dbLoading ? (
+                  <Loader2 size={14} className="mr-1.5 animate-spin" />
+                ) : dbSaveSuccess ? (
+                  <Check size={14} className="mr-1.5" />
+                ) : null}
+                {dbSaveSuccess ? 'Enregistré' : 'Enregistrer'}
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* ============================================= */}
+        {/* COLONNE DROITE : CLÉS API */}
+        {/* ============================================= */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Key size={20} className="text-amber-600" />
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900">Clés API</h2>
+                <p className="text-sm text-gray-500">
+                  Accès REST
+                </p>
+              </div>
+            </div>
+            <Button 
+              size="sm"
+              className="bg-black hover:bg-gray-800 text-white"
+              onClick={() => setShowCreateModal(true)}
+            >
+              <Plus size={14} className="mr-1.5" />
+              Nouvelle
+            </Button>
+          </div>
+
+          {/* Avertissement */}
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-start gap-2">
+            <AlertTriangle size={16} className="text-amber-600 flex-shrink-0 mt-0.5" />
+            <div className="text-xs text-amber-800">
+              <strong>Important :</strong> Ne partagez jamais vos clés API publiquement.
+            </div>
+          </div>
+
+          {/* Empty state ou liste */}
+          {!loading && apiKeys.length === 0 ? (
+            <div className="bg-white border border-gray-200 rounded-xl p-8 text-center">
+              <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <Key size={24} className="text-gray-400" />
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-1">Aucune clé API</h3>
+              <p className="text-gray-500 text-sm mb-4">
+                Créez une clé pour l'API REST
+              </p>
+              <Button 
+                size="sm"
+                className="bg-black hover:bg-gray-800 text-white"
+                onClick={() => setShowCreateModal(true)}
+              >
+                <Plus size={14} className="mr-1.5" />
+                Créer ma première clé
+              </Button>
+            </div>
+          ) : (
+            <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+              <div className="divide-y divide-gray-100">
+                {apiKeys.map((apiKey) => (
+                  <div key={apiKey.id} className="p-4 flex items-center justify-between hover:bg-gray-50">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
-                        <Key size={16} className="text-gray-500" />
+                        <Key size={14} className="text-gray-500" />
                       </div>
-                      <span className="font-medium text-gray-900">{apiKey.name}</span>
+                      <div>
+                        <div className="font-medium text-gray-900 text-sm">{apiKey.name}</div>
+                        <code className="text-xs text-gray-500">{apiKey.key_prefix}...</code>
+                      </div>
                     </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <code className="text-sm text-gray-600 bg-gray-100 px-2 py-1 rounded">
-                      {apiKey.key_prefix}...
-                    </code>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">
-                    {apiKey.last_used_at ? formatDate(apiKey.last_used_at) : 'Jamais'}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">
-                    {formatDate(apiKey.created_at)}
-                  </td>
-                  <td className="px-6 py-4 text-right">
                     <Button 
                       variant="ghost" 
                       size="sm" 
                       onClick={() => deleteApiKey(apiKey.id)}
                       className="text-red-500 hover:text-red-700 hover:bg-red-50"
                     >
-                      <Trash2 size={16} />
+                      <Trash2 size={14} />
                     </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {/* ============================================= */}
-      {/* SECTION BASE DE DONNÉES */}
-      {/* ============================================= */}
-      <div className="border-t border-gray-200 pt-8 mt-8">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-            <Database size={20} className="text-blue-600" />
-          </div>
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900">Base de données externe</h2>
-            <p className="text-sm text-gray-500">
-              Connectez votre base de données pour le suivi des commandes
-            </p>
-          </div>
-        </div>
-
-        <div className="bg-white border border-gray-200 rounded-xl p-6 space-y-6">
-          {/* Toggle activation */}
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="font-medium text-gray-900">Activer le suivi des commandes</div>
-              <div className="text-sm text-gray-500">
-                Le chatbot pourra consulter les commandes dans votre base de données
-              </div>
-            </div>
-            <button
-              onClick={() => setDbConfig(prev => ({ ...prev, is_enabled: !prev.is_enabled }))}
-              className={`relative w-12 h-6 rounded-full transition-colors ${
-                dbConfig.is_enabled ? 'bg-blue-600' : 'bg-gray-200'
-              }`}
-            >
-              <div
-                className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${
-                  dbConfig.is_enabled ? 'translate-x-6' : 'translate-x-0'
-                }`}
-              />
-            </button>
-          </div>
-
-          {/* Type de schéma */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Site / Tenant
-            </label>
-            <select
-              value={dbConfig.schema_type}
-              onChange={(e) => setDbConfig(prev => ({ ...prev, schema_type: e.target.value }))}
-              className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm bg-white"
-            >
-              <optgroup label="Impression de livres">
-                <option value="coollibri">CoolLibri</option>
-                <option value="jimprimeenfrance">J'imprime en France</option>
-                <option value="monpackaging">Mon Packaging</option>
-              </optgroup>
-              <optgroup label="Événementiel">
-                <option value="jedecore">Je Décore</option>
-                <option value="unjourunique">Un Jour Unique</option>
-              </optgroup>
-              <optgroup label="Montres">
-                <option value="chrono24">Chrono24</option>
-              </optgroup>
-              <optgroup label="Autre">
-                <option value="generic">Générique (personnalisé)</option>
-              </optgroup>
-            </select>
-            <p className="text-xs text-gray-500 mt-1">
-              Le site définit le schéma de base de données à utiliser
-            </p>
-          </div>
-
-          {/* Type de BDD */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Type de base de données
-            </label>
-            <select
-              value={dbConfig.db_type}
-              onChange={(e) => setDbConfig(prev => ({ 
-                ...prev, 
-                db_type: e.target.value,
-                db_port: e.target.value === 'sqlserver' ? 1433 : e.target.value === 'mysql' ? 3306 : 5432
-              }))}
-              className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm bg-white"
-            >
-              <option value="sqlserver">SQL Server</option>
-              <option value="mysql">MySQL</option>
-              <option value="postgres">PostgreSQL</option>
-            </select>
-          </div>
-
-          {/* Formulaire de connexion */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Hôte (host)
-              </label>
-              <input
-                type="text"
-                value={dbConfig.db_host}
-                onChange={(e) => setDbConfig(prev => ({ ...prev, db_host: e.target.value }))}
-                placeholder="ex: alpha.messages.fr ou 192.168.1.100"
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Port
-              </label>
-              <input
-                type="number"
-                value={dbConfig.db_port}
-                onChange={(e) => setDbConfig(prev => ({ ...prev, db_port: parseInt(e.target.value) || 1433 }))}
-                placeholder="1433"
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Nom de la base
-              </label>
-              <input
-                type="text"
-                value={dbConfig.db_name}
-                onChange={(e) => setDbConfig(prev => ({ ...prev, db_name: e.target.value }))}
-                placeholder="ex: IMP_COOLLIBRI"
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Utilisateur
-              </label>
-              <input
-                type="text"
-                value={dbConfig.db_user}
-                onChange={(e) => setDbConfig(prev => ({ ...prev, db_user: e.target.value }))}
-                placeholder="ex: sa ou db_user"
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Mot de passe
-              </label>
-              <div className="relative">
-                <input
-                  type={showDbPassword ? 'text' : 'password'}
-                  value={dbPassword}
-                  onChange={(e) => setDbPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full px-4 py-2 pr-10 border border-gray-200 rounded-lg text-sm"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowDbPassword(!showDbPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  {showDbPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Résultat du test */}
-          {dbTestResult && (
-            <div className={`flex items-start gap-3 p-4 rounded-lg ${
-              dbTestResult.success 
-                ? 'bg-green-50 border border-green-200' 
-                : 'bg-red-50 border border-red-200'
-            }`}>
-              {dbTestResult.success ? (
-                <CheckCircle2 size={20} className="text-green-600 flex-shrink-0 mt-0.5" />
-              ) : (
-                <XCircle size={20} className="text-red-600 flex-shrink-0 mt-0.5" />
-              )}
-              <div className={dbTestResult.success ? 'text-green-800' : 'text-red-800'}>
-                <div className="font-medium">{dbTestResult.message}</div>
-                {dbTestResult.success && dbTestResult.database && (
-                  <div className="text-sm mt-1 opacity-80">
-                    Base de données : {dbTestResult.database}
                   </div>
-                )}
+                ))}
               </div>
             </div>
           )}
-
-          {/* Statut du dernier test */}
-          {dbConfig.last_test_status && (
-            <div className="text-sm text-gray-500 flex items-center gap-2">
-              <Clock size={14} />
-              Dernier test: {dbConfig.last_test_status === 'success' ? '✅ Réussi' : '❌ Échoué'}
-              {dbConfig.last_test_at && ` - ${new Date(dbConfig.last_test_at).toLocaleString('fr-FR')}`}
-            </div>
-          )}
-
-          {/* Boutons d'action */}
-          <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
-            <Button
-              variant="outline"
-              onClick={testDatabaseConnection}
-              disabled={dbTestLoading || !dbConfig.db_host || !dbConfig.db_name}
-            >
-              {dbTestLoading ? (
-                <Loader2 size={16} className="mr-2 animate-spin" />
-              ) : (
-                <RefreshCw size={16} className="mr-2" />
-              )}
-              Tester la connexion
-            </Button>
-            
-            <Button
-              className="bg-black hover:bg-gray-800 text-white"
-              onClick={saveDatabaseConfig}
-              disabled={dbLoading || !dbConfig.db_host || !dbConfig.db_name}
-            >
-              {dbLoading ? (
-                <Loader2 size={16} className="mr-2 animate-spin" />
-              ) : dbSaveSuccess ? (
-                <Check size={16} className="mr-2" />
-              ) : null}
-              {dbSaveSuccess ? 'Enregistré !' : 'Enregistrer'}
-            </Button>
-          </div>
         </div>
       </div>
 

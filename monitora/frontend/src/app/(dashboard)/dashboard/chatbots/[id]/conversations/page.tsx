@@ -183,9 +183,7 @@ export default function ConversationsPage() {
               >
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-                      <User size={16} className="text-gray-500" />
-                    </div>
+                    <User size={16} className="text-gray-500" />
                     <span className="font-medium text-gray-900 text-sm">
                       {conversation.user_identifier || 'Anonyme'}
                     </span>
@@ -214,9 +212,7 @@ export default function ConversationsPage() {
           {/* Header */}
           <div className="p-4 border-b border-gray-200 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
-                <User size={20} className="text-gray-500" />
-              </div>
+              <User size={20} className="text-gray-500" />
               <div>
                 <p className="font-medium text-gray-900">
                   {selectedConversation.user_identifier || 'Anonyme'}

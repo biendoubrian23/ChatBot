@@ -117,7 +117,23 @@
     
     .monitora-chat-status {
       font-size: 12px;
-      opacity: 0.8;
+      opacity: 0.9;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .monitora-status-dot {
+      width: 8px;
+      height: 8px;
+      background: #22c55e;
+      border-radius: 50%;
+      animation: monitora-pulse 2s infinite;
+    }
+    
+    @keyframes monitora-pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
     }
     
     .monitora-chat-close {
@@ -127,11 +143,18 @@
       cursor: pointer;
       padding: 4px;
       opacity: 0.7;
-      transition: opacity 0.2s;
+      transition: all 0.2s;
     }
     
     .monitora-chat-close:hover {
       opacity: 1;
+    }
+    
+    .monitora-chat-close svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+      transition: transform 0.3s;
     }
     
     .monitora-chat-messages {
@@ -258,6 +281,74 @@
       0%, 80%, 100% { transform: scale(0); }
       40% { transform: scale(1); }
     }
+    
+    /* Feedback buttons (thumbs up/down) */
+    .monitora-feedback-buttons {
+      display: flex;
+      gap: 4px;
+      margin-top: 8px;
+      padding-left: 36px;
+    }
+    
+    .monitora-feedback-btn {
+      padding: 4px 8px;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      background: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      color: #6b7280;
+      transition: all 0.2s;
+    }
+    
+    .monitora-feedback-btn:hover {
+      background: #f3f4f6;
+      border-color: #d1d5db;
+    }
+    
+    .monitora-feedback-btn.active {
+      background: #f0fdf4;
+      border-color: #22c55e;
+      color: #22c55e;
+    }
+    
+    .monitora-feedback-btn.active.negative {
+      background: #fef2f2;
+      border-color: #ef4444;
+      color: #ef4444;
+    }
+    
+    .monitora-feedback-btn svg {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+    }
+    
+    /* Footer Propulsé par MONITORA */
+    .monitora-chat-footer {
+      padding: 8px 16px;
+      background: #f9fafb;
+      border-top: 1px solid #e5e7eb;
+      text-align: center;
+    }
+    
+    .monitora-powered-by {
+      font-size: 11px;
+      color: #9ca3af;
+    }
+    
+    .monitora-powered-by a {
+      color: ${config.primaryColor || '#000000'};
+      text-decoration: none;
+      font-weight: 600;
+    }
+    
+    .monitora-powered-by a:hover {
+      text-decoration: underline;
+    }
   `;
 
   // Injecter les styles
@@ -285,12 +376,12 @@
           </div>
           <div>
             <div class="monitora-chat-title">Assistant</div>
-            <div class="monitora-chat-status">En ligne</div>
+            <div class="monitora-chat-status"><span class="monitora-status-dot"></span>En ligne</div>
           </div>
         </div>
-        <button class="monitora-chat-close" aria-label="Fermer le chat">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M18 6L6 18M6 6l12 12"/>
+        <button class="monitora-chat-close" aria-label="Réduire le chat">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"></polyline>
           </svg>
         </button>
       </div>
@@ -302,6 +393,9 @@
             <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
           </svg>
         </button>
+      </div>
+      <div class="monitora-chat-footer" id="monitora-footer">
+        ${config.brandingText ? `<span class="monitora-powered-by">${config.brandingText}</span>` : ''}
       </div>
     </div>
   `;
@@ -315,19 +409,28 @@
   const messagesContainer = document.getElementById('monitora-messages');
   const input = document.getElementById('monitora-input');
   const sendButton = document.getElementById('monitora-send');
+  const footer = document.getElementById('monitora-footer');
 
+  // État
   // État
   let isOpen = false;
   let sessionId = null;
   let isLoading = false;
+  let streamingEnabled = true; // Par défaut, streaming activé
+  let welcomeMessage = config.welcomeMessage || 'Bonjour ! 👋 Comment puis-je vous aider ?';
+  let brandingText = config.brandingText !== undefined ? config.brandingText : 'Propulsé par MONITORA';
 
   // Fonctions
   function toggleChat() {
     isOpen = !isOpen;
     chatWindow.classList.toggle('open', isOpen);
-    if (isOpen && messagesContainer.children.length === 0) {
-      // Message de bienvenue
-      addMessage('assistant', config.welcomeMessage || 'Bonjour ! 👋 Comment puis-je vous aider ?');
+    if (isOpen) {
+      if (messagesContainer.children.length === 0) {
+        // Message de bienvenue (utilise la valeur mise à jour par l'API)
+        addMessage('assistant', welcomeMessage);
+      }
+      // Focus sur l'input quand le chat s'ouvre
+      setTimeout(() => input.focus(), 100);
     }
   }
 
@@ -387,11 +490,16 @@
     return formattedLines;
   }
 
-  function addMessage(role, content) {
+  function addMessage(role, content, addFeedback = true) {
     const messageDiv = document.createElement('div');
     messageDiv.className = `monitora-message ${role}`;
     // Formater le contenu (emails cliquables, liens, gras)
     const formattedContent = formatMessageContent(content);
+    
+    // Container pour message + feedback
+    const messageWrapper = document.createElement('div');
+    messageWrapper.className = 'monitora-message-wrapper';
+    
     messageDiv.innerHTML = `
       <div class="monitora-message-avatar">
         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -401,8 +509,109 @@
       <div class="monitora-message-content">${formattedContent}</div>
     `;
     messagesContainer.appendChild(messageDiv);
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    
+    // Ajouter les boutons feedback pour les messages assistant (pas le welcome message)
+    if (role === 'assistant' && addFeedback && content !== welcomeMessage) {
+      const feedbackDiv = document.createElement('div');
+      feedbackDiv.className = 'monitora-feedback-buttons';
+      feedbackDiv.innerHTML = `
+        <button class="monitora-feedback-btn" data-feedback="positive" title="Utile">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/>
+          </svg>
+        </button>
+        <button class="monitora-feedback-btn" data-feedback="negative" title="Pas utile">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"/>
+          </svg>
+        </button>
+      `;
+      messagesContainer.appendChild(feedbackDiv);
+      
+      // Event listeners pour feedback
+      feedbackDiv.querySelectorAll('.monitora-feedback-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const feedback = btn.dataset.feedback;
+          const isNegative = feedback === 'negative';
+          
+          // Reset tous les boutons
+          feedbackDiv.querySelectorAll('.monitora-feedback-btn').forEach(b => {
+            b.classList.remove('active', 'negative');
+          });
+          
+          // Activer le bouton cliqué
+          btn.classList.add('active');
+          if (isNegative) btn.classList.add('negative');
+          
+          // Envoyer le feedback à l'API (optionnel)
+          sendFeedback(feedback, content);
+        });
+      });
+    }
+    
+    // Scroll intelligent : pour les messages user, on scroll vers ce message
+    // Pour les réponses bot, on scroll pour voir le début de la réponse (pas la fin)
+    if (role === 'user') {
+      // Scroll pour que le message user soit visible en haut
+      messageDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      // Pour le bot, on scroll vers le haut du message (on voit la question + début réponse)
+      messageDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    
     return messageDiv;
+  }
+  
+  // Fonction pour envoyer le feedback
+  function sendFeedback(type, messageContent) {
+    fetch(`${API_URL}/api/widget/${workspaceId}/feedback`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type: type,
+        message: messageContent.substring(0, 200),
+        session_id: sessionId
+      })
+    }).catch(console.error);
+  }
+  
+  // Fonction pour ajouter les boutons feedback (utilisée après streaming)
+  function addFeedbackButtons(messageContent) {
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'monitora-feedback-buttons';
+    feedbackDiv.innerHTML = `
+      <button class="monitora-feedback-btn" data-feedback="positive" title="Utile">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/>
+        </svg>
+      </button>
+      <button class="monitora-feedback-btn" data-feedback="negative" title="Pas utile">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"/>
+        </svg>
+      </button>
+    `;
+    messagesContainer.appendChild(feedbackDiv);
+    
+    // Event listeners pour feedback
+    feedbackDiv.querySelectorAll('.monitora-feedback-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const feedback = btn.dataset.feedback;
+        const isNegative = feedback === 'negative';
+        
+        // Reset tous les boutons
+        feedbackDiv.querySelectorAll('.monitora-feedback-btn').forEach(b => {
+          b.classList.remove('active', 'negative');
+        });
+        
+        // Activer le bouton cliqué
+        btn.classList.add('active');
+        if (isNegative) btn.classList.add('negative');
+        
+        // Envoyer le feedback à l'API
+        sendFeedback(feedback, messageContent);
+      });
+    });
   }
 
   function showTyping() {
@@ -422,7 +631,8 @@
       </div>
     `;
     messagesContainer.appendChild(typingDiv);
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    // Scroll pour voir le typing en haut (on voit la question + typing)
+    typingDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   function hideTyping() {
@@ -432,7 +642,7 @@
 
   async function sendMessage() {
     const message = input.value.trim();
-    if (!message || isLoading) return;
+    if (!message || isLoading || domainBlocked) return;
 
     input.value = '';
     isLoading = true;
@@ -443,23 +653,101 @@
     showTyping();
 
     try {
-      const response = await fetch(`${API_URL}/api/widget/${workspaceId}/chat`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message,
-          session_id: sessionId,
-          stream: false
-        })
-      });
+      if (streamingEnabled) {
+        // Mode streaming
+        const response = await fetch(`${API_URL}/api/widget/${workspaceId}/chat`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message,
+            session_id: sessionId,
+            stream: true
+          })
+        });
 
-      hideTyping();
+        hideTyping();
 
-      if (!response.ok) throw new Error('Erreur serveur');
+        if (!response.ok) throw new Error('Erreur serveur');
 
-      const data = await response.json();
-      sessionId = data.session_id;
-      addMessage('assistant', data.response);
+        // Créer le message assistant vide avec la bonne structure
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'monitora-message assistant';
+        messageDiv.innerHTML = `
+          <div class="monitora-message-avatar">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+            </svg>
+          </div>
+          <div class="monitora-message-content"></div>
+        `;
+        const bubble = messageDiv.querySelector('.monitora-message-content');
+        messagesContainer.appendChild(messageDiv);
+
+        // Masquer l'indicateur de chargement dès que le streaming commence
+        hideTyping();
+
+        // Scroll vers le message utilisateur (pas tout en bas)
+        const userMessages = messagesContainer.querySelectorAll('.monitora-message.user');
+        const lastUserMessage = userMessages[userMessages.length - 1];
+        if (lastUserMessage) {
+          lastUserMessage.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // Lire le stream
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let fullResponse = '';
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          const chunk = decoder.decode(value);
+          const lines = chunk.split('\n');
+
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              try {
+                const data = JSON.parse(line.slice(6));
+                if (data.type === 'token') {
+                  fullResponse += data.content;
+                  bubble.innerHTML = formatMessageContent(fullResponse);
+                } else if (data.type === 'done') {
+                  sessionId = data.session_id;
+                }
+              } catch (e) {
+                // Ignorer les erreurs de parsing
+              }
+            }
+          }
+        }
+
+        // Formatter le message final
+        bubble.innerHTML = formatMessageContent(fullResponse);
+        
+        // Ajouter les boutons feedback après le streaming
+        addFeedbackButtons(fullResponse);
+        
+      } else {
+        // Mode non-streaming
+        const response = await fetch(`${API_URL}/api/widget/${workspaceId}/chat`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message,
+            session_id: sessionId,
+            stream: false
+          })
+        });
+
+        hideTyping();
+
+        if (!response.ok) throw new Error('Erreur serveur');
+
+        const data = await response.json();
+        sessionId = data.session_id;
+        addMessage('assistant', data.response);
+      }
     } catch (error) {
       hideTyping();
       addMessage('assistant', 'Désolé, une erreur est survenue. Veuillez réessayer.');
@@ -468,7 +756,6 @@
 
     isLoading = false;
     sendButton.disabled = false;
-    input.focus();
   }
 
   // Event listeners
@@ -478,13 +765,150 @@
   input.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') sendMessage();
   });
+  
+  // Garder le focus sur l'input en permanence quand le chat est ouvert
+  messagesContainer.addEventListener('click', () => input.focus());
+  document.addEventListener('click', (e) => {
+    if (chatWindow.classList.contains('open') && chatWindow.contains(e.target)) {
+      setTimeout(() => input.focus(), 10);
+    }
+  });
 
-  // Charger la config depuis l'API
+  // Variable pour bloquer le widget si domaine non autorisé
+  let domainBlocked = false;
+
+  // Charger la config depuis l'API et appliquer les vraies valeurs
   fetch(`${API_URL}/api/widget/${workspaceId}/config`)
-    .then(res => res.json())
-    .then(data => {
-      container.querySelector('.monitora-chat-title').textContent = data.name || 'Assistant';
+    .then(res => {
+      if (!res.ok) {
+        return res.json().then(errData => {
+          throw { status: res.status, data: errData };
+        });
+      }
+      return res.json();
     })
-    .catch(console.error);
+    .then(data => {
+      // Mettre à jour le nom du chatbot
+      container.querySelector('.monitora-chat-title').textContent = data.name || 'Assistant';
+      
+      // Récupérer le paramètre de streaming depuis la config
+      if (typeof data.streaming_enabled !== 'undefined') {
+        streamingEnabled = data.streaming_enabled;
+      }
+      
+      // Mettre à jour le message d'accueil (sera utilisé à l'ouverture)
+      if (data.welcome_message) {
+        welcomeMessage = data.welcome_message;
+      }
+      
+      // Appliquer la couleur principale depuis Supabase
+      if (data.primary_color) {
+        const primaryColor = data.primary_color;
+        
+        // Mettre à jour le bouton widget
+        const widgetButton = container.querySelector('.monitora-widget-button');
+        if (widgetButton) {
+          widgetButton.style.backgroundColor = primaryColor;
+        }
+        
+        // Mettre à jour le header du chat
+        const chatHeader = container.querySelector('.monitora-chat-header');
+        if (chatHeader) {
+          chatHeader.style.background = `linear-gradient(135deg, ${primaryColor} 0%, ${adjustColor(primaryColor, -30)} 100%)`;
+        }
+        
+        // Mettre à jour le bouton d'envoi
+        const sendBtn = container.querySelector('.monitora-chat-send');
+        if (sendBtn) {
+          sendBtn.style.backgroundColor = primaryColor;
+        }
+      }
+      
+      // Appliquer le placeholder depuis Supabase
+      if (data.placeholder) {
+        input.placeholder = data.placeholder;
+      }
+      
+      // Appliquer les dimensions depuis Supabase
+      if (data.width) {
+        chatWindow.style.width = data.width + 'px';
+      }
+      if (data.height) {
+        chatWindow.style.height = data.height + 'px';
+      }
+      
+      // Appliquer le texte de branding depuis Supabase
+      if (data.branding_text !== undefined) {
+        brandingText = data.branding_text;
+        if (footer) {
+          if (brandingText && brandingText.trim()) {
+            footer.innerHTML = `<span class="monitora-powered-by">${brandingText}</span>`;
+            footer.style.display = 'block';
+          } else {
+            footer.style.display = 'none';
+          }
+        }
+      }
+    })
+    .catch(err => {
+      console.error('MONITORA Error:', err);
+      
+      // Vérifier si c'est une erreur de domaine non autorisé
+      if (err.status === 403 && err.data && err.data.detail) {
+        const detail = err.data.detail;
+        if (detail.error === 'domain_not_allowed') {
+          domainBlocked = true;
+          
+          // Afficher un message dans le widget
+          const header = container.querySelector('.monitora-chat-header');
+          if (header) {
+            header.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+          }
+          
+          container.querySelector('.monitora-chat-title').textContent = 'Accès refusé';
+          container.querySelector('.monitora-chat-status').innerHTML = '<span class="monitora-status-dot" style="background:#fbbf24;"></span>Non autorisé';
+          
+          // Désactiver l'input
+          input.disabled = true;
+          input.placeholder = 'Widget non autorisé sur ce domaine';
+          sendButton.disabled = true;
+          
+          // Construire la liste des domaines autorisés
+          let domainsText = 'Non configuré';
+          if (detail.allowed_domains && Array.isArray(detail.allowed_domains) && detail.allowed_domains.length > 0) {
+            domainsText = detail.allowed_domains.join(', ');
+          } else if (detail.allowed_domain) {
+            domainsText = detail.allowed_domain;
+          }
+          
+          // Message d'erreur dans la zone de messages
+          messagesContainer.innerHTML = `
+            <div style="padding: 20px; text-align: center;">
+              <div style="font-size: 48px; margin-bottom: 16px;">🔒</div>
+              <h3 style="color: #ef4444; margin-bottom: 8px; font-size: 16px;">Domaine non autorisé</h3>
+              <p style="color: #6b7280; font-size: 14px; line-height: 1.5;">
+                Ce widget n'est pas autorisé à fonctionner sur ce site.
+              </p>
+              <p style="color: #9ca3af; font-size: 12px; margin-top: 12px;">
+                Domaine(s) autorisé(s) : <strong>${domainsText}</strong>
+              </p>
+              <p style="color: #9ca3af; font-size: 11px; margin-top: 8px;">
+                Veuillez contacter l'administrateur du chatbot pour autoriser ce domaine.
+              </p>
+            </div>
+          `;
+        }
+      }
+    });
+  
+  // Fonction pour ajuster la couleur (assombrir/éclaircir)
+  function adjustColor(color, amount) {
+    const hex = color.replace('#', '');
+    const num = parseInt(hex, 16);
+    const r = Math.max(0, Math.min(255, (num >> 16) + amount));
+    const g = Math.max(0, Math.min(255, ((num >> 8) & 0x00FF) + amount));
+    const b = Math.max(0, Math.min(255, (num & 0x0000FF) + amount));
+    return '#' + ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
+  }
 
 })();

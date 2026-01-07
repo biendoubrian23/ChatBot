@@ -184,25 +184,101 @@ async def delete_workspace(
     workspace_id: str,
     authorization: str = Header(None)
 ):
-    """Supprime un workspace"""
+    """
+    Supprime un workspace et toutes ses données associées en cascade.
+    - Documents et chunks indexés
+    - Historique des conversations
+    - Clés API
+    - Configuration de base de données
+    - Analytics
+    """
     user = await get_user_from_token(authorization)
     supabase = get_supabase()
     
     # Vérifier l'accès
     existing = supabase.table("workspaces")\
-        .select("id")\
+        .select("id, name")\
         .eq("id", workspace_id)\
         .eq("user_id", user.id)\
-        .single()\
         .execute()
     
-    if not existing.data:
+    if not existing.data or len(existing.data) == 0:
         raise HTTPException(status_code=404, detail="Workspace non trouvé")
     
-    # Supprimer le workspace (cascade vers documents, conversations, etc.)
-    supabase.table("workspaces")\
-        .delete()\
-        .eq("id", workspace_id)\
-        .execute()
+    workspace_name = existing.data[0].get("name", "")
     
-    return {"message": "Workspace supprimé"}
+    # Suppression en cascade de toutes les tables liées
+    # L'ordre est important pour respecter les contraintes de clés étrangères
+    # On ignore les erreurs pour les tables qui n'existent pas
+    
+    try:
+        # 1. Supprimer les chunks de documents
+        try:
+            supabase.table("document_chunks")\
+                .delete()\
+                .eq("workspace_id", workspace_id)\
+                .execute()
+        except Exception:
+            pass
+        
+        # 2. Supprimer les documents
+        try:
+            supabase.table("documents")\
+                .delete()\
+                .eq("workspace_id", workspace_id)\
+                .execute()
+        except Exception:
+            pass
+        
+        # 3. Supprimer les conversations et messages
+        try:
+            supabase.table("conversations")\
+                .delete()\
+                .eq("workspace_id", workspace_id)\
+                .execute()
+        except Exception:
+            pass
+        
+        # 4. Supprimer les clés API (si la table existe)
+        try:
+            supabase.table("api_keys")\
+                .delete()\
+                .eq("workspace_id", workspace_id)\
+                .execute()
+        except Exception:
+            pass
+        
+        # 5. Supprimer la configuration de base de données externe
+        try:
+            supabase.table("workspace_databases")\
+                .delete()\
+                .eq("workspace_id", workspace_id)\
+                .execute()
+        except Exception:
+            pass
+        
+        # 6. Supprimer le cache sémantique (si existe)
+        try:
+            supabase.table("semantic_cache")\
+                .delete()\
+                .eq("workspace_id", workspace_id)\
+                .execute()
+        except Exception:
+            pass
+        
+        # 7. Finalement, supprimer le workspace lui-même
+        supabase.table("workspaces")\
+            .delete()\
+            .eq("id", workspace_id)\
+            .execute()
+        
+        return {
+            "success": True,
+            "message": f"Workspace '{workspace_name}' supprimé avec succès"
+        }
+        
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, 
+            detail=f"Erreur lors de la suppression: {str(e)}"
+        )

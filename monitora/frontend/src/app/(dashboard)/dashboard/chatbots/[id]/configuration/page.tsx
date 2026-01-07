@@ -13,7 +13,9 @@ import {
   Scissors,
   RotateCcw,
   Info,
-  MessageSquare
+  MessageSquare,
+  ChevronDown,
+  Zap
 } from 'lucide-react'
 
 type Chatbot = Workspace
@@ -23,17 +25,26 @@ interface RAGConfig {
   temperature: number
   max_tokens: number
   system_prompt: string
+  streaming_enabled: boolean
 }
+
+const MODELS = [
+  { value: 'mistral-small-latest', label: 'Mistral Small', desc: 'Rapide et économique' },
+  { value: 'mistral-medium-latest', label: 'Mistral Medium', desc: 'Équilibré' },
+  { value: 'mistral-large-latest', label: 'Mistral Large', desc: 'Plus puissant' }
+]
 
 export default function ConfigurationPage() {
   const params = useParams()
   const [chatbot, setChatbot] = useState<Chatbot | null>(null)
   const [saving, setSaving] = useState(false)
+  const [modelDropdownOpen, setModelDropdownOpen] = useState(false)
   const [config, setConfig] = useState<RAGConfig>({
     model: 'mistral-small-latest',
     temperature: 0.7,
     max_tokens: 1024,
-    system_prompt: ''
+    system_prompt: '',
+    streaming_enabled: true
   })
 
   useEffect(() => {
@@ -82,9 +93,12 @@ export default function ConfigurationPage() {
       model: 'mistral-small-latest',
       temperature: 0.7,
       max_tokens: 1024,
-      system_prompt: ''
+      system_prompt: '',
+      streaming_enabled: true
     })
   }
+
+  const selectedModel = MODELS.find(m => m.value === config.model) || MODELS[0]
 
   return (
     <div className="space-y-8">
@@ -118,48 +132,100 @@ export default function ConfigurationPage() {
 
       {/* Layout 2 colonnes */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Colonne gauche - Modèle LLM */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+        {/* Colonne gauche - Modèle LLM + Streaming */}
+        <div className="space-y-6">
+          {/* Modèle LLM - Dropdown */}
+          <div className="bg-white rounded-xl border border-gray-200 p-6">
+            <div className="flex items-center gap-3 mb-6">
               <Brain size={20} className="text-purple-600" />
+              <div>
+                <h3 className="font-medium text-gray-900">Modèle LLM</h3>
+                <p className="text-sm text-gray-500">Choisissez le modèle de langage</p>
+              </div>
             </div>
-            <div>
-              <h3 className="font-medium text-gray-900">Modèle LLM</h3>
-              <p className="text-sm text-gray-500">Choisissez le modèle de langage</p>
+
+            <div className="relative">
+              <button
+                onClick={() => setModelDropdownOpen(!modelDropdownOpen)}
+                className="w-full p-4 rounded-lg border-2 border-gray-200 hover:border-gray-300 text-left transition-colors flex items-center justify-between"
+              >
+                <div>
+                  <p className="font-medium text-gray-900">{selectedModel.label}</p>
+                  <p className="text-xs text-gray-500 mt-1">{selectedModel.desc}</p>
+                </div>
+                <ChevronDown 
+                  size={20} 
+                  className={`text-gray-400 transition-transform ${modelDropdownOpen ? 'rotate-180' : ''}`} 
+                />
+              </button>
+              
+              {modelDropdownOpen && (
+                <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-10 overflow-hidden">
+                  {MODELS.map((model) => (
+                    <button
+                      key={model.value}
+                      onClick={() => {
+                        setConfig(prev => ({ ...prev, model: model.value }))
+                        setModelDropdownOpen(false)
+                      }}
+                      className={`w-full p-4 text-left hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0 ${
+                        config.model === model.value ? 'bg-gray-50' : ''
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-medium text-gray-900">{model.label}</p>
+                          <p className="text-xs text-gray-500 mt-1">{model.desc}</p>
+                        </div>
+                        {config.model === model.value && (
+                          <div className="w-2 h-2 bg-black rounded-full" />
+                        )}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-3">
-            {[
-              { value: 'mistral-small-latest', label: 'Mistral Small', desc: 'Rapide et économique' },
-              { value: 'mistral-medium-latest', label: 'Mistral Medium', desc: 'Équilibré' },
-              { value: 'mistral-large-latest', label: 'Mistral Large', desc: 'Plus puissant' }
-            ].map((model) => (
+          {/* Toggle Streaming */}
+          <div className="bg-white rounded-xl border border-gray-200 p-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Zap size={20} className="text-green-600" />
+                <div>
+                  <h3 className="font-medium text-gray-900">Réponse en streaming</h3>
+                  <p className="text-sm text-gray-500">Affiche la réponse mot par mot</p>
+                </div>
+              </div>
+              
+              {/* Toggle Switch */}
               <button
-                key={model.value}
-                onClick={() => setConfig(prev => ({ ...prev, model: model.value }))}
-                className={`
-                  p-4 rounded-lg border-2 text-left transition-colors
-                  ${config.model === model.value 
-                    ? 'border-black bg-gray-50' 
-                    : 'border-gray-200 hover:border-gray-300'
-                  }
-                `}
+                onClick={() => setConfig(prev => ({ ...prev, streaming_enabled: !prev.streaming_enabled }))}
+                className={`relative w-14 h-8 rounded-full transition-colors ${
+                  config.streaming_enabled ? 'bg-black' : 'bg-gray-300'
+                }`}
               >
-                <p className="font-medium text-gray-900">{model.label}</p>
-                <p className="text-xs text-gray-500 mt-1">{model.desc}</p>
+                <div
+                  className={`absolute top-1 w-6 h-6 bg-white rounded-full shadow-sm transition-transform ${
+                    config.streaming_enabled ? 'translate-x-7' : 'translate-x-1'
+                  }`}
+                />
               </button>
-            ))}
+            </div>
+            <p className="text-xs text-gray-400 mt-4">
+              {config.streaming_enabled 
+                ? 'Les réponses s\'afficheront progressivement comme une vraie conversation'
+                : 'Les réponses s\'afficheront en une seule fois après génération complète'
+              }
+            </p>
           </div>
         </div>
 
         {/* Colonne droite - Génération */}
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-              <Thermometer size={20} className="text-orange-600" />
-            </div>
+            <Thermometer size={20} className="text-orange-600" />
             <div>
               <h3 className="font-medium text-gray-900">Génération</h3>
               <p className="text-sm text-gray-500">Contrôlez la créativité des réponses</p>
@@ -227,9 +293,7 @@ export default function ConfigurationPage() {
       {/* System Prompt - Pleine largeur */}
       <div className="bg-white rounded-xl border border-gray-200 p-6">
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-            <MessageSquare size={20} className="text-blue-600" />
-          </div>
+          <MessageSquare size={20} className="text-blue-600" />
           <div>
             <h3 className="font-medium text-gray-900">Instructions du chatbot</h3>
             <p className="text-sm text-gray-500">Définissez le comportement et la personnalité de votre assistant</p>

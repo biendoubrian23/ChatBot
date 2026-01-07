@@ -70,6 +70,8 @@ interface ChatWidgetPreviewProps {
   workspaceId?: string  // Pour appeler le vrai backend
   widgetWidth?: number
   widgetHeight?: number
+  streamingEnabled?: boolean
+  brandingText?: string
 }
 
 // Fonction helper pour ajuster la couleur (plus sombre)
@@ -89,7 +91,9 @@ export function ChatWidgetPreview({
   showInPhone = false,
   workspaceId,
   widgetWidth = 360,
-  widgetHeight = 500
+  widgetHeight = 500,
+  streamingEnabled = true,
+  brandingText = 'Propulsé par MONITORA'
 }: ChatWidgetPreviewProps) {
   const [isOpen, setIsOpen] = useState(showInPhone ? true : false)
   const [messages, setMessages] = useState<Message[]>([
@@ -98,16 +102,24 @@ export function ChatWidgetPreview({
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [sessionId, setSessionId] = useState<string | null>(null)
-  const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  const userMessageRef = useRef<HTMLDivElement>(null)
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  const scrollToUserMessage = () => {
+    // Scroller vers le message utilisateur pour voir la question + le début de la réponse
+    userMessageRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
   useEffect(() => {
-    scrollToBottom()
+    scrollToUserMessage()
   }, [messages])
+
+  // Focus sur l'input quand le chat s'ouvre
+  useEffect(() => {
+    if (isOpen) {
+      setTimeout(() => inputRef.current?.focus(), 100)
+    }
+  }, [isOpen])
 
   const handleSend = async () => {
     if (!input.trim() || isLoading) return
@@ -131,33 +143,90 @@ export function ChatWidgetPreview({
     }
 
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001'}/api/widget/${workspaceId}/chat`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            message: userMessage,
-            session_id: sessionId,
-            stream: false
-          })
-        }
-      )
+      if (streamingEnabled) {
+        // Mode streaming
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001'}/api/widget/${workspaceId}/chat`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              message: userMessage,
+              session_id: sessionId,
+              stream: true
+            })
+          }
+        )
 
-      if (response.ok) {
-        const data = await response.json()
-        setSessionId(data.session_id)
-        setMessages(prev => [...prev, { 
-          role: 'assistant', 
-          content: data.response, 
-          feedback: null 
-        }])
+        if (!response.ok) throw new Error('Erreur serveur')
+
+        // Ajouter un message vide qui sera mis à jour et masquer l'indicateur de chargement
+        setMessages(prev => [...prev, { role: 'assistant', content: '', feedback: null }])
+        setIsLoading(false) // Masquer les "..." pendant le streaming
+
+        const reader = response.body?.getReader()
+        const decoder = new TextDecoder()
+        let fullResponse = ''
+
+        if (reader) {
+          while (true) {
+            const { done, value } = await reader.read()
+            if (done) break
+
+            const chunk = decoder.decode(value)
+            const lines = chunk.split('\n')
+
+            for (const line of lines) {
+              if (line.startsWith('data: ')) {
+                try {
+                  const data = JSON.parse(line.slice(6))
+                  if (data.type === 'token') {
+                    fullResponse += data.content
+                    // Mettre à jour le dernier message
+                    setMessages(prev => {
+                      const updated = [...prev]
+                      updated[updated.length - 1] = { 
+                        ...updated[updated.length - 1], 
+                        content: fullResponse 
+                      }
+                      return updated
+                    })
+                  } else if (data.type === 'done') {
+                    setSessionId(data.session_id)
+                  }
+                } catch (e) {
+                  // Ignorer les erreurs de parsing
+                }
+              }
+            }
+          }
+        }
       } else {
-        setMessages(prev => [...prev, { 
-          role: 'assistant', 
-          content: 'Désolé, une erreur est survenue. Veuillez réessayer.', 
-          feedback: null 
-        }])
+        // Mode non-streaming
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001'}/api/widget/${workspaceId}/chat`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              message: userMessage,
+              session_id: sessionId,
+              stream: false
+            })
+          }
+        )
+
+        if (response.ok) {
+          const data = await response.json()
+          setSessionId(data.session_id)
+          setMessages(prev => [...prev, { 
+            role: 'assistant', 
+            content: data.response, 
+            feedback: null 
+          }])
+        } else {
+          throw new Error('Erreur serveur')
+        }
       }
     } catch (error) {
       console.error('Erreur chat:', error)
@@ -230,9 +299,13 @@ export function ChatWidgetPreview({
 
               {/* Messages */}
               <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50">
-                {messages.map((msg, i) => (
+                {messages.map((msg, i) => {
+                  // Trouver l'index du dernier message utilisateur
+                  const lastUserIndex = messages.map((m, idx) => m.role === 'user' ? idx : -1).filter(idx => idx !== -1).pop()
+                  return (
                   <div
                     key={i}
+                    ref={i === lastUserIndex ? userMessageRef : null}
                     className={cn(
                       'flex w-full',
                       msg.role === 'user' ? 'justify-end' : 'justify-start'
@@ -288,7 +361,7 @@ export function ChatWidgetPreview({
                       )}
                     </div>
                   </div>
-                ))}
+                )})}  
                 {/* Indicateur de chargement */}
                 {isLoading && (
                   <div className="flex justify-start">
@@ -307,20 +380,19 @@ export function ChatWidgetPreview({
                     </div>
                   </div>
                 )}
-                <div ref={messagesEndRef} />
               </div>
 
               {/* Input */}
               <div className="p-3 bg-white border-t border-gray-100">
                 <div className="flex items-center gap-2">
                   <input
+                    ref={inputRef}
                     type="text"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && !isLoading && handleSend()}
                     placeholder="Écrivez votre message..."
-                    disabled={isLoading}
-                    className="flex-1 px-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-200 disabled:opacity-50"
+                    className="flex-1 px-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-200"
                   />
                   <button
                     onClick={handleSend}
@@ -331,9 +403,11 @@ export function ChatWidgetPreview({
                     <Send className={cn("w-4 h-4", input.trim() && !isLoading ? 'text-white' : 'text-gray-400')} />
                   </button>
                 </div>
-                <p className="text-center text-xs text-gray-400 mt-2">
-                  Propulsé par <span className="font-medium text-gray-500">MONITORA</span>
-                </p>
+                {brandingText && (
+                  <p className="text-center text-xs text-gray-400 mt-2">
+                    {brandingText}
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -388,9 +462,13 @@ export function ChatWidgetPreview({
           className="overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-gray-50 to-white"
           style={{ height: `${widgetHeight - 140}px` }}
         >
-          {messages.map((msg, i) => (
+          {messages.map((msg, i) => {
+            // Trouver l'index du dernier message utilisateur
+            const lastUserIndex = messages.map((m, idx) => m.role === 'user' ? idx : -1).filter(idx => idx !== -1).pop()
+            return (
             <div
               key={i}
+              ref={i === lastUserIndex ? userMessageRef : null}
               className={cn(
                 'flex w-full',
                 msg.role === 'user' ? 'justify-end' : 'justify-start'
@@ -449,7 +527,7 @@ export function ChatWidgetPreview({
                 )}
               </div>
             </div>
-          ))}
+          )})}  
           {/* Indicateur de chargement */}
           {isLoading && (
             <div className="flex justify-start">
@@ -468,20 +546,19 @@ export function ChatWidgetPreview({
               </div>
             </div>
           )}
-          <div ref={messagesEndRef} />
         </div>
 
         {/* Input */}
         <div className="p-4 border-t border-gray-100 bg-white">
           <div className="flex items-center gap-2">
             <input
+              ref={inputRef}
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && !isLoading && handleSend()}
               placeholder="Écrivez votre message..."
-              disabled={isLoading}
-              className="flex-1 px-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-200 focus:border-gray-300 placeholder:text-gray-400 disabled:opacity-50"
+              className="flex-1 px-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-200 focus:border-gray-300 placeholder:text-gray-400"
             />
             <button
               onClick={handleSend}
@@ -497,9 +574,11 @@ export function ChatWidgetPreview({
               )} />
             </button>
           </div>
-          <p className="text-center text-xs text-gray-400 mt-3">
-            Propulsé par <span className="font-medium text-gray-500">MONITORA</span>
-          </p>
+          {brandingText && (
+            <p className="text-center text-xs text-gray-400 mt-3">
+              {brandingText}
+            </p>
+          )}
         </div>
       </div>
 

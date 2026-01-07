@@ -249,9 +249,7 @@ export default function InsightsPage() {
       {!hasData && (
         <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100 rounded-xl p-6">
           <div className="flex items-start gap-4">
-            <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center flex-shrink-0">
-              <Sparkles size={24} className="text-indigo-600" />
-            </div>
+            <Sparkles size={24} className="text-indigo-600 flex-shrink-0" />
             <div>
               <h3 className="font-semibold text-gray-900 mb-1">Pas encore de données</h3>
               <p className="text-gray-600 text-sm mb-3">

@@ -6,78 +6,14 @@ import { supabase, Workspace } from '@/lib/supabase'
 import { ChatbotSidebar } from '@/components/chatbot-sidebar'
 import { Breadcrumb } from '@/components/ui/breadcrumb'
 import { ChatWidgetPreview } from '@/components/chat-widget-preview'
+import { ChatbotProvider, useChatbot } from '@/contexts/chatbot-context'
 
 type Chatbot = Workspace
 
-export default function ChatbotLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  const params = useParams()
-  const router = useRouter()
-  const [chatbot, setChatbot] = useState<Chatbot | null>(null)
-  const [loading, setLoading] = useState(true)
+function ChatbotLayoutContent({ children }: { children: React.ReactNode }) {
+  const { chatbot } = useChatbot()
 
-  const loadChatbot = useCallback(async (id: string) => {
-    const { data, error } = await supabase
-      .from('workspaces')
-      .select('*')
-      .eq('id', id)
-      .single()
-
-    if (error || !data) {
-      router.push('/dashboard')
-      return
-    }
-
-    setChatbot(data)
-    setLoading(false)
-  }, [router])
-
-  useEffect(() => {
-    if (params.id) {
-      loadChatbot(params.id as string)
-    }
-  }, [params.id, loadChatbot])
-
-  // S'abonner aux changements en temps réel du workspace
-  useEffect(() => {
-    if (!params.id) return
-
-    const channel = supabase
-      .channel(`workspace-${params.id}`)
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'workspaces',
-          filter: `id=eq.${params.id}`
-        },
-        (payload) => {
-          // Mettre à jour le chatbot quand widget_config change
-          setChatbot(prev => prev ? { ...prev, ...payload.new } : null)
-        }
-      )
-      .subscribe()
-
-    return () => {
-      supabase.removeChannel(channel)
-    }
-  }, [params.id])
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="animate-spin h-8 w-8 border-2 border-gray-300 border-t-black rounded-full" />
-      </div>
-    )
-  }
-
-  if (!chatbot) {
-    return null
-  }
+  if (!chatbot) return null
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -114,7 +50,60 @@ export default function ChatbotLayout({
         accentColor={chatbot.widget_config?.primaryColor || "#000000"}
         widgetWidth={chatbot.widget_config?.widgetWidth || 360}
         widgetHeight={chatbot.widget_config?.widgetHeight || 500}
+        streamingEnabled={chatbot.rag_config?.streaming_enabled ?? true}
+        brandingText={chatbot.widget_config?.brandingText ?? 'Propulsé par MONITORA'}
       />
     </div>
+  )
+}
+
+export default function ChatbotLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  const params = useParams()
+  const router = useRouter()
+  const [chatbot, setChatbot] = useState<Chatbot | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  const loadChatbot = useCallback(async (id: string) => {
+    const { data, error } = await supabase
+      .from('workspaces')
+      .select('*')
+      .eq('id', id)
+      .single()
+
+    if (error || !data) {
+      router.push('/dashboard')
+      return
+    }
+
+    setChatbot(data)
+    setLoading(false)
+  }, [router])
+
+  useEffect(() => {
+    if (params.id) {
+      loadChatbot(params.id as string)
+    }
+  }, [params.id, loadChatbot])
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin h-8 w-8 border-2 border-gray-300 border-t-black rounded-full" />
+      </div>
+    )
+  }
+
+  if (!chatbot) {
+    return null
+  }
+
+  return (
+    <ChatbotProvider initialChatbot={chatbot}>
+      <ChatbotLayoutContent>{children}</ChatbotLayoutContent>
+    </ChatbotProvider>
   )
 }
