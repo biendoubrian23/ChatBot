@@ -1,48 +1,52 @@
 """
 Service de détection d'intention pour les messages du chatbot.
-Détecte si l'utilisateur pose une question sur une commande ou une question générale.
-Identique au MessageAnalyzer du chatbot CoolLibri original.
+Utilise le LLM pour déterminer intelligemment l'intention de l'utilisateur.
 """
 import re
 import logging
 import json
-from typing import Dict, Any, Optional, Tuple
+from typing import Dict, Any, Optional
+from mistralai import Mistral
+import os
 
 logger = logging.getLogger(__name__)
 
-# Mots-clés pour détecter une intention de suivi de commande (identique à l'original)
-ORDER_KEYWORDS = [
-    "commande", "colis", "livraison", "expédition", "expédié", "suivi",
-    "tracking", "où en est", "statut", "numéro", "n°", "commandes",
-    "reçu", "reçue", "arrivée", "arrive", "délai", "retard",
-    "envoyé", "envoyée", "quand", "order", "cmd", "mon colis",
-    "ma commande", "suivre"
-]
-
-# Pattern regex pour extraire les numéros de commande (identique à l'original)
+# Pattern regex UNIQUEMENT pour extraire les numéros de commande (pas pour la détection d'intention)
 ORDER_NUMBER_PATTERNS = [
-    r'(?:commande|commandes|numéro|numero|n°|#)\s*[:\s]*(\d{4,6})',  # Après mot-clé
-    r'(?:^|\s)(\d{5})(?:\s|$)',  # 5 chiffres isolés (format CoolLibri standard)
-    r'\b(\d{5,8})\b',  # 5 à 8 chiffres
+    r'(?:commande|commandes|numéro|numero|n°|#)\s*[:\s]*(\d{4,6})',
+    r'(?:^|\s)(\d{5})(?:\s|$)',
+    r'\b(\d{5,8})\b',
 ]
 
 
 class IntentDetector:
     """
-    Détecte l'intention de l'utilisateur (identique à MessageAnalyzer original).
+    Détecte l'intention de l'utilisateur avec le LLM.
     
     Intentions:
-    - order_tracking : L'utilisateur veut le STATUT/SUIVI d'une commande
-    - general_question : Tout le reste (questions produits, prix, etc.)
+    - order_tracking : L'utilisateur veut le STATUT/SUIVI de SA commande spécifique
+    - general_question : Questions générales (délais, prix, formats, problèmes, etc.)
     """
     
     def __init__(self):
-        """Initialise le détecteur."""
-        self.llm = None
+        """Initialise le détecteur avec le client Mistral."""
+        api_key = os.getenv("MISTRAL_API_KEY")
+        self.client = Mistral(api_key=api_key) if api_key else None
+        self.model = os.getenv("MISTRAL_MODEL", "mistral-small-latest")
     
-    def detect(self, message: str) -> Dict[str, Any]:
+    def _extract_order_number(self, message: str) -> Optional[str]:
+        """Extrait le numéro de commande du message avec regex."""
+        for pattern in ORDER_NUMBER_PATTERNS:
+            match = re.search(pattern, message, re.IGNORECASE)
+            if match:
+                number = match.group(1)
+                if 4 <= len(number) <= 8:
+                    return number
+        return None
+    
+    async def detect(self, message: str) -> Dict[str, Any]:
         """
-        Détecte l'intention avec regex (rapide, sans LLM).
+        Détecte l'intention avec le LLM.
         
         Returns:
             {
@@ -52,15 +56,7 @@ class IntentDetector:
                 "needs_order_number": bool
             }
         """
-        message_lower = message.lower().strip()
-        
-        # 1. Essayer d'extraire un numéro de commande
-        order_number = self._extract_order_number(message)
-        
-        # 2. Vérifier les mots-clés
-        has_order_keyword = any(kw in message_lower for kw in ORDER_KEYWORDS)
-        
-        # 3. Message est juste un numéro → suivi de commande
+        # Cas spécial : message est juste un numéro → suivi de commande
         if message.strip().isdigit() and 4 <= len(message.strip()) <= 8:
             return {
                 "intent": "order_tracking",
@@ -68,94 +64,96 @@ class IntentDetector:
                 "confidence": 0.99
             }
         
-        # 4. Si numéro trouvé, c'est du suivi de commande
-        if order_number:
+        # Extraire le numéro de commande s'il existe
+        order_number = self._extract_order_number(message)
+        
+        # Si pas de client Mistral, fallback basique
+        if not self.client:
+            logger.warning("Pas de client Mistral, fallback sur general_question")
             return {
-                "intent": "order_tracking",
+                "intent": "general_question",
                 "order_number": order_number,
-                "confidence": 0.95
+                "confidence": 0.5
             }
         
-        # 5. Si mots-clés mais pas de numéro, demander le numéro
-        if has_order_keyword:
-            return {
-                "intent": "order_tracking",
-                "order_number": None,
-                "confidence": 0.8,
-                "needs_order_number": True
-            }
-        
-        # 6. Sinon, question générale
-        return {
-            "intent": "general_question",
-            "order_number": None,
-            "confidence": 0.9
-        }
-    
-    def _extract_order_number(self, message: str) -> Optional[str]:
-        """
-        Extrait le numéro de commande du message (identique à l'original).
-        """
-        for pattern in ORDER_NUMBER_PATTERNS:
-            match = re.search(pattern, message, re.IGNORECASE)
-            if match:
-                number = match.group(1)
-                # Valider que c'est un numéro plausible
-                if 4 <= len(number) <= 8:
-                    return number
-        return None
-    
-    async def detect_with_llm(self, message: str, llm_provider=None) -> Dict[str, Any]:
-        """
-        Détection avancée avec LLM (identique au prompt original CoolLibri).
-        Utilise le LLM comme cerveau principal pour les cas ambigus.
-        """
-        if not llm_provider:
-            return self.detect(message)
-        
-        # PROMPT OPTIMISÉ (identique à l'original)
-        prompt = f"""Analyse ce message client CoolLibri (imprimerie livres):
-"{message}"
+        # Appel LLM pour détecter l'intention
+        prompt = f"""Analyse ce message d'un client CoolLibri (service d'impression de livres):
 
-INTENTION:
-- ORDER_TRACKING = veut le STATUT/SUIVI d'une commande ("où en est ma commande?", "commande 13349", "mon colis?", juste un numéro)
-- GENERAL_QUESTION = tout le reste (annulation, réclamation, qualité, prix, formats, problèmes, remboursement)
+MESSAGE: "{message}"
 
-NUMÉRO: Extrais UNIQUEMENT un numéro PRÉSENT dans le message. Sinon null.
+Tu dois classifier ce message en UNE seule catégorie:
 
-JSON uniquement:
-{{"intent":"ORDER_TRACKING|GENERAL_QUESTION","order_number":"xxxxx|null","reasoning":"court"}}"""
+1. ORDER_TRACKING = Le client demande UNIQUEMENT le STATUT ACTUEL de sa commande
+   - "où en est ma commande?"
+   - "je veux suivre mon colis"
+   - "commande 13456"
+   - "quel est le statut de ma commande?"
+
+2. GENERAL_QUESTION = TOUT LE RESTE, notamment:
+   - Questions sur les délais en général: "quels sont les délais?", "combien de temps pour livrer?"
+   - RÉCLAMATIONS et PLAINTES: "ça fait 1 mois que j'attends", "ma commande a du retard", "je n'ai toujours pas reçu"
+   - Questions "que faire si...": "comment faire si retard?", "que faire si pas reçu?"
+   - Problèmes qualité, remboursements, annulations
+   - Questions sur les prix, formats, services
+
+RÈGLE IMPORTANTE: 
+- Une PLAINTE ou RÉCLAMATION ("j'attends depuis 1 mois", "retard", "pas reçu") = GENERAL_QUESTION
+- Seule une demande EXPLICITE de statut ("où en est?", "suivre ma commande") = ORDER_TRACKING
+
+Réponds UNIQUEMENT avec ce JSON:
+{{"intent": "ORDER_TRACKING ou GENERAL_QUESTION"}}"""
 
         try:
-            response = await llm_provider.generate(
-                system_prompt="Tu es un assistant qui analyse les intentions des messages clients.",
-                user_message=prompt,
+            response = self.client.chat.complete(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": "Tu classifies les messages clients. Réponds uniquement en JSON."},
+                    {"role": "user", "content": prompt}
+                ],
                 temperature=0.1,
-                max_tokens=150
+                max_tokens=50
             )
             
-            # Parser la réponse JSON
-            json_match = re.search(r'\{[^}]+\}', response)
+            result_text = response.choices[0].message.content.strip()
+            logger.info(f"🧠 Intent LLM response: {result_text}")
+            
+            # Parser le JSON
+            json_match = re.search(r'\{[^}]+\}', result_text)
             if json_match:
                 result = json.loads(json_match.group())
-                intent = "order_tracking" if "ORDER" in result.get("intent", "").upper() else "general_question"
-                order_num = result.get("order_number")
+                intent_raw = result.get("intent", "GENERAL_QUESTION").upper()
                 
-                # Valider le numéro de commande
-                if order_num and (order_num == "null" or not order_num.isdigit()):
-                    order_num = None
-                
-                return {
-                    "intent": intent,
-                    "order_number": order_num,
-                    "confidence": 0.95,
-                    "reasoning": result.get("reasoning", "")
-                }
+                if "ORDER" in intent_raw and "TRACKING" in intent_raw:
+                    intent = "order_tracking"
+                    # Si order_tracking mais pas de numéro, on doit le demander
+                    if not order_number:
+                        return {
+                            "intent": "order_tracking",
+                            "order_number": None,
+                            "confidence": 0.95,
+                            "needs_order_number": True
+                        }
+                    return {
+                        "intent": "order_tracking",
+                        "order_number": order_number,
+                        "confidence": 0.95
+                    }
+                else:
+                    return {
+                        "intent": "general_question",
+                        "order_number": None,
+                        "confidence": 0.95
+                    }
+                    
         except Exception as e:
-            logger.warning(f"Erreur détection LLM: {e}")
+            logger.error(f"❌ Erreur détection LLM: {e}")
         
-        # Fallback sur la détection simple
-        return self.detect(message)
+        # Fallback: question générale par défaut
+        return {
+            "intent": "general_question",
+            "order_number": order_number,
+            "confidence": 0.5
+        }
 
 
 # Instance singleton

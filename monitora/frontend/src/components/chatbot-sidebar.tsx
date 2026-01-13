@@ -33,7 +33,7 @@ export function ChatbotSidebar({ chatbotId, chatbotName, isActive = true }: Chat
     { href: `${basePath}/analytics`, icon: BarChart3, label: 'Analytics' },
     { href: `${basePath}/configuration`, icon: Sparkles, label: 'Configuration IA' },
     { href: `${basePath}/integration`, icon: Code, label: 'Intégration' },
-    { href: `${basePath}/api-keys`, icon: Key, label: 'Clés API' },
+    { href: `${basePath}/api-keys`, icon: Key, label: 'Base de données & API' },
     { href: `${basePath}/settings`, icon: Settings, label: 'Paramètres' },
   ]
 

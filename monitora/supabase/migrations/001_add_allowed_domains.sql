@@ -29,3 +29,11 @@ COMMENT ON COLUMN workspaces.allowed_domains IS 'Liste des domaines autorisés p
 -- ============================================================
 -- DROP INDEX IF EXISTS idx_workspaces_allowed_domains;
 -- ALTER TABLE workspaces DROP COLUMN IF EXISTS allowed_domains;
+
+// Données à récupérer :
+1. COUNT(*) FROM messages WHERE workspace_id = X
+2. COUNT(DISTINCT visitor_id) FROM conversations WHERE workspace_id = X
+3. AVG(response_time_ms) FROM messages WHERE role = 'assistant'
+4. AVG(feedback) FROM messages WHERE feedback IS NOT NULL
+5. COUNT(*) FROM conversations WHERE date > today
+

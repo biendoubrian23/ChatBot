@@ -131,8 +131,14 @@ class WidgetChatRequest(BaseModel):
 
 
 class FeedbackRequest(BaseModel):
-    message_id: str
-    feedback: int  # 1 = 👍, -1 = 👎
+    # Format moderne (widget.py script.js)
+    message_id: Optional[str] = None
+    feedback: Optional[int] = None  # 1 = 👍, -1 = 👎
+    
+    # Format alternatif (embed.js)
+    type: Optional[str] = None  # "positive" ou "negative"
+    message: Optional[str] = None
+    session_id: Optional[str] = None
 
 
 class WidgetConfig(BaseModel):
@@ -316,15 +322,22 @@ async def widget_chat(
             media_type="text/event-stream"
         )
     else:
+        import time
+        start_time = time.time()
+        
         response, sources, rag_score = await _get_response_with_score(rag, data.message, history)
         
-        # Sauvegarder la réponse avec le score RAG
+        # Calculer le temps de réponse
+        response_time_ms = int((time.time() - start_time) * 1000)
+        
+        # Sauvegarder la réponse avec le score RAG et temps de réponse
         msg_result = supabase.table("messages").insert({
             "conversation_id": conversation["id"],
             "role": "assistant",
             "content": response,
             "rag_score": rag_score,
-            "sources": sources
+            "sources": sources,
+            "response_time_ms": response_time_ms
         }).execute()
         
         message_id = msg_result.data[0]["id"] if msg_result.data else None
@@ -338,30 +351,79 @@ async def widget_chat(
 
 
 @router.post("/{workspace_id}/feedback")
-async def submit_feedback(workspace_id: str, data: FeedbackRequest):
+async def submit_feedback(workspace_id: str, request: Request):
     """
     Enregistre le feedback utilisateur (👍 ou 👎) sur un message
+    Accepte deux formats:
+    - Format moderne: {"message_id": "xxx", "feedback": 1}
+    - Format embed.js: {"type": "positive", "message": "...", "session_id": "..."}
     """
+    # Log du body brut pour debug
+    raw_body = await request.body()
+    logger.info(f"📊 Feedback RAW body: {raw_body.decode('utf-8')}")
+    
     supabase = get_supabase()
+    
+    # Parse le JSON
+    try:
+        import json
+        body_data = json.loads(raw_body)
+        logger.info(f"📊 Feedback parsed: {body_data}")
+    except Exception as e:
+        logger.error(f"❌ Erreur parsing JSON feedback: {e}")
+        raise HTTPException(status_code=422, detail=str(e))
+    
+    # Détecter le format et extraire les données
+    message_id = body_data.get("message_id")
+    feedback_value = body_data.get("feedback")
+    
+    # Format alternatif (embed.js) : {"type": "positive/negative", "session_id": "...", "message": "..."}
+    if not message_id and body_data.get("type"):
+        feedback_type = body_data.get("type")
+        session_id = body_data.get("session_id")
+        message_content = body_data.get("message", "")[:200]  # Premiers 200 chars
+        
+        feedback_value = 1 if feedback_type == "positive" else -1
+        
+        if session_id:
+            # Trouver le dernier message assistant de cette conversation
+            msg_result = supabase.table("messages")\
+                .select("id")\
+                .eq("conversation_id", session_id)\
+                .eq("role", "assistant")\
+                .order("created_at", desc=True)\
+                .limit(1)\
+                .execute()
+            
+            if msg_result.data:
+                message_id = msg_result.data[0]["id"]
+                logger.info(f"📊 Message trouvé via session_id: {message_id}")
+    
+    # Valider qu'on a bien un message_id
+    if not message_id:
+        logger.warning("⚠️ Feedback sans message_id - ignoré")
+        return {"success": True, "note": "No message_id found"}
     
     # Vérifier que le message appartient bien à ce workspace
     msg_result = supabase.table("messages")\
         .select("id, conversation:conversations!inner(workspace_id)")\
-        .eq("id", data.message_id)\
+        .eq("id", message_id)\
         .single()\
         .execute()
     
     if not msg_result.data:
-        raise HTTPException(status_code=404, detail="Message non trouvé")
+        logger.warning(f"⚠️ Message {message_id} non trouvé")
+        return {"success": True, "note": "Message not found"}
     
     if msg_result.data["conversation"]["workspace_id"] != workspace_id:
         raise HTTPException(status_code=403, detail="Accès refusé")
     
     # Mettre à jour le feedback
     supabase.table("messages").update({
-        "feedback": data.feedback
-    }).eq("id", data.message_id).execute()
+        "feedback": feedback_value
+    }).eq("id", message_id).execute()
     
+    logger.info(f"✅ Feedback enregistré: message={message_id}, value={feedback_value}")
     return {"success": True}
 
 
@@ -421,13 +483,16 @@ async def _check_order_intent(supabase, workspace_id: str, message: str) -> Opti
     Si oui, interroge la BDD externe et retourne la réponse formatée.
     Sinon, retourne None pour continuer avec le RAG.
     
-    Flux identique au chatbot CoolLibri original.
+    Utilise le LLM pour détecter l'intention intelligemment.
     """
-    # 1. Détecter l'intention (comme MessageAnalyzer original)
+    # 1. Détecter l'intention avec le LLM
     intent_detector = IntentDetector()
-    intent = intent_detector.detect(message)
+    intent = await intent_detector.detect(message)
+    
+    logger.info(f"🧠 Intent détectée: {intent}")
     
     if intent["intent"] != "order_tracking":
+        return None
         return None
     
     order_number = intent.get("order_number")
@@ -513,8 +578,11 @@ async def _get_response_with_score(rag: RAGPipeline, message: str, history: list
 
 
 async def _stream_response_with_score(supabase, rag: RAGPipeline, message: str, history: list, conversation_id: str):
-    """Stream la réponse et stocke avec le score RAG"""
+    """Stream la réponse et stocke avec le score RAG + temps de réponse"""
     import asyncio
+    import time
+    
+    start_time = time.time()  # Début du chrono
     
     full_response = ""
     sources = []
@@ -536,13 +604,18 @@ async def _stream_response_with_score(supabase, rag: RAGPipeline, message: str, 
     # Post-traitement: corriger les emails malformés
     full_response = fix_email_format(full_response)
     
-    # Sauvegarder la réponse avec le score RAG
+    # Calculer le temps de réponse en millisecondes
+    response_time_ms = int((time.time() - start_time) * 1000)
+    logger.info(f"⏱️ Temps de réponse: {response_time_ms}ms")
+    
+    # Sauvegarder la réponse avec le score RAG et le temps de réponse
     msg_result = supabase.table("messages").insert({
         "conversation_id": conversation_id,
         "role": "assistant",
         "content": full_response,
         "rag_score": rag_score,
-        "sources": sources
+        "sources": sources,
+        "response_time_ms": response_time_ms
     }).execute()
     
     message_id = msg_result.data[0]["id"] if msg_result.data else None

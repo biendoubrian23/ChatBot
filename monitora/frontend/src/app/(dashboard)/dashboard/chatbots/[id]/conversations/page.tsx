@@ -11,7 +11,10 @@ import {
   Clock,
   User,
   ChevronRight,
-  X
+  X,
+  ThumbsUp,
+  ThumbsDown,
+  Zap
 } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
 
@@ -32,6 +35,9 @@ interface Message {
   role: 'user' | 'assistant'
   content: string
   created_at: string
+  feedback?: number | null
+  response_time_ms?: number | null
+  rag_score?: number | null
 }
 
 export default function ConversationsPage() {
@@ -243,16 +249,60 @@ export default function ConversationsPage() {
                   key={message.id}
                   className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
-                  <div 
-                    className={`
-                      max-w-[80%] p-3 rounded-2xl text-sm
-                      ${message.role === 'user' 
-                        ? 'bg-black text-white rounded-br-md' 
-                        : 'bg-gray-100 text-gray-900 rounded-bl-md'
-                      }
-                    `}
-                  >
-                    {message.content}
+                  <div className="max-w-[80%]">
+                    <div 
+                      className={`
+                        p-3 rounded-2xl text-sm
+                        ${message.role === 'user' 
+                          ? 'bg-black text-white rounded-br-md' 
+                          : 'bg-gray-100 text-gray-900 rounded-bl-md'
+                        }
+                      `}
+                    >
+                      {message.content}
+                    </div>
+                    
+                    {/* Métadonnées pour les messages assistant */}
+                    {message.role === 'assistant' && (
+                      <div className="flex items-center gap-3 mt-1.5 ml-1">
+                        {/* Feedback */}
+                        {message.feedback !== null && message.feedback !== undefined && (
+                          <div className={`
+                            flex items-center gap-1 text-xs px-2 py-0.5 rounded-full
+                            ${message.feedback === 1 
+                              ? 'bg-green-100 text-green-700' 
+                              : 'bg-red-100 text-red-700'
+                            }
+                          `}>
+                            {message.feedback === 1 
+                              ? <ThumbsUp size={10} /> 
+                              : <ThumbsDown size={10} />
+                            }
+                            <span>{message.feedback === 1 ? 'Utile' : 'Pas utile'}</span>
+                          </div>
+                        )}
+                        
+                        {/* Temps de réponse */}
+                        {message.response_time_ms && (
+                          <div className="flex items-center gap-1 text-xs text-gray-400">
+                            <Zap size={10} />
+                            <span>
+                              {message.response_time_ms < 1000 
+                                ? `${message.response_time_ms}ms`
+                                : `${(message.response_time_ms / 1000).toFixed(1)}s`
+                              }
+                            </span>
+                          </div>
+                        )}
+                        
+                        {/* Score RAG si disponible */}
+                        {message.rag_score !== null && message.rag_score !== undefined && (
+                          <div className="text-xs text-gray-400">
+                            Score: {Math.round(message.rag_score * 100)}%
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               ))

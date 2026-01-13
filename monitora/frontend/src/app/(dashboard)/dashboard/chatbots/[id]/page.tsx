@@ -39,7 +39,9 @@ export default function ChatbotOverviewPage() {
     usersTotal: 0,
     avgResponseTime: '0s',
     documentsCount: 0,
-    conversationsToday: 0
+    conversationsToday: 0,
+    satisfactionRate: 0,
+    messagesPerConversation: 0
   })
 
   useEffect(() => {
@@ -60,22 +62,85 @@ export default function ChatbotOverviewPage() {
       setChatbot(chatbotData)
     }
 
-    // Charger les stats (simplifiées pour l'instant)
+    // 1. Nombre de documents
     const { data: docsData } = await supabase
       .from('documents')
       .select('id')
       .eq('workspace_id', id)
 
+    // 2. Toutes les conversations du workspace
     const { data: convData } = await supabase
       .from('conversations')
-      .select('id')
+      .select('id, visitor_id, started_at, messages_count, satisfaction')
       .eq('workspace_id', id)
 
-    setStats(prev => ({
-      ...prev,
+    // 3. Tous les messages du workspace (via les conversations)
+    const conversationIds = convData?.map(c => c.id) || []
+    let messagesData: any[] = []
+    let totalResponseTime = 0
+    let responseTimeCount = 0
+    let totalFeedback = 0
+    let feedbackCount = 0
+
+    if (conversationIds.length > 0) {
+      const { data: msgData } = await supabase
+        .from('messages')
+        .select('id, role, response_time_ms, feedback, created_at')
+        .in('conversation_id', conversationIds)
+
+      messagesData = msgData || []
+
+      // Calculer le temps de réponse moyen (uniquement messages assistant)
+      messagesData.forEach(msg => {
+        if (msg.role === 'assistant' && msg.response_time_ms) {
+          totalResponseTime += msg.response_time_ms
+          responseTimeCount++
+        }
+        if (msg.feedback !== null && msg.feedback !== undefined) {
+          totalFeedback += msg.feedback
+          feedbackCount++
+        }
+      })
+    }
+
+    // 4. Utilisateurs uniques (visitor_id distincts)
+    const uniqueVisitors = new Set(convData?.map(c => c.visitor_id).filter(Boolean))
+
+    // 5. Conversations aujourd'hui
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const conversationsToday = convData?.filter(c => 
+      new Date(c.started_at) >= today
+    ).length || 0
+
+    // 6. Calculer les moyennes
+    const avgResponseMs = responseTimeCount > 0 ? totalResponseTime / responseTimeCount : 0
+    const avgResponseTime = avgResponseMs > 0 
+      ? avgResponseMs < 1000 
+        ? `${Math.round(avgResponseMs)}ms`
+        : `${(avgResponseMs / 1000).toFixed(1)}s`
+      : '0s'
+
+    const satisfactionRate = feedbackCount > 0 
+      ? Math.round((totalFeedback / feedbackCount) * 100)
+      : 0
+
+    const totalMessages = messagesData.length
+    const totalConversations = convData?.length || 0
+    const messagesPerConversation = totalConversations > 0 
+      ? Math.round((totalMessages / totalConversations) * 10) / 10
+      : 0
+
+    setStats({
+      messagesTotal: totalMessages,
+      messagesThisWeek: totalMessages, // TODO: filtrer par semaine
+      usersTotal: uniqueVisitors.size,
+      avgResponseTime,
       documentsCount: docsData?.length || 0,
-      conversationsToday: convData?.length || 0
-    }))
+      conversationsToday,
+      satisfactionRate,
+      messagesPerConversation
+    })
   }
 
   return (
