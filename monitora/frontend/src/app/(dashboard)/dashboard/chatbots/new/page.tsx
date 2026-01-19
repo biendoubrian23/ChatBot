@@ -3,7 +3,8 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { supabase } from '@/lib/supabase'
+import { getCurrentUser } from '@/lib/auth'
+import { api } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Breadcrumb } from '@/components/ui/breadcrumb'
 import { 
@@ -43,35 +44,24 @@ export default function NewChatbotPage() {
   const createChatbot = async () => {
     setCreating(true)
 
-    const { data: { user } } = await supabase.auth.getUser()
+    const user = await getCurrentUser()
     if (!user) {
       router.push('/login')
       return
     }
 
-    const { data, error } = await supabase
-      .from('workspaces')
-      .insert({
-        user_id: user.id,
+    try {
+      const data = await api.workspaces.create({
         name: formData.name,
-        domain: formData.domain || null,
-        settings: {
-          welcome_message: formData.welcomeMessage,
-          description: formData.description
-        },
-        is_active: true
+        description: formData.description
       })
-      .select()
-      .single()
 
-    if (error) {
+      // Rediriger vers le nouveau chatbot
+      router.push(`/dashboard/chatbots/${data.id}`)
+    } catch (error) {
       console.error('Erreur création:', error)
       setCreating(false)
-      return
     }
-
-    // Rediriger vers le nouveau chatbot
-    router.push(`/dashboard/chatbots/${data.id}`)
   }
 
   const handleNext = () => {

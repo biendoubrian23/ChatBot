@@ -1,10 +1,12 @@
 """
-Routes API pour les Workspaces
+Routes API pour les Workspaces - SQL Server uniquement
 """
-from fastapi import APIRouter, HTTPException, Header
+from fastapi import APIRouter, HTTPException, Header, Depends
 from typing import Optional
 from pydantic import BaseModel
-from app.core.supabase import get_supabase
+from app.core.config import settings, DEFAULT_RAG_CONFIG
+from app.core.auth_sqlserver import get_current_user
+from app.core.database import WorkspacesDB, get_db, to_json, parse_json, new_uuid
 
 router = APIRouter()
 
@@ -30,105 +32,104 @@ class RAGConfigUpdate(BaseModel):
     enable_cache: Optional[bool] = None
     cache_ttl: Optional[int] = None
     similarity_threshold: Optional[float] = None
-    system_prompt: Optional[str] = None  # Prompt personnalisé du chatbot
+    system_prompt: Optional[str] = None
 
 
-async def get_user_from_token(authorization: str) -> dict:
-    """Vérifie le token et retourne l'utilisateur"""
-    if not authorization or not authorization.startswith("Bearer "):
-        raise HTTPException(status_code=401, detail="Non autorisé")
-    
-    token = authorization.replace("Bearer ", "")
-    supabase = get_supabase()
-    
-    try:
-        user = supabase.auth.get_user(token)
-        return user.user
-    except Exception:
-        raise HTTPException(status_code=401, detail="Token invalide")
-
+# =====================================================
+# ROUTES SQL Server
+# =====================================================
 
 @router.get("")
-async def list_workspaces(authorization: str = Header(None)):
+async def list_workspaces(user = Depends(get_current_user)):
     """Liste tous les workspaces de l'utilisateur"""
-    user = await get_user_from_token(authorization)
-    supabase = get_supabase()
+    db = get_db()
     
-    result = supabase.table("workspaces")\
-        .select("*")\
-        .eq("user_id", user.id)\
-        .order("created_at", desc=True)\
-        .execute()
-    
-    return result.data
+    with db.cursor() as cursor:
+        cursor.execute("""
+            SELECT w.*, 
+                   (SELECT COUNT(*) FROM documents d WHERE d.workspace_id = w.id) as documents_count,
+                   (SELECT COUNT(*) FROM conversations c WHERE c.workspace_id = w.id) as conversations_count
+            FROM workspaces w
+            WHERE w.user_id = ?
+            ORDER BY w.created_at DESC
+        """, (user["id"],))
+        
+        columns = [col[0] for col in cursor.description]
+        rows = cursor.fetchall()
+        workspaces = [dict(zip(columns, row)) for row in rows]
+        
+        # Parser les colonnes JSON
+        for w in workspaces:
+            w["rag_config"] = parse_json(w.get("rag_config"))
+            w["widget_config"] = parse_json(w.get("widget_config"))
+        
+        return workspaces
 
 
 @router.post("")
 async def create_workspace(
     data: WorkspaceCreate,
-    authorization: str = Header(None)
+    user = Depends(get_current_user)
 ):
     """Crée un nouveau workspace"""
-    user = await get_user_from_token(authorization)
-    supabase = get_supabase()
+    db = get_db()
+    workspace_id = new_uuid()
     
-    from app.core.config import DEFAULT_RAG_CONFIG
-    
-    workspace_data = {
-        "name": data.name,
-        "description": data.description,
-        "user_id": user.id,
-        "rag_config": DEFAULT_RAG_CONFIG
+    default_widget = {
+        "color_accent": "#000000",
+        "position": "bottom-right",
+        "welcome_message": "Bonjour ! Comment puis-je vous aider ?",
+        "chatbot_name": "Assistant"
     }
     
-    result = supabase.table("workspaces")\
-        .insert(workspace_data)\
-        .execute()
-    
-    return result.data[0]
+    with db.cursor() as cursor:
+        cursor.execute("""
+            INSERT INTO workspaces (id, user_id, name, description, rag_config, widget_config, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, GETDATE(), GETDATE())
+        """, (
+            workspace_id,
+            user["id"],
+            data.name,
+            data.description,
+            to_json(DEFAULT_RAG_CONFIG),
+            to_json(default_widget)
+        ))
+        
+        cursor.execute("SELECT * FROM workspaces WHERE id = ?", (workspace_id,))
+        columns = [col[0] for col in cursor.description]
+        row = cursor.fetchone()
+        result = dict(zip(columns, row))
+        result["rag_config"] = parse_json(result.get("rag_config"))
+        result["widget_config"] = parse_json(result.get("widget_config"))
+        
+        return result
 
 
 @router.get("/{workspace_id}")
 async def get_workspace(
     workspace_id: str,
-    authorization: str = Header(None)
+    user = Depends(get_current_user)
 ):
     """Récupère un workspace par son ID"""
-    user = await get_user_from_token(authorization)
-    supabase = get_supabase()
+    workspace = WorkspacesDB.get_by_id_and_user(workspace_id, user["id"])
     
-    result = supabase.table("workspaces")\
-        .select("*")\
-        .eq("id", workspace_id)\
-        .eq("user_id", user.id)\
-        .single()\
-        .execute()
-    
-    if not result.data:
+    if not workspace:
         raise HTTPException(status_code=404, detail="Workspace non trouvé")
     
-    return result.data
+    return workspace
 
 
 @router.patch("/{workspace_id}")
 async def update_workspace(
     workspace_id: str,
     data: WorkspaceUpdate,
-    authorization: str = Header(None)
+    user = Depends(get_current_user)
 ):
     """Met à jour un workspace"""
-    user = await get_user_from_token(authorization)
-    supabase = get_supabase()
     
     # Vérifier l'accès
-    existing = supabase.table("workspaces")\
-        .select("id")\
-        .eq("id", workspace_id)\
-        .eq("user_id", user.id)\
-        .single()\
-        .execute()
-    
-    if not existing.data:
+    existing = WorkspacesDB.get_by_id_and_user(workspace_id, user["id"])
+    if not existing:
         raise HTTPException(status_code=404, detail="Workspace non trouvé")
     
     # Filtrer les champs non-null
@@ -137,148 +138,56 @@ async def update_workspace(
     if not update_data:
         raise HTTPException(status_code=400, detail="Aucune donnée à mettre à jour")
     
-    result = supabase.table("workspaces")\
-        .update(update_data)\
-        .eq("id", workspace_id)\
-        .execute()
-    
-    return result.data[0]
+    result = WorkspacesDB.update(workspace_id, **update_data)
+    return result
 
 
 @router.patch("/{workspace_id}/rag-config")
 async def update_rag_config(
     workspace_id: str,
     config: RAGConfigUpdate,
-    authorization: str = Header(None)
+    user = Depends(get_current_user)
 ):
     """Met à jour la configuration RAG d'un workspace"""
-    user = await get_user_from_token(authorization)
-    supabase = get_supabase()
     
     # Récupérer le workspace actuel
-    existing = supabase.table("workspaces")\
-        .select("rag_config")\
-        .eq("id", workspace_id)\
-        .eq("user_id", user.id)\
-        .single()\
-        .execute()
+    workspace = WorkspacesDB.get_by_id_and_user(workspace_id, user["id"])
     
-    if not existing.data:
+    if not workspace:
         raise HTTPException(status_code=404, detail="Workspace non trouvé")
     
-    # Fusionner la config existante avec les nouvelles valeurs
-    current_config = existing.data.get("rag_config", {})
+    # Fusionner la config
+    current_config = workspace.get("rag_config") or {}
     new_config = {k: v for k, v in config.model_dump().items() if v is not None}
     merged_config = {**current_config, **new_config}
     
-    result = supabase.table("workspaces")\
-        .update({"rag_config": merged_config})\
-        .eq("id", workspace_id)\
-        .execute()
-    
-    return result.data[0]
+    result = WorkspacesDB.update(workspace_id, rag_config=merged_config)
+    return result
 
 
 @router.delete("/{workspace_id}")
 async def delete_workspace(
     workspace_id: str,
-    authorization: str = Header(None)
+    user = Depends(get_current_user)
 ):
-    """
-    Supprime un workspace et toutes ses données associées en cascade.
-    - Documents et chunks indexés
-    - Historique des conversations
-    - Clés API
-    - Configuration de base de données
-    - Analytics
-    """
-    user = await get_user_from_token(authorization)
-    supabase = get_supabase()
+    """Supprime un workspace et toutes ses données associées en cascade."""
     
     # Vérifier l'accès
-    existing = supabase.table("workspaces")\
-        .select("id, name")\
-        .eq("id", workspace_id)\
-        .eq("user_id", user.id)\
-        .execute()
+    workspace = WorkspacesDB.get_by_id_and_user(workspace_id, user["id"])
     
-    if not existing.data or len(existing.data) == 0:
+    if not workspace:
         raise HTTPException(status_code=404, detail="Workspace non trouvé")
     
-    workspace_name = existing.data[0].get("name", "")
-    
-    # Suppression en cascade de toutes les tables liées
-    # L'ordre est important pour respecter les contraintes de clés étrangères
-    # On ignore les erreurs pour les tables qui n'existent pas
+    workspace_name = workspace.get("name", "")
     
     try:
-        # 1. Supprimer les chunks de documents
-        try:
-            supabase.table("document_chunks")\
-                .delete()\
-                .eq("workspace_id", workspace_id)\
-                .execute()
-        except Exception:
-            pass
-        
-        # 2. Supprimer les documents
-        try:
-            supabase.table("documents")\
-                .delete()\
-                .eq("workspace_id", workspace_id)\
-                .execute()
-        except Exception:
-            pass
-        
-        # 3. Supprimer les conversations et messages
-        try:
-            supabase.table("conversations")\
-                .delete()\
-                .eq("workspace_id", workspace_id)\
-                .execute()
-        except Exception:
-            pass
-        
-        # 4. Supprimer les clés API (si la table existe)
-        try:
-            supabase.table("api_keys")\
-                .delete()\
-                .eq("workspace_id", workspace_id)\
-                .execute()
-        except Exception:
-            pass
-        
-        # 5. Supprimer la configuration de base de données externe
-        try:
-            supabase.table("workspace_databases")\
-                .delete()\
-                .eq("workspace_id", workspace_id)\
-                .execute()
-        except Exception:
-            pass
-        
-        # 6. Supprimer le cache sémantique (si existe)
-        try:
-            supabase.table("semantic_cache")\
-                .delete()\
-                .eq("workspace_id", workspace_id)\
-                .execute()
-        except Exception:
-            pass
-        
-        # 7. Finalement, supprimer le workspace lui-même
-        supabase.table("workspaces")\
-            .delete()\
-            .eq("id", workspace_id)\
-            .execute()
-        
+        WorkspacesDB.delete(workspace_id)
         return {
             "success": True,
             "message": f"Workspace '{workspace_name}' supprimé avec succès"
         }
-        
     except Exception as e:
         raise HTTPException(
-            status_code=500, 
+            status_code=500,
             detail=f"Erreur lors de la suppression: {str(e)}"
         )

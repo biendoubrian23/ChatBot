@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
+import { getAccessToken } from '@/lib/auth'
 import { Button } from '@/components/ui/button'
 import { 
   Key, 
@@ -82,14 +82,9 @@ export default function ApiKeysPage() {
     // Dans une vraie implémentation, on chargerait depuis une table api_keys
   }, [params.id])
 
-  const getToken = async () => {
-    const { data: { session } } = await supabase.auth.getSession()
-    return session?.access_token || ''
-  }
-
   const loadDatabaseConfig = async () => {
     try {
-      const token = await getToken()
+      const token = getAccessToken()
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/workspaces/${params.id}/database`,
         {
@@ -131,7 +126,7 @@ export default function ApiKeysPage() {
     setDbTestResult(null)  // Effacer l'ancien résultat de test
     
     try {
-      const token = await getToken()
+      const token = getAccessToken()
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/workspaces/${params.id}/database`,
         {
@@ -172,7 +167,7 @@ export default function ApiKeysPage() {
     setDbTestResult(null)
     
     try {
-      const token = await getToken()
+      const token = getAccessToken()
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/workspaces/${params.id}/database/test`,
         {

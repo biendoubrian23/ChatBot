@@ -2,14 +2,14 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
+import { getCurrentUser, logout, User } from '@/lib/auth'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card'
 
 export default function SettingsPage() {
   const router = useRouter()
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
 
@@ -18,13 +18,13 @@ export default function SettingsPage() {
   }, [])
 
   const loadUser = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
-    setUser(user)
+    const currentUser = await getCurrentUser()
+    setUser(currentUser)
     setLoading(false)
   }
 
   const handleLogout = async () => {
-    await supabase.auth.signOut()
+    await logout()
     router.push('/login')
   }
 

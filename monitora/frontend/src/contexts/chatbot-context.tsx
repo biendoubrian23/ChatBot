@@ -1,7 +1,8 @@
 'use client'
 
 import { createContext, useContext, useState, useCallback, ReactNode } from 'react'
-import { supabase, Workspace } from '@/lib/supabase'
+import { Workspace } from '@/lib/supabase'
+import { api } from '@/lib/api'
 
 type Chatbot = Workspace
 
@@ -27,18 +28,17 @@ export function ChatbotProvider({
   const refreshChatbot = useCallback(async () => {
     if (!chatbot?.id) return
     
-    const { data } = await supabase
-      .from('workspaces')
-      .select('*')
-      .eq('id', chatbot.id)
-      .single()
-
-    if (data) {
-      setChatbot(data)
+    try {
+      const data = await api.workspaces.get(chatbot.id)
+      if (data) {
+        setChatbot(data)
+      }
+    } catch (error) {
+      console.error('Erreur refresh chatbot:', error)
     }
   }, [chatbot?.id])
 
-  // Mettre à jour widget_config localement (avant même la sauvegarde Supabase)
+  // Mettre à jour widget_config localement (avant même la sauvegarde API)
   const updateWidgetConfig = useCallback((config: Partial<Chatbot['widget_config']>) => {
     setChatbot(prev => prev ? {
       ...prev,

@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
-import { supabase, Workspace } from '@/lib/supabase'
+import { Workspace } from '@/lib/supabase'
+import { api } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Slider } from '@/components/ui/slider'
 import { 
@@ -54,18 +55,18 @@ export default function ConfigurationPage() {
   }, [params.id])
 
   const loadChatbot = async (id: string) => {
-    const { data } = await supabase
-      .from('workspaces')
-      .select('*')
-      .eq('id', id)
-      .single()
+    try {
+      const data = await api.workspaces.get(id)
 
-    if (data) {
-      setChatbot(data)
-      // Charger la config depuis rag_config directement
-      if (data.rag_config) {
-        setConfig(prev => ({ ...prev, ...data.rag_config }))
+      if (data) {
+        setChatbot(data)
+        // Charger la config depuis rag_config directement
+        if (data.rag_config) {
+          setConfig(prev => ({ ...prev, ...data.rag_config }))
+        }
       }
+    } catch (error) {
+      console.error('Erreur chargement chatbot:', error)
     }
   }
 
@@ -74,18 +75,15 @@ export default function ConfigurationPage() {
 
     setSaving(true)
 
-    // Sauvegarder rag_config directement (pas dans settings)
-    const { error } = await supabase
-      .from('workspaces')
-      .update({ rag_config: config })
-      .eq('id', chatbot.id)
-
-    setSaving(false)
-
-    if (!error) {
+    try {
+      await api.ragConfig.update(chatbot.id, config)
       // Mise à jour locale
       setChatbot(prev => prev ? { ...prev, rag_config: config } : null)
+    } catch (error) {
+      console.error('Erreur sauvegarde config:', error)
     }
+
+    setSaving(false)
   }
 
   const resetToDefaults = () => {

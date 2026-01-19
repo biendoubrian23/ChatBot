@@ -1,12 +1,12 @@
 """
-Routes API pour le Chat (test interne)
+Routes API pour le Chat (test interne) - SQL Server
 """
 from fastapi import APIRouter, HTTPException, Header
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from typing import Optional, List
 import json
-from app.core.supabase import get_supabase
+from app.core.database import WorkspacesDB, ConversationsDB, MessagesDB
 from app.api.workspaces import get_user_from_token
 from app.services.rag_pipeline import RAGPipeline
 
@@ -35,60 +35,30 @@ async def chat(
 ):
     """Endpoint de chat avec streaming"""
     user = await get_user_from_token(authorization)
-    supabase = get_supabase()
     
     # Vérifier l'accès au workspace
-    workspace_result = supabase.table("workspaces")\
-        .select("*")\
-        .eq("id", data.workspace_id)\
-        .eq("user_id", user.id)\
-        .single()\
-        .execute()
+    workspace = WorkspacesDB.get_by_id_and_user(data.workspace_id, user.id)
     
-    if not workspace_result.data:
+    if not workspace:
         raise HTTPException(status_code=404, detail="Workspace non trouvé")
-    
-    workspace = workspace_result.data
     
     # Créer ou récupérer la conversation
     if data.conversation_id:
-        conv_result = supabase.table("conversations")\
-            .select("*")\
-            .eq("id", data.conversation_id)\
-            .eq("workspace_id", data.workspace_id)\
-            .single()\
-            .execute()
+        conversation = ConversationsDB.get_by_id(data.conversation_id)
         
-        if not conv_result.data:
+        if not conversation or conversation.get('workspace_id') != data.workspace_id:
             raise HTTPException(status_code=404, detail="Conversation non trouvée")
-        
-        conversation = conv_result.data
     else:
         # Créer une nouvelle conversation
-        conv_result = supabase.table("conversations")\
-            .insert({
-                "workspace_id": data.workspace_id,
-                "title": data.message[:50] + "..." if len(data.message) > 50 else data.message
-            })\
-            .execute()
-        conversation = conv_result.data[0]
+        title = data.message[:50] + "..." if len(data.message) > 50 else data.message
+        conversation = ConversationsDB.create(data.workspace_id, title)
     
     # Sauvegarder le message utilisateur
-    supabase.table("messages").insert({
-        "conversation_id": conversation["id"],
-        "role": "user",
-        "content": data.message
-    }).execute()
+    MessagesDB.create(conversation["id"], "user", data.message)
     
     # Récupérer l'historique
-    history_result = supabase.table("messages")\
-        .select("role, content")\
-        .eq("conversation_id", conversation["id"])\
-        .order("created_at")\
-        .limit(10)\
-        .execute()
-    
-    history = history_result.data[:-1]  # Exclure le dernier message (celui qu'on vient d'ajouter)
+    history = MessagesDB.get_by_conversation(conversation["id"], limit=10)
+    history = [{"role": m["role"], "content": m["content"]} for m in history[:-1]]  # Exclure le dernier
     
     # Créer le pipeline RAG
     rag = RAGPipeline(workspace_id=data.workspace_id, config=workspace.get("rag_config", {}))
@@ -109,12 +79,12 @@ async def chat(
                     yield f"data: {json.dumps(chunk)}\n\n"
             
             # Sauvegarder la réponse
-            supabase.table("messages").insert({
-                "conversation_id": conversation["id"],
-                "role": "assistant",
-                "content": full_response,
-                "metadata": {"sources": sources}
-            }).execute()
+            MessagesDB.create(
+                conversation["id"], 
+                "assistant", 
+                full_response, 
+                metadata={"sources": sources}
+            )
             
             # Signal de fin
             yield f"data: {json.dumps({'type': 'done', 'conversation_id': conversation['id']})}\n\n"
@@ -128,12 +98,12 @@ async def chat(
         response, sources = await rag.get_response(data.message, history)
         
         # Sauvegarder la réponse
-        supabase.table("messages").insert({
-            "conversation_id": conversation["id"],
-            "role": "assistant",
-            "content": response,
-            "metadata": {"sources": sources}
-        }).execute()
+        MessagesDB.create(
+            conversation["id"], 
+            "assistant", 
+            response, 
+            metadata={"sources": sources}
+        )
         
         return ChatResponse(
             response=response,
@@ -149,26 +119,15 @@ async def list_conversations(
 ):
     """Liste toutes les conversations d'un workspace"""
     user = await get_user_from_token(authorization)
-    supabase = get_supabase()
     
     # Vérifier l'accès
-    workspace_check = supabase.table("workspaces")\
-        .select("id")\
-        .eq("id", workspace_id)\
-        .eq("user_id", user.id)\
-        .single()\
-        .execute()
+    workspace = WorkspacesDB.get_by_id_and_user(workspace_id, user.id)
     
-    if not workspace_check.data:
+    if not workspace:
         raise HTTPException(status_code=404, detail="Workspace non trouvé")
     
-    result = supabase.table("conversations")\
-        .select("*")\
-        .eq("workspace_id", workspace_id)\
-        .order("created_at", desc=True)\
-        .execute()
-    
-    return result.data
+    conversations = ConversationsDB.get_by_workspace(workspace_id)
+    return conversations
 
 
 @router.get("/conversation/{conversation_id}/messages")
@@ -178,28 +137,18 @@ async def get_conversation_messages(
 ):
     """Récupère les messages d'une conversation"""
     user = await get_user_from_token(authorization)
-    supabase = get_supabase()
     
     # Vérifier l'accès via le workspace
-    conv_result = supabase.table("conversations")\
-        .select("*, workspaces!inner(user_id)")\
-        .eq("id", conversation_id)\
-        .single()\
-        .execute()
+    conversation = ConversationsDB.get_with_workspace_owner(conversation_id)
     
-    if not conv_result.data:
+    if not conversation:
         raise HTTPException(status_code=404, detail="Conversation non trouvée")
     
-    if conv_result.data["workspaces"]["user_id"] != user.id:
+    if conversation.get("workspace_user_id") != user.id:
         raise HTTPException(status_code=403, detail="Accès refusé")
     
-    messages = supabase.table("messages")\
-        .select("*")\
-        .eq("conversation_id", conversation_id)\
-        .order("created_at")\
-        .execute()
-    
-    return messages.data
+    messages = MessagesDB.get_by_conversation(conversation_id)
+    return messages
 
 
 @router.delete("/conversation/{conversation_id}")
@@ -209,22 +158,17 @@ async def delete_conversation(
 ):
     """Supprime une conversation"""
     user = await get_user_from_token(authorization)
-    supabase = get_supabase()
     
     # Vérifier l'accès
-    conv_result = supabase.table("conversations")\
-        .select("*, workspaces!inner(user_id)")\
-        .eq("id", conversation_id)\
-        .single()\
-        .execute()
+    conversation = ConversationsDB.get_with_workspace_owner(conversation_id)
     
-    if not conv_result.data:
+    if not conversation:
         raise HTTPException(status_code=404, detail="Conversation non trouvée")
     
-    if conv_result.data["workspaces"]["user_id"] != user.id:
+    if conversation.get("workspace_user_id") != user.id:
         raise HTTPException(status_code=403, detail="Accès refusé")
     
     # Supprimer (cascade vers messages)
-    supabase.table("conversations").delete().eq("id", conversation_id).execute()
+    ConversationsDB.delete(conversation_id)
     
     return {"message": "Conversation supprimée"}

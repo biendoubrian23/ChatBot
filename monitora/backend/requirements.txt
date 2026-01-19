@@ -7,8 +7,11 @@ python-dotenv>=1.0.0
 python-multipart>=0.0.6
 aiofiles>=23.0.0
 
-# Supabase
+# Supabase (legacy - peut être supprimé après migration complète)
 supabase>=2.0.0
+
+# Authentication
+PyJWT>=2.8.0
 
 # LLM Providers
 mistralai>=1.0.0

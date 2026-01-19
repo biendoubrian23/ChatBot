@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { useParams } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
+import { api } from '@/lib/api'
 import { StatCard } from '@/components/ui/stat-card'
 import { DateRangePicker } from '@/components/ui/date-range-picker'
 import { 
@@ -84,114 +84,30 @@ export default function AnalyticsPage() {
       startDate = getStartDate(period)
     }
 
-    // Période précédente (pour calculer le trend)
-    const periodDuration = endDate.getTime() - startDate.getTime()
-    const previousStartDate = new Date(startDate.getTime() - periodDuration)
-    const previousEndDate = new Date(startDate.getTime() - 1)
+    try {
+      // Utiliser l'API analytics côté serveur
+      const analyticsData = await api.analytics.overview(workspaceId, period)
+      
+      if (analyticsData) {
+        setStats({
+          totalMessages: analyticsData.totalMessages || 0,
+          uniqueUsers: analyticsData.uniqueUsers || 0,
+          avgResponseTime: analyticsData.avgResponseTime || '0s',
+          avgResponseTimeMs: analyticsData.avgResponseTimeMs || 0,
+          satisfactionRate: analyticsData.satisfactionRate || 0,
+          messagesPerConversation: analyticsData.messagesPerConversation || 0,
+          resolvedConversations: analyticsData.resolvedConversations || 0,
+          totalConversations: analyticsData.totalConversations || 0
+        })
 
-    // 1. Récupérer les conversations de la période
-    const { data: convData } = await supabase
-      .from('conversations')
-      .select('id, visitor_id, started_at, messages_count, satisfaction')
-      .eq('workspace_id', workspaceId)
-      .gte('started_at', startDate.toISOString())
-      .lte('started_at', endDate.toISOString())
-
-    // 2. Conversations de la période précédente (pour le trend)
-    const { data: prevConvData } = await supabase
-      .from('conversations')
-      .select('id, visitor_id')
-      .eq('workspace_id', workspaceId)
-      .gte('started_at', previousStartDate.toISOString())
-      .lte('started_at', previousEndDate.toISOString())
-
-    // 3. Récupérer les messages de ces conversations
-    const conversationIds = convData?.map(c => c.id) || []
-    const prevConversationIds = prevConvData?.map(c => c.id) || []
-    
-    let messagesData: any[] = []
-    let prevMessagesCount = 0
-
-    if (conversationIds.length > 0) {
-      const { data: msgData } = await supabase
-        .from('messages')
-        .select('id, role, response_time_ms, feedback, created_at')
-        .in('conversation_id', conversationIds)
-
-      messagesData = msgData || []
-    }
-
-    if (prevConversationIds.length > 0) {
-      const { count } = await supabase
-        .from('messages')
-        .select('id', { count: 'exact', head: true })
-        .in('conversation_id', prevConversationIds)
-
-      prevMessagesCount = count || 0
-    }
-
-    // 4. Calculer les métriques
-    let totalResponseTime = 0
-    let responseTimeCount = 0
-    let totalFeedback = 0
-    let feedbackCount = 0
-
-    messagesData.forEach(msg => {
-      if (msg.role === 'assistant' && msg.response_time_ms) {
-        totalResponseTime += msg.response_time_ms
-        responseTimeCount++
+        setPreviousStats({
+          totalMessages: analyticsData.previousTotalMessages || 0,
+          uniqueUsers: analyticsData.previousUniqueUsers || 0
+        })
       }
-      if (msg.feedback !== null && msg.feedback !== undefined) {
-        totalFeedback += msg.feedback
-        feedbackCount++
-      }
-    })
-
-    // Utilisateurs uniques
-    const uniqueVisitors = new Set(convData?.map(c => c.visitor_id).filter(Boolean))
-    const prevUniqueVisitors = new Set(prevConvData?.map(c => c.visitor_id).filter(Boolean))
-
-    // Temps de réponse moyen
-    const avgResponseMs = responseTimeCount > 0 ? totalResponseTime / responseTimeCount : 0
-    const avgResponseTime = avgResponseMs > 0 
-      ? avgResponseMs < 1000 
-        ? `${Math.round(avgResponseMs)}ms`
-        : `${(avgResponseMs / 1000).toFixed(1)}s`
-      : '0s'
-
-    // Satisfaction
-    const satisfactionRate = feedbackCount > 0 
-      ? Math.round((totalFeedback / feedbackCount) * 100)
-      : 0
-
-    // Messages par conversation
-    const totalMessages = messagesData.length
-    const totalConversations = convData?.length || 0
-    const messagesPerConversation = totalConversations > 0 
-      ? Math.round((totalMessages / totalConversations) * 10) / 10
-      : 0
-
-    // Conversations résolues (celles avec satisfaction > 0 ou terminées)
-    const resolvedConversations = convData?.filter(c => c.satisfaction && c.satisfaction > 0).length || 0
-    const resolvedRate = totalConversations > 0 
-      ? Math.round((resolvedConversations / totalConversations) * 100)
-      : 0
-
-    setStats({
-      totalMessages,
-      uniqueUsers: uniqueVisitors.size,
-      avgResponseTime,
-      avgResponseTimeMs: avgResponseMs,
-      satisfactionRate,
-      messagesPerConversation,
-      resolvedConversations: resolvedRate,
-      totalConversations
-    })
-
-    setPreviousStats({
-      totalMessages: prevMessagesCount,
-      uniqueUsers: prevUniqueVisitors.size
-    })
+    } catch (error) {
+      console.error('Erreur chargement analytics:', error)
+    }
 
     setLoading(false)
   }, [params.id, period, customDates])

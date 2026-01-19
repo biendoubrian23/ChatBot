@@ -12,12 +12,41 @@ load_dotenv(os.path.join(os.path.dirname(__file__), '..', '..', '.env'))
 load_dotenv()
 
 class Settings(BaseSettings):
-    # Supabase
+    # ===========================================
+    # MODE DE BASE DE DONNÉES
+    # ===========================================
+    # "supabase" = PostgreSQL/Supabase (ancien)
+    # "sqlserver" = Microsoft SQL Server (nouveau)
+    DATABASE_MODE: str = "sqlserver"
+    
+    # ===========================================
+    # SQL Server (Monitora_dev)
+    # ===========================================
+    MSSQL_HOST: str = "alpha.messages.fr"
+    MSSQL_PORT: int = 1433
+    MSSQL_DATABASE: str = "Monitora_dev"
+    MSSQL_USER: str = "chatbot"
+    MSSQL_PASSWORD: str = "M3ss4ges"
+    MSSQL_DRIVER: str = "ODBC Driver 18 for SQL Server"
+    
+    # ===========================================
+    # Supabase (legacy - à supprimer après migration)
+    # ===========================================
     SUPABASE_URL: str = ""
     SUPABASE_SERVICE_KEY: str = ""
     SUPABASE_ANON_KEY: str = ""
     
+    # ===========================================
+    # JWT Authentication (pour SQL Server)
+    # ===========================================
+    JWT_SECRET: str = "monitora-jwt-secret-change-in-production-2026"
+    JWT_ALGORITHM: str = "HS256"
+    JWT_EXPIRY_HOURS: int = 24
+    JWT_REFRESH_EXPIRY_DAYS: int = 7
+    
+    # ===========================================
     # LLM - Mistral
+    # ===========================================
     MISTRAL_API_KEY: str = ""
     MISTRAL_MODEL: str = "mistral-small-latest"
     
@@ -25,21 +54,29 @@ class Settings(BaseSettings):
     GROQ_API_KEY: str = ""
     GROQ_MODEL: str = "llama-3.3-70b-versatile"
     
+    # ===========================================
     # App
+    # ===========================================
     CORS_ORIGINS: str = "http://localhost:3001"
     DEBUG: bool = True
     
+    # ===========================================
     # RAG Defaults
+    # ===========================================
     DEFAULT_TEMPERATURE: float = 0.1
     DEFAULT_MAX_TOKENS: int = 900
     DEFAULT_TOP_K: int = 8
     DEFAULT_CHUNK_SIZE: int = 1500
     DEFAULT_CHUNK_OVERLAP: int = 300
     
-    # Storage mode: "local" (FAISS) ou "supabase" (pgvector + Storage)
-    STORAGE_MODE: str = "supabase"  # Changer en "local" pour dev sans Supabase Storage
+    # ===========================================
+    # Storage mode
+    # ===========================================
+    # "local" = FAISS pour vecteurs (recommandé avec SQL Server)
+    # "supabase" = pgvector + Supabase Storage
+    STORAGE_MODE: str = "local"
     
-    # Paths (utilisé seulement en mode local)
+    # Paths (utilisé en mode local)
     VECTORSTORE_PATH: str = "./data/vectorstores"
     UPLOADS_PATH: str = "./data/uploads"
     

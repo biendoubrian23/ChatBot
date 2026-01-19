@@ -10,8 +10,6 @@ import {
   LogOut
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { supabase } from '@/lib/supabase'
-import { useRouter } from 'next/navigation'
 
 const mainNavItems = [
   { href: '/dashboard', icon: Bot, label: 'Chatbots' },
@@ -22,16 +20,18 @@ const mainNavItems = [
 interface MainSidebarProps {
   user?: {
     email?: string
-  }
+    full_name?: string
+  } | null
+  onLogout?: () => void
 }
 
-export function MainSidebar({ user }: MainSidebarProps) {
+export function MainSidebar({ user, onLogout }: MainSidebarProps) {
   const pathname = usePathname()
-  const router = useRouter()
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut()
-    router.push('/login')
+  const handleLogout = () => {
+    if (onLogout) {
+      onLogout()
+    }
   }
 
   return (
@@ -73,7 +73,7 @@ export function MainSidebar({ user }: MainSidebarProps) {
       {/* User */}
       <div className="p-3 border-t border-gray-200">
         <div className="px-3 py-2 text-sm text-gray-500 truncate">
-          {user?.email || 'Utilisateur'}
+          {user?.full_name || user?.email || 'Utilisateur'}
         </div>
         <button
           onClick={handleLogout}

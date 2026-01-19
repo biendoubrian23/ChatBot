@@ -8,6 +8,7 @@ from app.api.chat import router as chat_router
 from app.api.widget import router as widget_router
 from app.api.insights import router as insights_router
 from app.api.database_config import router as database_router
+from app.api.auth import router as auth_router
 
 # Importer le bon module documents selon le mode de stockage
 if settings.STORAGE_MODE == "supabase":
@@ -18,6 +19,7 @@ else:
 router = APIRouter()
 
 # Inclure tous les sous-routers
+router.include_router(auth_router, prefix="/auth", tags=["Authentication"])
 router.include_router(workspaces_router, prefix="/workspaces", tags=["Workspaces"])
 router.include_router(documents_router, prefix="/documents", tags=["Documents"])
 router.include_router(chat_router, prefix="/chat", tags=["Chat"])

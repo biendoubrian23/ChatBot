@@ -2,7 +2,8 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { supabase, Workspace } from '@/lib/supabase'
+import { Workspace } from '@/lib/supabase'
+import { api } from '@/lib/api'
 import { ChatbotSidebar } from '@/components/chatbot-sidebar'
 import { Breadcrumb } from '@/components/ui/breadcrumb'
 import { ChatWidgetPreview } from '@/components/chat-widget-preview'
@@ -68,18 +69,17 @@ export default function ChatbotLayout({
   const [loading, setLoading] = useState(true)
 
   const loadChatbot = useCallback(async (id: string) => {
-    const { data, error } = await supabase
-      .from('workspaces')
-      .select('*')
-      .eq('id', id)
-      .single()
-
-    if (error || !data) {
+    try {
+      const data = await api.workspaces.get(id)
+      if (!data) {
+        router.push('/dashboard')
+        return
+      }
+      setChatbot(data)
+    } catch (error) {
+      console.error('Erreur chargement chatbot:', error)
       router.push('/dashboard')
-      return
     }
-
-    setChatbot(data)
     setLoading(false)
   }, [router])
 

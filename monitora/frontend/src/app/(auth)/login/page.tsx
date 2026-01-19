@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { supabase } from '@/lib/supabase'
+import { login } from '@/lib/auth'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
@@ -20,25 +20,17 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
+      const result = await login(email, password)
 
-      if (error) {
-        if (error.message === 'Invalid login credentials') {
-          setError('Email ou mot de passe incorrect')
-        } else {
-          setError(error.message)
-        }
-        return
-      }
-
-      if (data.user) {
+      if (result.user) {
         router.push('/dashboard')
       }
-    } catch (err) {
-      setError('Une erreur est survenue')
+    } catch (err: any) {
+      if (err.message?.includes('incorrect') || err.message?.includes('Invalid')) {
+        setError('Email ou mot de passe incorrect')
+      } else {
+        setError(err.message || 'Une erreur est survenue')
+      }
     } finally {
       setLoading(false)
     }

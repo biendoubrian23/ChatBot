@@ -2,7 +2,8 @@
 
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { useParams } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
+import { api } from '@/lib/api'
+import { getAccessToken } from '@/lib/auth'
 import { Button } from '@/components/ui/button'
 import { 
   Upload, 
@@ -183,20 +184,19 @@ export default function DocumentsPage() {
   useEffect(() => {
     const loadRagConfig = async () => {
       if (!params.id) return
-      const { data } = await supabase
-        .from('workspaces')
-        .select('rag_config')
-        .eq('id', params.id)
-        .single()
-      
-      if (data?.rag_config) {
-        setRagConfig({
-          chunk_size: data.rag_config.chunk_size ?? 1500,
-          chunk_overlap: data.rag_config.chunk_overlap ?? 300,
-          top_k: data.rag_config.top_k ?? 8,
-          enable_cache: data.rag_config.enable_cache ?? true,
-          cache_ttl: data.rag_config.cache_ttl ?? 7200
-        })
+      try {
+        const config = await api.ragConfig.get(params.id as string)
+        if (config) {
+          setRagConfig({
+            chunk_size: config.chunk_size ?? 1500,
+            chunk_overlap: config.chunk_overlap ?? 300,
+            top_k: config.top_k ?? 8,
+            enable_cache: config.enable_cache ?? true,
+            cache_ttl: config.cache_ttl ?? 7200
+          })
+        }
+      } catch (error) {
+        console.error('Erreur chargement config RAG:', error)
       }
       setRagLoading(false)
     }
@@ -210,8 +210,8 @@ export default function DocumentsPage() {
     setRagSaved(false)
     
     try {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session?.access_token) {
+      const token = getAccessToken()
+      if (!token) {
         console.error('Non authentifié')
         setRagSaving(false)
         return
@@ -223,7 +223,7 @@ export default function DocumentsPage() {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${session.access_token}`
+            'Authorization': `Bearer ${token}`
           },
           body: JSON.stringify(ragConfig)
         }
@@ -245,24 +245,23 @@ export default function DocumentsPage() {
   const loadDocuments = useCallback(async () => {
     if (!params.id) return
 
-    const { data } = await supabase
-      .from('documents')
-      .select('*')
-      .eq('workspace_id', params.id)
-      .order('created_at', { ascending: false })
-
-    if (data) {
-      setDocuments(data)
-      
-      // Vérifier si un document est en cours de traitement
-      const processing = data.find(d => d.status === 'processing')
-      if (processing) {
-        setIndexingDoc(processing.filename)
-      } else {
-        // Plus aucun document en traitement
-        if (indexingDoc) setIndexingDoc(null)
-        if (reindexingAll) setReindexingAll(false)
+    try {
+      const data = await api.documents.list(params.id as string)
+      if (data) {
+        setDocuments(data)
+        
+        // Vérifier si un document est en cours de traitement
+        const processing = data.find((d: Document) => d.status === 'processing')
+        if (processing) {
+          setIndexingDoc(processing.filename)
+        } else {
+          // Plus aucun document en traitement
+          if (indexingDoc) setIndexingDoc(null)
+          if (reindexingAll) setReindexingAll(false)
+        }
       }
+    } catch (error) {
+      console.error('Erreur chargement documents:', error)
     }
     setLoading(false)
   }, [params.id, indexingDoc, reindexingAll])
@@ -288,8 +287,8 @@ export default function DocumentsPage() {
     for (const file of Array.from(files)) {
       try {
         // Récupérer le token d'authentification
-        const { data: { session } } = await supabase.auth.getSession()
-        if (!session?.access_token) {
+        const token = getAccessToken()
+        if (!token) {
           console.error('Non authentifié')
           continue
         }
@@ -304,7 +303,7 @@ export default function DocumentsPage() {
           {
             method: 'POST',
             headers: {
-              'Authorization': `Bearer ${session.access_token}`
+              'Authorization': `Bearer ${token}`
             },
             body: formData
           }
@@ -327,8 +326,8 @@ export default function DocumentsPage() {
   // Fonction pour indexer un document
   const indexDocument = async (doc: Document) => {
     try {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session?.access_token) return
+      const token = getAccessToken()
+      if (!token) return
 
       setIndexingDoc(doc.filename)
 
@@ -337,7 +336,7 @@ export default function DocumentsPage() {
         {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${session.access_token}`
+            'Authorization': `Bearer ${token}`
           }
         }
       )
@@ -361,8 +360,8 @@ export default function DocumentsPage() {
     if (reindexingAll || documents.length === 0) return
     
     try {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session?.access_token) return
+      const token = getAccessToken()
+      if (!token) return
 
       setReindexingAll(true)
       setIndexingDoc('Tous les documents')
@@ -372,7 +371,7 @@ export default function DocumentsPage() {
         {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${session.access_token}`
+            'Authorization': `Bearer ${token}`
           }
         }
       )

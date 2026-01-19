@@ -1,5 +1,5 @@
 """
-Routes API pour les Documents
+Routes API pour les Documents - SQL Server
 """
 from fastapi import APIRouter, HTTPException, UploadFile, File, Header, Form
 from typing import Optional, List
@@ -7,7 +7,7 @@ import os
 import uuid
 import aiofiles
 import logging
-from app.core.supabase import get_supabase
+from app.core.database import DocumentsDB, WorkspacesDB
 from app.core.config import settings
 from app.api.workspaces import get_user_from_token
 
@@ -21,19 +21,12 @@ MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
 
 async def verify_workspace_access(workspace_id: str, user_id: str) -> dict:
     """Vérifie que l'utilisateur a accès au workspace"""
-    supabase = get_supabase()
+    workspace = WorkspacesDB.get_by_id_and_user(workspace_id, user_id)
     
-    result = supabase.table("workspaces")\
-        .select("*")\
-        .eq("id", workspace_id)\
-        .eq("user_id", user_id)\
-        .single()\
-        .execute()
-    
-    if not result.data:
+    if not workspace:
         raise HTTPException(status_code=404, detail="Workspace non trouvé")
     
-    return result.data
+    return workspace
 
 
 @router.get("/workspace/{workspace_id}")
@@ -45,15 +38,8 @@ async def list_documents(
     user = await get_user_from_token(authorization)
     await verify_workspace_access(workspace_id, user.id)
     
-    supabase = get_supabase()
-    
-    result = supabase.table("documents")\
-        .select("*")\
-        .eq("workspace_id", workspace_id)\
-        .order("created_at", desc=True)\
-        .execute()
-    
-    return result.data
+    documents = DocumentsDB.get_by_workspace(workspace_id)
+    return documents
 
 
 @router.post("/workspace/{workspace_id}/upload")
@@ -107,26 +93,19 @@ async def upload_document(
         logger.info(f"File saved: {filepath}")
         
         # Enregistrer en base
-        supabase = get_supabase()
-        
-        doc_data = {
-            "workspace_id": workspace_id,
-            "filename": file.filename,
-            "file_path": filepath,
-            "file_size": len(content),
-            "file_type": ext.replace(".", ""),
-            "status": "pending",
-            "chunk_count": 0
-        }
-        
-        result = supabase.table("documents")\
-            .insert(doc_data)\
-            .execute()
-        logger.info(f"Document inserted: {result.data[0]['id']}")
+        doc = DocumentsDB.create(
+            workspace_id=workspace_id,
+            filename=file.filename,
+            file_path=filepath,
+            file_size=len(content),
+            file_type=ext.replace(".", ""),
+            status="pending"
+        )
+        logger.info(f"Document inserted: {doc['id']}")
         
         # NE PAS vectoriser automatiquement - l'utilisateur doit cliquer sur "Indexer"
         
-        return result.data[0]
+        return doc
         
     except HTTPException:
         raise
@@ -150,26 +129,14 @@ async def index_document(
         user = await get_user_from_token(authorization)
         await verify_workspace_access(workspace_id, user.id)
         
-        supabase = get_supabase()
-        
         # Récupérer le document
-        doc_result = supabase.table("documents")\
-            .select("*")\
-            .eq("id", document_id)\
-            .eq("workspace_id", workspace_id)\
-            .single()\
-            .execute()
+        doc = DocumentsDB.get_by_id(document_id)
         
-        if not doc_result.data:
+        if not doc or doc.get('workspace_id') != workspace_id:
             raise HTTPException(status_code=404, detail="Document non trouvé")
         
-        doc = doc_result.data
-        
         # Mettre à jour le statut
-        supabase.table("documents")\
-            .update({"status": "processing"})\
-            .eq("id", document_id)\
-            .execute()
+        DocumentsDB.update_status(document_id, "processing")
         
         # Lancer la vectorisation en arrière-plan
         from app.services.vectorstore import vectorize_document
@@ -221,24 +188,20 @@ async def upload_multiple_documents(
             async with aiofiles.open(filepath, 'wb') as f:
                 await f.write(content)
             
-            supabase = get_supabase()
-            doc_data = {
-                "workspace_id": workspace_id,
-                "filename": file.filename,
-                "file_path": filepath,
-                "file_size": len(content),
-                "file_type": ext.replace(".", ""),
-                "status": "pending",
-                "chunk_count": 0
-            }
-            
-            result = supabase.table("documents").insert(doc_data).execute()
-            results.append(result.data[0])
+            doc = DocumentsDB.create(
+                workspace_id=workspace_id,
+                filename=file.filename,
+                file_path=filepath,
+                file_size=len(content),
+                file_type=ext.replace(".", ""),
+                status="pending"
+            )
+            results.append(doc)
             
             # Vectoriser
             from app.services.vectorstore import vectorize_document
             import asyncio
-            asyncio.create_task(vectorize_document(result.data[0]["id"], workspace_id, filepath))
+            asyncio.create_task(vectorize_document(doc["id"], workspace_id, filepath))
             
         except Exception as e:
             errors.append({"filename": file.filename, "error": str(e)})
@@ -258,25 +221,20 @@ async def get_document(
 ):
     """Récupère les détails d'un document"""
     user = await get_user_from_token(authorization)
-    supabase = get_supabase()
     
-    # Récupérer le document avec son workspace
-    result = supabase.table("documents")\
-        .select("*, workspaces!inner(user_id)")\
-        .eq("id", document_id)\
-        .single()\
-        .execute()
+    # Récupérer le document avec son workspace owner
+    doc = DocumentsDB.get_with_workspace_owner(document_id)
     
-    if not result.data:
+    if not doc:
         raise HTTPException(status_code=404, detail="Document non trouvé")
     
     # Vérifier l'accès
-    if result.data["workspaces"]["user_id"] != user.id:
+    if doc.get("workspace_user_id") != user.id:
         raise HTTPException(status_code=403, detail="Accès refusé")
     
-    # Retourner sans les infos du workspace
-    del result.data["workspaces"]
-    return result.data
+    # Retourner sans les infos du workspace owner
+    del doc["workspace_user_id"]
+    return doc
 
 
 @router.delete("/{document_id}")
@@ -286,28 +244,23 @@ async def delete_document(
 ):
     """Supprime un document"""
     user = await get_user_from_token(authorization)
-    supabase = get_supabase()
     
-    # Récupérer le document
-    doc_result = supabase.table("documents")\
-        .select("*, workspaces!inner(user_id)")\
-        .eq("id", document_id)\
-        .single()\
-        .execute()
+    # Récupérer le document avec son workspace owner
+    doc = DocumentsDB.get_with_workspace_owner(document_id)
     
-    if not doc_result.data:
+    if not doc:
         raise HTTPException(status_code=404, detail="Document non trouvé")
     
-    if doc_result.data["workspaces"]["user_id"] != user.id:
+    if doc.get("workspace_user_id") != user.id:
         raise HTTPException(status_code=403, detail="Accès refusé")
     
     # Supprimer le fichier physique
-    filepath = doc_result.data.get("file_path")
+    filepath = doc.get("file_path")
     if filepath and os.path.exists(filepath):
         os.remove(filepath)
     
     # Supprimer de la base
-    supabase.table("documents").delete().eq("id", document_id).execute()
+    DocumentsDB.delete(document_id)
     
     # TODO: Supprimer du vectorstore
     
@@ -321,26 +274,18 @@ async def reindex_document(
 ):
     """Relance la vectorisation d'un document"""
     user = await get_user_from_token(authorization)
-    supabase = get_supabase()
     
-    # Récupérer le document
-    doc_result = supabase.table("documents")\
-        .select("*, workspaces!inner(user_id)")\
-        .eq("id", document_id)\
-        .single()\
-        .execute()
+    # Récupérer le document avec son workspace owner
+    doc = DocumentsDB.get_with_workspace_owner(document_id)
     
-    if not doc_result.data:
+    if not doc:
         raise HTTPException(status_code=404, detail="Document non trouvé")
     
-    if doc_result.data["workspaces"]["user_id"] != user.id:
+    if doc.get("workspace_user_id") != user.id:
         raise HTTPException(status_code=403, detail="Accès refusé")
     
     # Mettre à jour le statut
-    supabase.table("documents")\
-        .update({"status": "pending"})\
-        .eq("id", document_id)\
-        .execute()
+    DocumentsDB.update_status(document_id, "pending")
     
     # Relancer la vectorisation
     from app.services.vectorstore import vectorize_document
@@ -348,8 +293,8 @@ async def reindex_document(
     asyncio.create_task(
         vectorize_document(
             document_id, 
-            doc_result.data["workspace_id"],
-            doc_result.data["file_path"]
+            doc["workspace_id"],
+            doc["file_path"]
         )
     )
     
@@ -371,15 +316,8 @@ async def reindex_all_documents(
         user = await get_user_from_token(authorization)
         await verify_workspace_access(workspace_id, user.id)
         
-        supabase = get_supabase()
-        
         # Récupérer tous les documents du workspace
-        docs_result = supabase.table("documents")\
-            .select("*")\
-            .eq("workspace_id", workspace_id)\
-            .execute()
-        
-        documents = docs_result.data or []
+        documents = DocumentsDB.get_by_workspace(workspace_id)
         
         if not documents:
             raise HTTPException(status_code=400, detail="Aucun document à réindexer")
@@ -391,10 +329,7 @@ async def reindex_all_documents(
         
         # Mettre tous les documents en status "processing"
         for doc in documents:
-            supabase.table("documents")\
-                .update({"status": "processing", "chunk_count": 0})\
-                .eq("id", doc["id"])\
-                .execute()
+            DocumentsDB.update_status(doc["id"], "processing", chunk_count=0)
         
         # Lancer la réindexation de tous les documents en séquence
         import asyncio

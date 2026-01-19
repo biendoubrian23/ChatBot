@@ -2,7 +2,9 @@
 
 import { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
-import { supabase, Workspace } from '@/lib/supabase'
+import { Workspace } from '@/lib/supabase'
+import { getCurrentUser, getAccessToken, User } from '@/lib/auth'
+import { api } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { StatCard } from '@/components/ui/stat-card'
 import { Plus, Bot, MessageSquare, Users, TrendingUp, Globe, MoreVertical, Play, Pause, Trash2, Settings, ExternalLink, X, AlertTriangle } from 'lucide-react'
@@ -35,23 +37,22 @@ export default function DashboardPage() {
   }, [])
 
   const loadChatbots = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
+    const user = await getCurrentUser()
     if (!user) return
 
-    const { data, error } = await supabase
-      .from('workspaces')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false })
-
-    if (data) {
-      setChatbots(data)
-      setStats({
-        totalChatbots: data.length,
-        activeChatbots: data.filter(c => c.is_active).length,
-        totalMessages: 0,
-        totalUsers: 0
-      })
+    try {
+      const data = await api.workspaces.list()
+      if (data) {
+        setChatbots(data)
+        setStats({
+          totalChatbots: data.length,
+          activeChatbots: data.filter((c: Chatbot) => c.is_active).length,
+          totalMessages: 0,
+          totalUsers: 0
+        })
+      }
+    } catch (error) {
+      console.error('Erreur chargement chatbots:', error)
     }
     setLoading(false)
   }
@@ -81,15 +82,15 @@ export default function DashboardPage() {
     setDeleteError('')
 
     try {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) throw new Error('Non authentifié')
+      const token = getAccessToken()
+      if (!token) throw new Error('Non authentifié')
 
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/workspaces/${deleteModal.chatbot.id}`,
         {
           method: 'DELETE',
           headers: {
-            'Authorization': `Bearer ${session.access_token}`
+            'Authorization': `Bearer ${token}`
           }
         }
       )

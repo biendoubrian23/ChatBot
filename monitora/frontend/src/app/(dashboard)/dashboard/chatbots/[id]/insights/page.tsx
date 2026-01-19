@@ -2,7 +2,8 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { useParams } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
+import { api } from '@/lib/api'
+import { getAccessToken } from '@/lib/auth'
 import { 
   Lightbulb,
   ThumbsUp,
@@ -112,25 +113,55 @@ export default function InsightsPage() {
   const loadInsights = useCallback(async () => {
     if (!params.id) return
 
-    // Charger depuis le cache insights
-    const { data: cacheData } = await supabase
-      .from('insights_cache')
-      .select('*')
-      .eq('workspace_id', params.id)
-      .single()
+    try {
+      // Charger les insights via l'API
+      const data = await api.insights.get(params.id as string)
 
-    if (cacheData) {
-      setInsights({
-        satisfactionRate: cacheData.satisfaction_rate,
-        avgRagScore: cacheData.avg_rag_score,
-        avgMessagesPerConversation: cacheData.avg_messages_per_conversation || 0,
-        lowConfidenceCount: cacheData.low_confidence_count || 0,
-        totalConversations: cacheData.total_conversations || 0,
-        totalMessages: cacheData.total_messages || 0,
-        calculatedAt: cacheData.calculated_at
-      })
-    } else {
-      // Pas de cache, valeurs par défaut
+      if (data) {
+        setInsights({
+          satisfactionRate: data.satisfaction_rate ?? null,
+          avgRagScore: data.avg_rag_score ?? null,
+          avgMessagesPerConversation: data.avg_messages_per_conversation || 0,
+          lowConfidenceCount: data.low_confidence_count || 0,
+          totalConversations: data.total_conversations || 0,
+          totalMessages: data.total_messages || 0,
+          calculatedAt: data.calculated_at || null
+        })
+
+        // Topics depuis l'API
+        if (data.topics) {
+          setTopics(data.topics.map((t: any) => ({
+            topicName: t.topic_name,
+            messageCount: t.message_count,
+            sampleQuestions: t.sample_questions || []
+          })))
+        }
+
+        // Questions problématiques depuis l'API
+        if (data.problematic_questions) {
+          setProblematicQuestions(data.problematic_questions.map((q: any) => ({
+            id: q.id,
+            content: q.content,
+            ragScore: q.rag_score,
+            feedback: q.feedback,
+            createdAt: q.created_at,
+            isResolved: q.is_resolved || false
+          })))
+        }
+      } else {
+        // Pas de données, valeurs par défaut
+        setInsights({
+          satisfactionRate: null,
+          avgRagScore: null,
+          avgMessagesPerConversation: 0,
+          lowConfidenceCount: 0,
+          totalConversations: 0,
+          totalMessages: 0,
+          calculatedAt: null
+        })
+      }
+    } catch (error) {
+      console.error('Erreur chargement insights:', error)
       setInsights({
         satisfactionRate: null,
         avgRagScore: null,
@@ -142,52 +173,6 @@ export default function InsightsPage() {
       })
     }
 
-    // Charger les sujets
-    const { data: topicsData } = await supabase
-      .from('message_topics')
-      .select('*')
-      .eq('workspace_id', params.id)
-      .order('message_count', { ascending: false })
-      .limit(10)
-
-    if (topicsData) {
-      setTopics(topicsData.map(t => ({
-        topicName: t.topic_name,
-        messageCount: t.message_count,
-        sampleQuestions: t.sample_questions || []
-      })))
-    }
-
-    // Charger les questions problématiques (faible score OU feedback négatif)
-    const { data: questionsData } = await supabase
-      .from('messages')
-      .select(`
-        id,
-        content,
-        rag_score,
-        feedback,
-        created_at,
-        is_resolved,
-        conversation:conversations!inner(workspace_id)
-      `)
-      .eq('conversations.workspace_id', params.id)
-      .eq('role', 'user')
-      .eq('is_resolved', false)
-      .or('rag_score.lt.0.5,feedback.eq.-1')
-      .order('created_at', { ascending: false })
-      .limit(20)
-
-    if (questionsData) {
-      setProblematicQuestions(questionsData.map(q => ({
-        id: q.id,
-        content: q.content,
-        ragScore: q.rag_score,
-        feedback: q.feedback,
-        createdAt: q.created_at,
-        isResolved: q.is_resolved || false
-      })))
-    }
-
     setLoading(false)
   }, [params.id])
 
@@ -197,19 +182,23 @@ export default function InsightsPage() {
 
   const handleRefresh = async () => {
     setRefreshing(true)
-    // Appeler la fonction SQL pour recalculer
-    await supabase.rpc('calculate_workspace_insights', { p_workspace_id: params.id })
-    await loadInsights()
+    try {
+      // Appeler l'API pour recalculer les insights
+      await api.insights.recalculate(params.id as string)
+      await loadInsights()
+    } catch (error) {
+      console.error('Erreur recalcul insights:', error)
+    }
     setRefreshing(false)
   }
 
   const markAsResolved = async (questionId: string) => {
-    await supabase
-      .from('messages')
-      .update({ is_resolved: true })
-      .eq('id', questionId)
-    
-    setProblematicQuestions(prev => prev.filter(q => q.id !== questionId))
+    try {
+      await api.insights.resolve(params.id as string, questionId)
+      setProblematicQuestions(prev => prev.filter(q => q.id !== questionId))
+    } catch (error) {
+      console.error('Erreur marquage résolu:', error)
+    }
   }
 
   if (loading) {

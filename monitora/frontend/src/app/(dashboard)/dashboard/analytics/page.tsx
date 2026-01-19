@@ -1,7 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { supabase, Workspace } from '@/lib/supabase'
+import { Workspace } from '@/lib/supabase'
+import { getCurrentUser } from '@/lib/auth'
+import { api } from '@/lib/api'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { MessageSquare, Users, Clock, TrendingUp } from 'lucide-react'
 
@@ -14,16 +16,16 @@ export default function AnalyticsPage() {
   }, [])
 
   const loadData = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
+    const user = await getCurrentUser()
     if (!user) return
 
-    const { data } = await supabase
-      .from('workspaces')
-      .select('*')
-      .eq('user_id', user.id)
-
-    if (data) {
-      setWorkspaces(data)
+    try {
+      const data = await api.workspaces.list()
+      if (data) {
+        setWorkspaces(data)
+      }
+    } catch (error) {
+      console.error('Erreur chargement workspaces:', error)
     }
     setLoading(false)
   }

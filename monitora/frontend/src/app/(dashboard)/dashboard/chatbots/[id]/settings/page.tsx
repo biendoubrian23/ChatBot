@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { supabase, Workspace } from '@/lib/supabase'
+import { Workspace } from '@/lib/supabase'
+import { api } from '@/lib/api'
+import { getAccessToken } from '@/lib/auth'
 import { Button } from '@/components/ui/button'
 import { 
   Save,
@@ -38,26 +40,26 @@ export default function SettingsPage() {
   }, [params.id])
 
   const loadChatbot = async (id: string) => {
-    const { data } = await supabase
-      .from('workspaces')
-      .select('*')
-      .eq('id', id)
-      .single()
+    try {
+      const data = await api.workspaces.get(id)
 
-    if (data) {
-      setChatbot(data)
-      // Convertir domain (ancien format) ou allowed_domains (nouveau format)
-      let domains: string[] = ['']
-      if (data.allowed_domains && Array.isArray(data.allowed_domains)) {
-        domains = data.allowed_domains.length > 0 ? data.allowed_domains : ['']
-      } else if (data.domain) {
-        domains = [data.domain]
+      if (data) {
+        setChatbot(data)
+        // Convertir domain (ancien format) ou allowed_domains (nouveau format)
+        let domains: string[] = ['']
+        if (data.allowed_domains && Array.isArray(data.allowed_domains)) {
+          domains = data.allowed_domains.length > 0 ? data.allowed_domains : ['']
+        } else if (data.domain) {
+          domains = [data.domain]
+        }
+        setFormData({
+          name: data.name,
+          allowed_domains: domains,
+          is_active: data.is_active
+        })
       }
-      setFormData({
-        name: data.name,
-        allowed_domains: domains,
-        is_active: data.is_active
-      })
+    } catch (error) {
+      console.error('Erreur chargement chatbot:', error)
     }
   }
 
@@ -69,22 +71,19 @@ export default function SettingsPage() {
     // Filtrer les domaines vides
     const cleanDomains = formData.allowed_domains.filter(d => d.trim() !== '')
 
-    const { error } = await supabase
-      .from('workspaces')
-      .update({
+    try {
+      await api.workspaces.update(chatbot.id, {
         name: formData.name,
         allowed_domains: cleanDomains.length > 0 ? cleanDomains : null,
-        // Garder l'ancien champ domain pour compatibilité
         domain: cleanDomains.length > 0 ? cleanDomains[0] : null,
         is_active: formData.is_active
       })
-      .eq('id', chatbot.id)
+      // Notification succès
+    } catch (error) {
+      console.error('Erreur sauvegarde:', error)
+    }
 
     setSaving(false)
-
-    if (!error) {
-      // Notification succès
-    }
   }
 
   // Fonctions pour gérer les domaines

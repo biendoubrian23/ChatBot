@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { useParams } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
+import { api } from '@/lib/api'
 import { ChatWidgetPreview } from '@/components/chat-widget-preview'
 import { 
   MessageSquare, 
@@ -51,14 +51,13 @@ export default function ConversationsPage() {
   const loadConversations = useCallback(async () => {
     if (!params.id) return
 
-    const { data, error } = await supabase
-      .from('conversations')
-      .select('*')
-      .eq('workspace_id', params.id)
-      .order('last_message_at', { ascending: false })
-
-    if (data) {
-      setConversations(data)
+    try {
+      const data = await api.conversations.list(params.id as string)
+      if (data) {
+        setConversations(data)
+      }
+    } catch (error) {
+      console.error('Erreur chargement conversations:', error)
     }
     setLoading(false)
   }, [params.id])
@@ -70,14 +69,13 @@ export default function ConversationsPage() {
   const loadMessages = async (conversationId: string) => {
     setLoadingMessages(true)
 
-    const { data, error } = await supabase
-      .from('messages')
-      .select('*')
-      .eq('conversation_id', conversationId)
-      .order('created_at', { ascending: true })
-
-    if (data) {
-      setMessages(data)
+    try {
+      const data = await api.conversations.messages(conversationId)
+      if (data) {
+        setMessages(data)
+      }
+    } catch (error) {
+      console.error('Erreur chargement messages:', error)
     }
     setLoadingMessages(false)
   }

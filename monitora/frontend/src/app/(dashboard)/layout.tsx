@@ -2,7 +2,7 @@
 
 import { useRouter, usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
+import { getCurrentUser, logout, User } from '@/lib/auth'
 import { MainSidebar } from '@/components/main-sidebar'
 
 export default function DashboardLayout({
@@ -12,7 +12,7 @@ export default function DashboardLayout({
 }) {
   const router = useRouter()
   const pathname = usePathname()
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
 
   // Détecter si on est dans une route de chatbot spécifique
@@ -20,29 +20,31 @@ export default function DashboardLayout({
 
   useEffect(() => {
     const checkUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      
-      if (!user) {
+      try {
+        const currentUser = await getCurrentUser()
+        
+        if (!currentUser) {
+          router.push('/login')
+          return
+        }
+        
+        setUser(currentUser)
+      } catch (error) {
+        console.error('Erreur lors de la vérification de l\'utilisateur:', error)
         router.push('/login')
-        return
+      } finally {
+        setLoading(false)
       }
-      
-      setUser(user)
-      setLoading(false)
     }
 
     checkUser()
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_OUT') {
-        router.push('/login')
-      } else if (session) {
-        setUser(session.user)
-      }
-    })
-
-    return () => subscription.unsubscribe()
   }, [router])
+
+  // Fonction de déconnexion à passer au sidebar
+  const handleLogout = async () => {
+    await logout()
+    router.push('/login')
+  }
 
   if (loading) {
     return (
@@ -62,7 +64,7 @@ export default function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <MainSidebar user={user} />
+      <MainSidebar user={user} onLogout={handleLogout} />
       <main className="ml-56 min-h-screen p-6">
         {children}
       </main>

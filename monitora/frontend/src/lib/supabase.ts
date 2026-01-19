@@ -1,9 +1,8 @@
-import { createClient } from '@supabase/supabase-js'
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+/**
+ * Types pour l'application MONITORA
+ * Note: Supabase a été remplacé par SQL Server
+ * Ce fichier ne contient que les types pour la compatibilité
+ */
 
 // Types pour les tables
 export interface Workspace {
@@ -14,12 +13,20 @@ export interface Workspace {
   api_key: string
   settings: WorkspaceSettings
   rag_config: RAGConfig
+  widget_config?: WidgetConfig
   is_active: boolean
   created_at: string
   updated_at: string
 }
 
 export interface WorkspaceSettings {
+  color_accent: string
+  position: 'bottom-right' | 'bottom-left'
+  welcome_message: string
+  chatbot_name: string
+}
+
+export interface WidgetConfig {
   color_accent: string
   position: 'bottom-right' | 'bottom-left'
   welcome_message: string
@@ -33,6 +40,8 @@ export interface RAGConfig {
   chunk_size: number
   chunk_overlap: number
   llm_model: string
+  llm_provider?: string
+  system_prompt?: string
 }
 
 export interface Document {
@@ -41,9 +50,9 @@ export interface Document {
   filename: string
   file_path: string
   file_size: number | null
-  mime_type: string | null
-  status: 'pending' | 'indexing' | 'indexed' | 'error'
-  chunks_count: number
+  file_type: string | null
+  status: 'pending' | 'processing' | 'indexed' | 'error'
+  chunk_count: number
   error_message: string | null
   created_at: string
   indexed_at: string | null

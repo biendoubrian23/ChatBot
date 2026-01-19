@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { supabase } from '@/lib/supabase'
+import { register } from '@/lib/auth'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
@@ -12,6 +12,7 @@ export default function RegisterPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [fullName, setFullName] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
@@ -34,30 +35,18 @@ export default function RegisterPage() {
     setLoading(true)
 
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-      })
+      const result = await register(email, password, fullName || undefined)
 
-      if (error) {
-        if (error.message.includes('already registered')) {
-          setError('Cet email est déjà utilisé')
-        } else {
-          setError(error.message)
-        }
-        return
+      if (result.user) {
+        // Rediriger directement vers le dashboard
+        router.push('/dashboard')
       }
-
-      if (data.user) {
-        // Si l'email de confirmation est désactivé, rediriger directement
-        if (data.session) {
-          router.push('/dashboard')
-        } else {
-          setSuccess(true)
-        }
+    } catch (err: any) {
+      if (err.message?.includes('already') || err.message?.includes('déjà')) {
+        setError('Cet email est déjà utilisé')
+      } else {
+        setError(err.message || 'Une erreur est survenue')
       }
-    } catch (err) {
-      setError('Une erreur est survenue')
     } finally {
       setLoading(false)
     }
@@ -73,10 +62,10 @@ export default function RegisterPage() {
         </div>
         <h1 className="text-2xl font-bold mb-2">Compte créé !</h1>
         <p className="text-gray-600 text-sm mb-6">
-          Vérifiez votre email pour confirmer votre compte.
+          Votre compte a été créé avec succès.
         </p>
         <Link href="/login">
-          <Button variant="outline">Retour à la connexion</Button>
+          <Button variant="outline">Se connecter</Button>
         </Link>
       </div>
     )
@@ -90,6 +79,14 @@ export default function RegisterPage() {
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-4">
+        <Input
+          type="text"
+          label="Nom complet (optionnel)"
+          placeholder="Jean Dupont"
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+        />
+
         <Input
           type="email"
           label="Email"

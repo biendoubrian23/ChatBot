@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
-import { supabase, Workspace } from '@/lib/supabase'
+import { Workspace } from '@/lib/supabase'
+import { api } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { useChatbot } from '@/contexts/chatbot-context'
 import { 
@@ -91,17 +92,17 @@ export default function IntegrationPage() {
     if (!chatbot?.id) return
     setSaving(true)
     
-    await supabase
-      .from('workspaces')
-      .update({ widget_config: widgetConfig })
-      .eq('id', chatbot.id)
+    try {
+      await api.widgetConfig.update(chatbot.id, widgetConfig)
+      setSaved(true)
+      setHasChanges(false)
+      // Réinitialiser le message "Sauvegardé" après 2 secondes
+      setTimeout(() => setSaved(false), 2000)
+    } catch (error) {
+      console.error('Erreur sauvegarde config widget:', error)
+    }
     
     setSaving(false)
-    setSaved(true)
-    setHasChanges(false)
-    
-    // Réinitialiser le message "Sauvegardé" après 2 secondes
-    setTimeout(() => setSaved(false), 2000)
   }
 
   const getWidgetCode = () => {
