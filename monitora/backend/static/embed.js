@@ -529,8 +529,79 @@
     // INJECTION DU TEMPLATE HTML
     // ========================================
     shadow.innerHTML = `
-      <style>${styles}</style>
+      <style>
+        ${styles}
+        /* Tooltip Styles */
+        .monitora-tooltip {
+          position: absolute;
+          bottom: 25px;
+          right: 70px;
+          background-color: white;
+          color: #1f2937;
+          padding: 8px 12px;
+          border-radius: 8px;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+          font-size: 13px;
+          font-weight: 500;
+          white-space: nowrap;
+          z-index: 2147483646;
+          opacity: 0;
+          transform: translateX(10px);
+          transition: opacity 0.3s ease, transform 0.3s ease;
+          pointer-events: none;
+          border: 1px solid #e5e7eb;
+          animation: monitora-tooltip-pulse 5s infinite;
+        }
+
+        .monitora-tooltip::after {
+          content: '';
+          position: absolute;
+          top: 50%;
+          right: -6px;
+          transform: translateY(-50%);
+          border-width: 6px 0 6px 6px;
+          border-style: solid;
+          border-color: transparent transparent transparent white;
+        }
+        
+        /* Animation: Apparition + petit saut */
+        @keyframes monitora-tooltip-pulse {
+          0%, 80% { transform: translateY(0); opacity: 1; }
+          85% { transform: translateY(-3px); }
+          90% { transform: translateY(0); }
+          95% { transform: translateY(-2px); }
+          100% { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Mobile positioning for tooltip */
+        @media (max-width: 480px) {
+          .monitora-tooltip {
+            bottom: 80px;
+            right: 20px;
+            
+          }
+          .monitora-tooltip::after {
+            display: none; /* Pas de flèche sur mobile car position différente */
+            top: auto;
+            bottom: -6px;
+            right: 20px;
+            border-width: 6px 6px 0 6px;
+            border-color: white transparent transparent transparent;
+          }
+        }
+
+        /* Hide tooltip when chat is open */
+        .monitora-chat-window.open ~ .monitora-tooltip {
+          display: none !important;
+          animation: none !important;
+        }
+      </style>
       <div class="monitora-container">
+        <!-- Tooltip -->
+        <div class="monitora-tooltip">
+          Besoin d'aide ? Je suis là 👋
+        </div>
+
         <!-- Bouton toggle -->
         <button class="monitora-toggle-btn" aria-label="Ouvrir le chat">
           <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
