@@ -621,6 +621,40 @@
     }
 
     // ========================================
+    // GESTION DU CLAVIER MOBILE
+    // ========================================
+
+    // Ajuster la hauteur du widget quand le clavier mobile s'ouvre
+    function handleMobileKeyboard() {
+      if (window.visualViewport && window.innerWidth <= 480) {
+        const updateHeight = () => {
+          const viewportHeight = window.visualViewport.height;
+          const windowHeight = window.innerHeight;
+
+          // Si la fenêtre visuelle est plus petite, c'est que le clavier est ouvert
+          if (viewportHeight < windowHeight * 0.8) {
+            chatWindow.style.height = viewportHeight + 'px';
+            chatWindow.style.top = '0px';
+            // Scroller vers le bas pour voir l'input
+            setTimeout(() => {
+              inputEl.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            }, 100);
+          } else {
+            // Clavier fermé, remettre en plein écran
+            chatWindow.style.height = '100%';
+            chatWindow.style.top = '0px';
+          }
+        };
+
+        window.visualViewport.addEventListener('resize', updateHeight);
+        window.visualViewport.addEventListener('scroll', updateHeight);
+      }
+    }
+
+    // Initialiser après que le DOM soit prêt
+    handleMobileKeyboard();
+
+    // ========================================
     // FONCTIONS
     // ========================================
 
