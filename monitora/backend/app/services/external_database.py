@@ -294,7 +294,7 @@ class CoolLibriOrderService:
             # ⚠️ CAS RETARD - Ton rassurant
             response += f"J'ai retrouvé votre commande n°**{order_id}** !\n\n"
             response += f"Votre livre de {pages} pages était prévu pour le **{date_str}**. "
-            response += "Je vois qu'il y a un petit décalage, mais pas d'inquiétude — "
+            response += "Je vois qu'il y a un petit décalage, mais pas d'inquiétude - "
             response += "votre commande est bien en cours et devrait arriver très prochainement ! 📬\n\n"
             response += "Pour avoir des nouvelles précises sur la livraison, notre équipe sera ravie de vous aider :\n"
             response += "📧 contact@coollibri.com\n"

@@ -496,6 +496,26 @@
       .monitora-message.user .monitora-message-bubble a {
         color: white !important;
       }
+
+      /* Mobile Responsive Styles - Proportional with margins */
+      @media (max-width: 480px) {
+        .monitora-chat-window {
+          /* Garde le ratio de la config mais adapte à l'écran */
+          width: calc(100vw - 24px) !important;
+          max-width: ${config.width || 380}px !important;
+          height: calc(100vh - 100px) !important;
+          max-height: ${config.height || 550}px !important;
+          bottom: 70px !important;
+          right: 12px !important;
+          left: auto !important;
+          border-radius: 16px !important;
+        }
+
+        .monitora-toggle-btn {
+          width: 50px !important;
+          height: 50px !important;
+        }
+      }
     `;
 
     // ========================================

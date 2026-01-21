@@ -627,8 +627,15 @@ export default {
                     {/* Widget ouvert */}
                     {mobilePreviewOpen && (
                       <div
-                        className="absolute bottom-4 left-2 right-2 bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col z-10 animate-in slide-in-from-bottom-4 duration-300"
-                        style={{ height: `${Math.min(500, Math.max(300, widgetConfig.widgetHeight * 0.7))}px` }}
+                        className="absolute bottom-4 bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col z-10 animate-in slide-in-from-bottom-4 duration-300"
+                        style={{
+                          // Calcul proportionnel: ratio par rapport à la taille max (500px largeur, 700px hauteur)
+                          // L'écran iPhone fait ~254px de largeur interne, on scale proportionnellement
+                          width: `${Math.min(254, Math.max(180, (widgetConfig.widgetWidth / 500) * 254))}px`,
+                          height: `${Math.min(450, Math.max(280, (widgetConfig.widgetHeight / 700) * 450))}px`,
+                          left: '50%',
+                          transform: 'translateX(-50%)'
+                        }}
                       >
                         {/* Header du widget mobile */}
                         <div
