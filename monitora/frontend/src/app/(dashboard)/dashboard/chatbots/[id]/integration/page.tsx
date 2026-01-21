@@ -143,25 +143,24 @@ export default function IntegrationPage() {
   }
 
   const getWidgetCode = () => {
-    // apiUrl = Backend URL pour les appels API (XHR)
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001'
-    // proxyUrl = URL du script via le proxy Vercel (contourne les restrictions iOS Safari)
-    const proxyUrl = typeof window !== 'undefined' ? `${window.location.origin}/api/proxy-widget` : '/api/proxy-widget'
+    const getWidgetCode = () => {
+      // apiUrl = Backend URL pour les appels API (XHR) et le chargement du script via Ngrok
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001'
 
-    const config = {
-      workspaceId: chatbot?.id || 'WORKSPACE_ID',
-      position: widgetConfig.position,
-      primaryColor: widgetConfig.primaryColor,
-      welcomeMessage: widgetConfig.welcomeMessage,
-      placeholder: widgetConfig.placeholder,
-      width: widgetConfig.widgetWidth,
-      height: widgetConfig.widgetHeight,
-      brandingText: widgetConfig.brandingText
-    }
+      const config = {
+        workspaceId: chatbot?.id || 'WORKSPACE_ID',
+        position: widgetConfig.position,
+        primaryColor: widgetConfig.primaryColor,
+        welcomeMessage: widgetConfig.welcomeMessage,
+        placeholder: widgetConfig.placeholder,
+        width: widgetConfig.widgetWidth,
+        height: widgetConfig.widgetHeight,
+        brandingText: widgetConfig.brandingText
+      }
 
-    switch (selectedFramework) {
-      case 'nextjs':
-        return `// Dans votre layout.tsx ou page.tsx
+      switch (selectedFramework) {
+        case 'nextjs':
+          return `// Dans votre layout.tsx ou page.tsx
 import Script from 'next/script'
 
 // Ajoutez ces lignes avant </body>
@@ -181,12 +180,12 @@ import Script from 'next/script'
   \`}
 </Script>
 <Script 
-  src="${proxyUrl}" 
+  src="${apiUrl}/widget/embed.js" 
   strategy="afterInteractive" 
 />`
 
-      case 'react':
-        return `// Dans votre App.js ou index.js
+        case 'react':
+          return `// Dans votre App.js ou index.js
 import { useEffect } from 'react';
 
 function App() {
@@ -206,7 +205,7 @@ function App() {
 
     // Charger le script
     const script = document.createElement('script');
-    script.src = "${proxyUrl}";
+    script.src = "${apiUrl}/widget/embed.js";
     script.async = true;
     document.body.appendChild(script);
 
@@ -220,8 +219,8 @@ function App() {
   );
 }`
 
-      case 'vue':
-        return `<!-- Dans votre App.vue ou main.js -->
+        case 'vue':
+          return `<!-- Dans votre App.vue ou main.js -->
 <script>
 export default {
   mounted() {
@@ -240,15 +239,15 @@ export default {
 
     // Charger le script
     const script = document.createElement('script');
-    script.src = "${proxyUrl}";
+    script.src = "${apiUrl}/widget/embed.js";
     script.async = true;
     document.body.appendChild(script);
   }
 }
 </script>`
 
-      case 'blazor':
-        return `@* MONITORA Widget - Blazor / .NET *@
+        case 'blazor':
+          return `@* MONITORA Widget - Blazor / .NET *@
 @* Dans votre _Host.cshtml ou App.razor, ajoutez avant </body> : *@
 
 <script>
@@ -264,13 +263,13 @@ export default {
         apiUrl: "${apiUrl}"
     };
 </script>
-<script src="${proxyUrl}" async></script>
+<script src="${apiUrl}/widget/embed.js" async></script>
 
 @* Ou via injection JavaScript dans Program.cs : *@
 @* builder.Services.AddScoped<IJSRuntime>(); *@`
 
-      case 'mvc4':
-        return `@* MONITORA Widget - ASP.NET MVC 4 *@
+        case 'mvc4':
+          return `@* MONITORA Widget - ASP.NET MVC 4 *@
 @* Ajoutez ce code dans votre fichier _Layout.cshtml ou votre vue, juste avant la fermeture </body> : *@
 
 <script>
@@ -286,11 +285,11 @@ export default {
         apiUrl: "${apiUrl}"
     };
 </script>
-<script src="${proxyUrl}" async></script>`
+<script src="${apiUrl}/widget/embed.js" async></script>`
 
-      case 'html':
-      default:
-        return `<!-- MONITORA Widget -->
+        case 'html':
+        default:
+          return `<!-- MONITORA Widget -->
 <script>
   window.MONITORA_CONFIG = {
     workspaceId: "${config.workspaceId}",
@@ -305,406 +304,406 @@ export default {
   };
 </script>
 <script 
-  src="${proxyUrl}"
+  src="${apiUrl}/widget/embed.js"
   async
 ></script>`
+      }
     }
-  }
 
-  const copyCode = () => {
-    navigator.clipboard.writeText(getWidgetCode())
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
+    const copyCode = () => {
+      navigator.clipboard.writeText(getWidgetCode())
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    }
 
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-900">Intégration</h1>
-          <p className="text-gray-500 mt-1">
-            Intégrez le chatbot sur votre site web
-          </p>
-        </div>
-        {saving && (
-          <span className="text-sm text-gray-500">Enregistrement...</span>
-        )}
-      </div>
-
-      {/* Layout principal : 2 colonnes */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Colonne gauche : Personnalisation + Code d'intégration */}
-        <div className="space-y-6">
-          {/* 1. Personnalisation */}
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
-                <Settings2 size={20} className="text-gray-700" />
-                <div>
-                  <h3 className="font-medium text-gray-900">Personnalisation</h3>
-                  <p className="text-sm text-gray-500">Configurez l'apparence du widget</p>
-                </div>
-              </div>
-              <Button
-                onClick={saveConfig}
-                disabled={saving || !hasChanges}
-                className={`${saved
-                  ? 'bg-green-600 hover:bg-green-700'
-                  : hasChanges
-                    ? 'bg-black hover:bg-gray-800'
-                    : 'bg-gray-300'
-                  }`}
-              >
-                {saving ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                    Sauvegarde...
-                  </>
-                ) : saved ? (
-                  <>
-                    <Check size={16} className="mr-2" />
-                    Sauvegardé
-                  </>
-                ) : (
-                  'Sauvegarder'
-                )}
-              </Button>
-            </div>
-
-            <div className="space-y-6">
-              {/* Position */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Position
-                </label>
-                <div className="grid grid-cols-2 gap-3">
-                  <button
-                    onClick={() => updateConfig({ position: 'bottom-right' })}
-                    className={`px-4 py-2 rounded-lg border text-sm transition-all ${widgetConfig.position === 'bottom-right'
-                      ? 'border-black bg-gray-50 font-medium'
-                      : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                  >
-                    Bas droite
-                  </button>
-                  <button
-                    onClick={() => updateConfig({ position: 'bottom-left' })}
-                    className={`px-4 py-2 rounded-lg border text-sm transition-all ${widgetConfig.position === 'bottom-left'
-                      ? 'border-black bg-gray-50 font-medium'
-                      : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                  >
-                    Bas gauche
-                  </button>
-                </div>
-              </div>
-
-              {/* Couleur */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Couleur principale
-                </label>
-                <div className="flex items-center gap-3">
-                  <input
-                    type="color"
-                    value={widgetConfig.primaryColor}
-                    onChange={(e) => updateConfig({ primaryColor: e.target.value })}
-                    className="w-10 h-10 rounded-lg cursor-pointer border-0"
-                  />
-                  <input
-                    type="text"
-                    value={widgetConfig.primaryColor}
-                    onChange={(e) => updateConfig({ primaryColor: e.target.value })}
-                    className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm"
-                  />
-                </div>
-              </div>
-
-              {/* Taille du widget */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Largeur ({widgetConfig.widgetWidth}px)
-                </label>
-                <input
-                  type="range"
-                  min="300"
-                  max="500"
-                  value={widgetConfig.widgetWidth}
-                  onChange={(e) => updateConfig({ widgetWidth: parseInt(e.target.value) })}
-                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-black"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Hauteur ({widgetConfig.widgetHeight}px)
-                </label>
-                <input
-                  type="range"
-                  min="400"
-                  max="700"
-                  value={widgetConfig.widgetHeight}
-                  onChange={(e) => updateConfig({ widgetHeight: parseInt(e.target.value) })}
-                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-black"
-                />
-              </div>
-
-              {/* Message d'accueil */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Message d'accueil
-                </label>
-                <textarea
-                  value={widgetConfig.welcomeMessage}
-                  onChange={(e) => updateConfig({ welcomeMessage: e.target.value })}
-                  rows={2}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm resize-none"
-                />
-              </div>
-
-              {/* Placeholder */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Placeholder
-                </label>
-                <input
-                  type="text"
-                  value={widgetConfig.placeholder}
-                  onChange={(e) => updateConfig({ placeholder: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
-                />
-              </div>
-
-              {/* Texte de branding */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Texte du pied de page
-                </label>
-                <input
-                  type="text"
-                  value={widgetConfig.brandingText}
-                  onChange={(e) => updateConfig({ brandingText: e.target.value })}
-                  placeholder="Propulsé par MONITORA"
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
-                />
-                <p className="text-xs text-gray-400 mt-1">
-                  Laissez vide pour masquer le pied de page
-                </p>
-              </div>
-            </div>
+    return (
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-semibold text-gray-900">Intégration</h1>
+            <p className="text-gray-500 mt-1">
+              Intégrez le chatbot sur votre site web
+            </p>
           </div>
+          {saving && (
+            <span className="text-sm text-gray-500">Enregistrement...</span>
+          )}
+        </div>
 
-          {/* 2. Code d'intégration */}
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <Code2 size={20} className="text-gray-700" />
-                <div>
-                  <h3 className="font-medium text-gray-900">Code d'intégration</h3>
-                  <p className="text-sm text-gray-500">Copiez ce code dans votre site</p>
+        {/* Layout principal : 2 colonnes */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Colonne gauche : Personnalisation + Code d'intégration */}
+          <div className="space-y-6">
+            {/* 1. Personnalisation */}
+            <div className="bg-white rounded-xl border border-gray-200 p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-3">
+                  <Settings2 size={20} className="text-gray-700" />
+                  <div>
+                    <h3 className="font-medium text-gray-900">Personnalisation</h3>
+                    <p className="text-sm text-gray-500">Configurez l'apparence du widget</p>
+                  </div>
                 </div>
-              </div>
-            </div>
-
-            {/* Tabs de frameworks */}
-            <div className="flex flex-wrap gap-1 mb-4 p-1 bg-gray-100 rounded-lg">
-              {[
-                { id: 'html', label: 'HTML', icon: FrameworkIcons.html },
-                { id: 'react', label: 'React', icon: FrameworkIcons.react },
-                { id: 'nextjs', label: 'Next.js', icon: FrameworkIcons.nextjs },
-                { id: 'vue', label: 'Vue.js', icon: FrameworkIcons.vue },
-                { id: 'blazor', label: 'Blazor', icon: FrameworkIcons.blazor },
-                { id: 'mvc4', label: 'ASP.NET MVC 4', icon: FrameworkIcons.mvc4 },
-              ].map((framework) => (
-                <button
-                  key={framework.id}
-                  onClick={() => setSelectedFramework(framework.id as FrameworkType)}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all ${selectedFramework === framework.id
-                    ? 'bg-white text-gray-900 shadow-sm'
-                    : 'text-gray-600 hover:text-gray-900'
+                <Button
+                  onClick={saveConfig}
+                  disabled={saving || !hasChanges}
+                  className={`${saved
+                    ? 'bg-green-600 hover:bg-green-700'
+                    : hasChanges
+                      ? 'bg-black hover:bg-gray-800'
+                      : 'bg-gray-300'
                     }`}
                 >
-                  <framework.icon />
-                  {framework.label}
-                </button>
-              ))}
-            </div>
-
-            <div className="relative">
-              <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg text-xs overflow-x-auto max-h-64">
-                <code>{getWidgetCode()}</code>
-              </pre>
-              <Button
-                onClick={copyCode}
-                size="sm"
-                className="absolute top-2 right-2 bg-gray-800 hover:bg-gray-700"
-              >
-                {copied ? (
-                  <>
-                    <Check size={14} className="mr-1" />
-                    Copié
-                  </>
-                ) : (
-                  <>
-                    <Copy size={14} className="mr-1" />
-                    Copier
-                  </>
-                )}
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {/* Colonne droite : Aperçu Mobile (iPhone) */}
-        <div className="lg:sticky lg:top-6 h-fit">
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
-            <div className="flex items-center gap-3 mb-6">
-              <Smartphone size={20} className="text-gray-700" />
-              <div>
-                <h3 className="font-medium text-gray-900">Aperçu Mobile</h3>
-                <p className="text-sm text-gray-500">Testez la responsivité sur mobile</p>
+                  {saving ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                      Sauvegarde...
+                    </>
+                  ) : saved ? (
+                    <>
+                      <Check size={16} className="mr-2" />
+                      Sauvegardé
+                    </>
+                  ) : (
+                    'Sauvegarder'
+                  )}
+                </Button>
               </div>
-            </div>
 
-            {/* iPhone Frame */}
-            <div className="flex justify-center">
-              <div className="relative">
-                {/* iPhone outer frame */}
-                <div
-                  className="relative bg-gray-900 rounded-[3rem] p-3 shadow-xl"
-                  style={{ width: '280px', height: '580px' }}
-                >
-                  {/* Dynamic Island */}
-                  <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-24 h-6 bg-black rounded-full z-30" />
-
-                  {/* Screen */}
-                  <div
-                    className="relative bg-white rounded-[2.5rem] overflow-hidden h-full"
-                    style={{
-                      background: 'linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%)'
-                    }}
-                  >
-                    {/* Status bar */}
-                    <div className="flex items-center justify-between px-8 pt-4 pb-2">
-                      <span className="text-xs font-medium text-gray-800">9:41</span>
-                      <div className="flex items-center gap-1">
-                        <svg className="w-4 h-4 text-gray-800" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M12 3a9 9 0 0 1 9 9v7a2 2 0 0 1-2 2h-3v-2h3v-7a7 7 0 0 0-14 0v7h3v2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 9-9z" />
-                        </svg>
-                        <svg className="w-4 h-4 text-gray-800" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M17 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2V3a1 1 0 0 1 2 0v1h6V3a1 1 0 0 1 2 0v1z" />
-                        </svg>
-                      </div>
-                    </div>
-
-                    {/* Fake website content */}
-                    <div className="px-4 pt-2 space-y-3">
-                      <div className="h-3 bg-gray-300 rounded w-3/4" />
-                      <div className="h-3 bg-gray-200 rounded w-full" />
-                      <div className="h-3 bg-gray-200 rounded w-5/6" />
-                      <div className="h-20 bg-gray-200 rounded-lg mt-4" />
-                      <div className="h-3 bg-gray-200 rounded w-2/3" />
-                      <div className="h-3 bg-gray-200 rounded w-full" />
-                      <div className="h-3 bg-gray-200 rounded w-4/5" />
-                      <div className="h-16 bg-gray-200 rounded-lg mt-4" />
-                    </div>
-
-                    {/* Widget button */}
-                    {!mobilePreviewOpen && (
-                      <button
-                        onClick={() => setMobilePreviewOpen(true)}
-                        className="absolute bottom-6 right-4 w-12 h-12 rounded-full shadow-lg flex items-center justify-center transition-transform hover:scale-110 cursor-pointer z-10"
-                        style={{ backgroundColor: widgetConfig.primaryColor }}
-                      >
-                        <MessageSquare size={20} className="text-white" />
-                      </button>
-                    )}
-
-                    {/* Widget ouvert */}
-                    {mobilePreviewOpen && (
-                      <div
-                        className="absolute bottom-4 bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col z-10 animate-in slide-in-from-bottom-4 duration-300"
-                        style={{
-                          // Calcul proportionnel: ratio par rapport à la taille max (500px largeur, 700px hauteur)
-                          // L'écran iPhone fait ~254px de largeur interne, on scale proportionnellement
-                          width: `${Math.min(254, Math.max(180, (widgetConfig.widgetWidth / 500) * 254))}px`,
-                          height: `${Math.min(450, Math.max(280, (widgetConfig.widgetHeight / 700) * 450))}px`,
-                          left: '50%',
-                          transform: 'translateX(-50%)'
-                        }}
-                      >
-                        {/* Header du widget mobile */}
-                        <div
-                          className="px-3 py-2.5 flex items-center justify-between shrink-0"
-                          style={{ backgroundColor: widgetConfig.primaryColor }}
-                        >
-                          <div className="flex items-center gap-2">
-                            <div className="w-7 h-7 bg-white/20 rounded-full flex items-center justify-center">
-                              <MessageSquare size={12} className="text-white" />
-                            </div>
-                            <div>
-                              <p className="text-white font-medium text-xs">{chatbot?.name || 'Assistant'}</p>
-                              <p className="text-white/70 text-[10px]">En ligne</p>
-                            </div>
-                          </div>
-                          <button
-                            onClick={() => setMobilePreviewOpen(false)}
-                            className="text-white/70 hover:text-white p-1"
-                          >
-                            <X size={16} />
-                          </button>
-                        </div>
-
-                        {/* Messages mobile */}
-                        <div className="flex-1 p-3 bg-gray-50 overflow-y-auto">
-                          <div className="flex gap-2">
-                            <div
-                              className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
-                              style={{ backgroundColor: widgetConfig.primaryColor }}
-                            >
-                              <MessageSquare size={10} className="text-white" />
-                            </div>
-                            <div className="bg-white rounded-xl rounded-tl-sm px-3 py-2 shadow-sm max-w-[90%]">
-                              <p className="text-xs text-gray-800">{widgetConfig.welcomeMessage}</p>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Input mobile */}
-                        <div className="p-2 bg-white border-t border-gray-100 shrink-0">
-                          <div className="flex items-center gap-2">
-                            <input
-                              type="text"
-                              placeholder={widgetConfig.placeholder}
-                              className="flex-1 px-3 py-1.5 bg-gray-100 rounded-full text-xs outline-none"
-                              disabled
-                            />
-                            <button
-                              className="w-7 h-7 rounded-full flex items-center justify-center text-white shrink-0"
-                              style={{ backgroundColor: widgetConfig.primaryColor }}
-                            >
-                              <Send size={12} />
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    )}
+              <div className="space-y-6">
+                {/* Position */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Position
+                  </label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      onClick={() => updateConfig({ position: 'bottom-right' })}
+                      className={`px-4 py-2 rounded-lg border text-sm transition-all ${widgetConfig.position === 'bottom-right'
+                        ? 'border-black bg-gray-50 font-medium'
+                        : 'border-gray-200 hover:border-gray-300'
+                        }`}
+                    >
+                      Bas droite
+                    </button>
+                    <button
+                      onClick={() => updateConfig({ position: 'bottom-left' })}
+                      className={`px-4 py-2 rounded-lg border text-sm transition-all ${widgetConfig.position === 'bottom-left'
+                        ? 'border-black bg-gray-50 font-medium'
+                        : 'border-gray-200 hover:border-gray-300'
+                        }`}
+                    >
+                      Bas gauche
+                    </button>
                   </div>
                 </div>
 
-                {/* Home indicator */}
-                <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-28 h-1 bg-gray-600 rounded-full" />
+                {/* Couleur */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Couleur principale
+                  </label>
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="color"
+                      value={widgetConfig.primaryColor}
+                      onChange={(e) => updateConfig({ primaryColor: e.target.value })}
+                      className="w-10 h-10 rounded-lg cursor-pointer border-0"
+                    />
+                    <input
+                      type="text"
+                      value={widgetConfig.primaryColor}
+                      onChange={(e) => updateConfig({ primaryColor: e.target.value })}
+                      className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm"
+                    />
+                  </div>
+                </div>
+
+                {/* Taille du widget */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Largeur ({widgetConfig.widgetWidth}px)
+                  </label>
+                  <input
+                    type="range"
+                    min="300"
+                    max="500"
+                    value={widgetConfig.widgetWidth}
+                    onChange={(e) => updateConfig({ widgetWidth: parseInt(e.target.value) })}
+                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-black"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Hauteur ({widgetConfig.widgetHeight}px)
+                  </label>
+                  <input
+                    type="range"
+                    min="400"
+                    max="700"
+                    value={widgetConfig.widgetHeight}
+                    onChange={(e) => updateConfig({ widgetHeight: parseInt(e.target.value) })}
+                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-black"
+                  />
+                </div>
+
+                {/* Message d'accueil */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Message d'accueil
+                  </label>
+                  <textarea
+                    value={widgetConfig.welcomeMessage}
+                    onChange={(e) => updateConfig({ welcomeMessage: e.target.value })}
+                    rows={2}
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm resize-none"
+                  />
+                </div>
+
+                {/* Placeholder */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Placeholder
+                  </label>
+                  <input
+                    type="text"
+                    value={widgetConfig.placeholder}
+                    onChange={(e) => updateConfig({ placeholder: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
+                  />
+                </div>
+
+                {/* Texte de branding */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Texte du pied de page
+                  </label>
+                  <input
+                    type="text"
+                    value={widgetConfig.brandingText}
+                    onChange={(e) => updateConfig({ brandingText: e.target.value })}
+                    placeholder="Propulsé par MONITORA"
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
+                  />
+                  <p className="text-xs text-gray-400 mt-1">
+                    Laissez vide pour masquer le pied de page
+                  </p>
+                </div>
               </div>
             </div>
 
-            {/* Instructions */}
-            <p className="text-center text-xs text-gray-500 mt-4">
-              Cliquez sur le bouton pour voir l'ouverture du widget
-            </p>
+            {/* 2. Code d'intégration */}
+            <div className="bg-white rounded-xl border border-gray-200 p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <Code2 size={20} className="text-gray-700" />
+                  <div>
+                    <h3 className="font-medium text-gray-900">Code d'intégration</h3>
+                    <p className="text-sm text-gray-500">Copiez ce code dans votre site</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Tabs de frameworks */}
+              <div className="flex flex-wrap gap-1 mb-4 p-1 bg-gray-100 rounded-lg">
+                {[
+                  { id: 'html', label: 'HTML', icon: FrameworkIcons.html },
+                  { id: 'react', label: 'React', icon: FrameworkIcons.react },
+                  { id: 'nextjs', label: 'Next.js', icon: FrameworkIcons.nextjs },
+                  { id: 'vue', label: 'Vue.js', icon: FrameworkIcons.vue },
+                  { id: 'blazor', label: 'Blazor', icon: FrameworkIcons.blazor },
+                  { id: 'mvc4', label: 'ASP.NET MVC 4', icon: FrameworkIcons.mvc4 },
+                ].map((framework) => (
+                  <button
+                    key={framework.id}
+                    onClick={() => setSelectedFramework(framework.id as FrameworkType)}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all ${selectedFramework === framework.id
+                      ? 'bg-white text-gray-900 shadow-sm'
+                      : 'text-gray-600 hover:text-gray-900'
+                      }`}
+                  >
+                    <framework.icon />
+                    {framework.label}
+                  </button>
+                ))}
+              </div>
+
+              <div className="relative">
+                <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg text-xs overflow-x-auto max-h-64">
+                  <code>{getWidgetCode()}</code>
+                </pre>
+                <Button
+                  onClick={copyCode}
+                  size="sm"
+                  className="absolute top-2 right-2 bg-gray-800 hover:bg-gray-700"
+                >
+                  {copied ? (
+                    <>
+                      <Check size={14} className="mr-1" />
+                      Copié
+                    </>
+                  ) : (
+                    <>
+                      <Copy size={14} className="mr-1" />
+                      Copier
+                    </>
+                  )}
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* Colonne droite : Aperçu Mobile (iPhone) */}
+          <div className="lg:sticky lg:top-6 h-fit">
+            <div className="bg-white rounded-xl border border-gray-200 p-6">
+              <div className="flex items-center gap-3 mb-6">
+                <Smartphone size={20} className="text-gray-700" />
+                <div>
+                  <h3 className="font-medium text-gray-900">Aperçu Mobile</h3>
+                  <p className="text-sm text-gray-500">Testez la responsivité sur mobile</p>
+                </div>
+              </div>
+
+              {/* iPhone Frame */}
+              <div className="flex justify-center">
+                <div className="relative">
+                  {/* iPhone outer frame */}
+                  <div
+                    className="relative bg-gray-900 rounded-[3rem] p-3 shadow-xl"
+                    style={{ width: '280px', height: '580px' }}
+                  >
+                    {/* Dynamic Island */}
+                    <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-24 h-6 bg-black rounded-full z-30" />
+
+                    {/* Screen */}
+                    <div
+                      className="relative bg-white rounded-[2.5rem] overflow-hidden h-full"
+                      style={{
+                        background: 'linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%)'
+                      }}
+                    >
+                      {/* Status bar */}
+                      <div className="flex items-center justify-between px-8 pt-4 pb-2">
+                        <span className="text-xs font-medium text-gray-800">9:41</span>
+                        <div className="flex items-center gap-1">
+                          <svg className="w-4 h-4 text-gray-800" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 3a9 9 0 0 1 9 9v7a2 2 0 0 1-2 2h-3v-2h3v-7a7 7 0 0 0-14 0v7h3v2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 9-9z" />
+                          </svg>
+                          <svg className="w-4 h-4 text-gray-800" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M17 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2V3a1 1 0 0 1 2 0v1h6V3a1 1 0 0 1 2 0v1z" />
+                          </svg>
+                        </div>
+                      </div>
+
+                      {/* Fake website content */}
+                      <div className="px-4 pt-2 space-y-3">
+                        <div className="h-3 bg-gray-300 rounded w-3/4" />
+                        <div className="h-3 bg-gray-200 rounded w-full" />
+                        <div className="h-3 bg-gray-200 rounded w-5/6" />
+                        <div className="h-20 bg-gray-200 rounded-lg mt-4" />
+                        <div className="h-3 bg-gray-200 rounded w-2/3" />
+                        <div className="h-3 bg-gray-200 rounded w-full" />
+                        <div className="h-3 bg-gray-200 rounded w-4/5" />
+                        <div className="h-16 bg-gray-200 rounded-lg mt-4" />
+                      </div>
+
+                      {/* Widget button */}
+                      {!mobilePreviewOpen && (
+                        <button
+                          onClick={() => setMobilePreviewOpen(true)}
+                          className="absolute bottom-6 right-4 w-12 h-12 rounded-full shadow-lg flex items-center justify-center transition-transform hover:scale-110 cursor-pointer z-10"
+                          style={{ backgroundColor: widgetConfig.primaryColor }}
+                        >
+                          <MessageSquare size={20} className="text-white" />
+                        </button>
+                      )}
+
+                      {/* Widget ouvert */}
+                      {mobilePreviewOpen && (
+                        <div
+                          className="absolute bottom-4 bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col z-10 animate-in slide-in-from-bottom-4 duration-300"
+                          style={{
+                            // Calcul proportionnel: ratio par rapport à la taille max (500px largeur, 700px hauteur)
+                            // L'écran iPhone fait ~254px de largeur interne, on scale proportionnellement
+                            width: `${Math.min(254, Math.max(180, (widgetConfig.widgetWidth / 500) * 254))}px`,
+                            height: `${Math.min(450, Math.max(280, (widgetConfig.widgetHeight / 700) * 450))}px`,
+                            left: '50%',
+                            transform: 'translateX(-50%)'
+                          }}
+                        >
+                          {/* Header du widget mobile */}
+                          <div
+                            className="px-3 py-2.5 flex items-center justify-between shrink-0"
+                            style={{ backgroundColor: widgetConfig.primaryColor }}
+                          >
+                            <div className="flex items-center gap-2">
+                              <div className="w-7 h-7 bg-white/20 rounded-full flex items-center justify-center">
+                                <MessageSquare size={12} className="text-white" />
+                              </div>
+                              <div>
+                                <p className="text-white font-medium text-xs">{chatbot?.name || 'Assistant'}</p>
+                                <p className="text-white/70 text-[10px]">En ligne</p>
+                              </div>
+                            </div>
+                            <button
+                              onClick={() => setMobilePreviewOpen(false)}
+                              className="text-white/70 hover:text-white p-1"
+                            >
+                              <X size={16} />
+                            </button>
+                          </div>
+
+                          {/* Messages mobile */}
+                          <div className="flex-1 p-3 bg-gray-50 overflow-y-auto">
+                            <div className="flex gap-2">
+                              <div
+                                className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
+                                style={{ backgroundColor: widgetConfig.primaryColor }}
+                              >
+                                <MessageSquare size={10} className="text-white" />
+                              </div>
+                              <div className="bg-white rounded-xl rounded-tl-sm px-3 py-2 shadow-sm max-w-[90%]">
+                                <p className="text-xs text-gray-800">{widgetConfig.welcomeMessage}</p>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Input mobile */}
+                          <div className="p-2 bg-white border-t border-gray-100 shrink-0">
+                            <div className="flex items-center gap-2">
+                              <input
+                                type="text"
+                                placeholder={widgetConfig.placeholder}
+                                className="flex-1 px-3 py-1.5 bg-gray-100 rounded-full text-xs outline-none"
+                                disabled
+                              />
+                              <button
+                                className="w-7 h-7 rounded-full flex items-center justify-center text-white shrink-0"
+                                style={{ backgroundColor: widgetConfig.primaryColor }}
+                              >
+                                <Send size={12} />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Home indicator */}
+                  <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-28 h-1 bg-gray-600 rounded-full" />
+                </div>
+              </div>
+
+              {/* Instructions */}
+              <p className="text-center text-xs text-gray-500 mt-4">
+                Cliquez sur le bouton pour voir l'ouverture du widget
+              </p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  )
-}
+    )
+  }
