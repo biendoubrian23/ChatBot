@@ -91,6 +91,10 @@ export default function IntegrationPage() {
           // Mapping explicite DB (snake_case) -> UI (camelCase)
           primaryColor: config?.color_accent || prev.primaryColor,
           welcomeMessage: config?.welcome_message || prev.welcomeMessage,
+          widgetWidth: config?.width || prev.widgetWidth,
+          widgetHeight: config?.height || prev.widgetHeight,
+          placeholder: config?.placeholder || prev.placeholder,
+          brandingText: config?.branding_text || prev.brandingText,
           // Assurer que les valeurs par défaut sont écrasées si présentes en DB
           chatbot_name: config?.chatbot_name || prev.chatbot_name
         }
@@ -106,6 +110,10 @@ export default function IntegrationPage() {
     // Mapping inverse UI -> DB pour la consistance
     if (updates.primaryColor) dbUpdates.color_accent = updates.primaryColor
     if (updates.welcomeMessage) dbUpdates.welcome_message = updates.welcomeMessage
+    if (updates.widgetWidth) dbUpdates.width = updates.widgetWidth
+    if (updates.widgetHeight) dbUpdates.height = updates.widgetHeight
+    if (updates.placeholder) dbUpdates.placeholder = updates.placeholder
+    if (updates.brandingText) dbUpdates.branding_text = updates.brandingText
 
     const newConfig = { ...widgetConfig, ...updates, ...dbUpdates }
     setWidgetConfig(newConfig)
@@ -620,7 +628,7 @@ export default {
                     {mobilePreviewOpen && (
                       <div
                         className="absolute bottom-4 left-2 right-2 bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col z-10 animate-in slide-in-from-bottom-4 duration-300"
-                        style={{ height: '420px' }}
+                        style={{ height: `${Math.min(500, Math.max(300, widgetConfig.widgetHeight * 0.7))}px` }}
                       >
                         {/* Header du widget mobile */}
                         <div

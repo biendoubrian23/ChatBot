@@ -50,10 +50,10 @@ function ChatbotLayoutContent({ children }: { children: React.ReactNode }) {
         botName={chatbot.widget_config?.chatbot_name || chatbot.name}
         welcomeMessage={chatbot.widget_config?.welcome_message || `Bonjour ! Je suis ${chatbot.name}. Comment puis-je vous aider ?`}
         accentColor={chatbot.widget_config?.color_accent || "#000000"}
-        widgetWidth={400} // Default value since not in config type
-        widgetHeight={600} // Default value since not in config type
+        widgetWidth={chatbot.widget_config?.width || 400}
+        widgetHeight={chatbot.widget_config?.height || 600}
         streamingEnabled={chatbot.rag_config?.streaming_enabled ?? true}
-        brandingText={'Propulsé par MONITORA'} // Default value since not in config type
+        brandingText={chatbot.widget_config?.branding_text || 'Propulsé par MONITORA'}
       />
     </div>
   )

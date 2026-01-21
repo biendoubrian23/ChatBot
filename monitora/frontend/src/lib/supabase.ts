@@ -31,6 +31,10 @@ export interface WidgetConfig {
   position: 'bottom-right' | 'bottom-left'
   welcome_message: string
   chatbot_name: string
+  width?: number
+  height?: number
+  placeholder?: string
+  branding_text?: string
 }
 
 export interface RAGConfig {
