@@ -39,7 +39,7 @@ app.add_middleware(
     allow_origins=["*"],  # Widget doit être accessible depuis n'importe quel site
     allow_credentials=False,  # Pas de credentials avec allow_origins=["*"]
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
-    allow_headers=["Authorization", "Content-Type", "Accept", "Origin", "X-Requested-With"],
+    allow_headers=["Authorization", "Content-Type", "Accept", "Origin", "X-Requested-With", "ngrok-skip-browser-warning"],
     expose_headers=["*"],
     max_age=86400,  # Cache preflight 24h
 )
