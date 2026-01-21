@@ -591,7 +591,7 @@
         }
 
         /* Hide tooltip when chat is open */
-        .monitora-chat-window.open ~ .monitora-tooltip {
+        .monitora-container.chat-open .monitora-tooltip {
           display: none !important;
           animation: none !important;
         }
@@ -733,12 +733,14 @@
       isOpen = !isOpen;
       if (isOpen) {
         chatWindow.classList.add('open');
+        container.classList.add('chat-open'); // Toggle class on container to hide tooltip
         if (messagesEl.children.length === 0) {
           addMessage('assistant', welcomeMessage, false);
         }
         setTimeout(() => inputEl.focus(), 100);
       } else {
         chatWindow.classList.remove('open');
+        container.classList.remove('chat-open'); // Remove class to show tooltip again
       }
     }
 
