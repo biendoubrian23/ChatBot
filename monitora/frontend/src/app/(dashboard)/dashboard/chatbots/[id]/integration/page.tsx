@@ -143,7 +143,10 @@ export default function IntegrationPage() {
   }
 
   const getWidgetCode = () => {
+    // apiUrl = Backend URL pour les appels API (XHR)
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001'
+    // proxyUrl = URL du script via le proxy Vercel (contourne les restrictions iOS Safari)
+    const proxyUrl = typeof window !== 'undefined' ? `${window.location.origin}/api/proxy-widget` : '/api/proxy-widget'
 
     const config = {
       workspaceId: chatbot?.id || 'WORKSPACE_ID',
@@ -178,7 +181,7 @@ import Script from 'next/script'
   \`}
 </Script>
 <Script 
-  src="${apiUrl}/widget/embed.js" 
+  src="${proxyUrl}" 
   strategy="afterInteractive" 
 />`
 
@@ -203,7 +206,7 @@ function App() {
 
     // Charger le script
     const script = document.createElement('script');
-    script.src = "${apiUrl}/widget/embed.js";
+    script.src = "${proxyUrl}";
     script.async = true;
     document.body.appendChild(script);
 
@@ -237,7 +240,7 @@ export default {
 
     // Charger le script
     const script = document.createElement('script');
-    script.src = "${apiUrl}/widget/embed.js";
+    script.src = "${proxyUrl}";
     script.async = true;
     document.body.appendChild(script);
   }
@@ -261,7 +264,7 @@ export default {
         apiUrl: "${apiUrl}"
     };
 </script>
-<script src="${apiUrl}/widget/embed.js" async></script>
+<script src="${proxyUrl}" async></script>
 
 @* Ou via injection JavaScript dans Program.cs : *@
 @* builder.Services.AddScoped<IJSRuntime>(); *@`
@@ -283,7 +286,7 @@ export default {
         apiUrl: "${apiUrl}"
     };
 </script>
-<script src="${apiUrl}/widget/embed.js" async></script>`
+<script src="${proxyUrl}" async></script>`
 
       case 'html':
       default:
@@ -302,7 +305,7 @@ export default {
   };
 </script>
 <script 
-  src="${apiUrl}/widget/embed.js"
+  src="${proxyUrl}"
   async
 ></script>`
     }
