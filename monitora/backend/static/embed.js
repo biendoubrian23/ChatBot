@@ -503,17 +503,25 @@
           /* Garde le ratio de la config mais adapte à l'écran */
           width: calc(100vw - 24px) !important;
           max-width: ${config.width || 380}px !important;
-          height: calc(100vh - 100px) !important;
+          height: calc(100vh - 40px) !important;
           max-height: ${config.height || 550}px !important;
-          bottom: 70px !important;
+          bottom: 12px !important;
           right: 12px !important;
           left: auto !important;
           border-radius: 16px !important;
+          z-index: 2147483647 !important;
+        }
+
+        /* Cacher le bouton toggle quand le chat est ouvert sur mobile */
+        .monitora-chat-window.open ~ .monitora-toggle-btn {
+          display: none !important;
         }
 
         .monitora-toggle-btn {
           width: 50px !important;
           height: 50px !important;
+          bottom: 20px !important;
+          right: 20px !important;
         }
       }
     `;
