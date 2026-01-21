@@ -144,7 +144,9 @@ import Script from 'next/script'
       placeholder: "${config.placeholder}",
       width: ${config.width},
       height: ${config.height},
-      brandingText: "${config.brandingText}"
+      height: ${config.height},
+      brandingText: "${config.brandingText}",
+      apiUrl: "${apiUrl}"
     };
   \`}
 </Script>
@@ -264,7 +266,9 @@ export default {
     placeholder: "${config.placeholder}",
     width: ${config.width},
     height: ${config.height},
-    brandingText: "${config.brandingText}"
+    height: ${config.height},
+    brandingText: "${config.brandingText}",
+    apiUrl: "${apiUrl}"
   };
 </script>
 <script 

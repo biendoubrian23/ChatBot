@@ -33,10 +33,12 @@
       for (let i = 0; i < scripts.length; i++) {
         const src = scripts[i].src;
         if (src && src.includes('embed.js')) {
-          return src.replace('/widget/embed.js', '');
+          // Gérer les différents chemins possibles
+          return src.replace('/widget/embed.js', '').replace('/static/embed.js', '');
         }
       }
-      return 'http://localhost:8001';
+      console.warn('MONITORA: Impossible de détecter l\'URL de l\'API, utilisation de la configuration par défaut');
+      return '';
     })();
 
     // ========================================
