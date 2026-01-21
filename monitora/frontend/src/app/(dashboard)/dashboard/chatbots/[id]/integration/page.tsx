@@ -83,19 +83,38 @@ export default function IntegrationPage() {
   useEffect(() => {
     // Charger la config existante depuis le contexte
     if (chatbot?.widget_config) {
-      setWidgetConfig(prev => ({ ...prev, ...chatbot.widget_config }))
+      setWidgetConfig(prev => {
+        const config = chatbot.widget_config
+        return {
+          ...prev,
+          ...config,
+          // Mapping explicite DB (snake_case) -> UI (camelCase)
+          primaryColor: config?.color_accent || prev.primaryColor,
+          welcomeMessage: config?.welcome_message || prev.welcomeMessage,
+          // Assurer que les valeurs par défaut sont écrasées si présentes en DB
+          chatbot_name: config?.chatbot_name || prev.chatbot_name
+        }
+      })
     }
   }, [chatbot])
 
   // Mettre à jour localement ET dans le contexte (preview instantanée)
   const updateConfig = (updates: Partial<typeof widgetConfig>) => {
-    const newConfig = { ...widgetConfig, ...updates }
+    // Préparer les mises à jour pour la DB (snake_case)
+    const dbUpdates: any = { ...updates }
+
+    // Mapping inverse UI -> DB pour la consistance
+    if (updates.primaryColor) dbUpdates.color_accent = updates.primaryColor
+    if (updates.welcomeMessage) dbUpdates.welcome_message = updates.welcomeMessage
+
+    const newConfig = { ...widgetConfig, ...updates, ...dbUpdates }
     setWidgetConfig(newConfig)
     setHasChanges(true)
     setSaved(false)
+
     // Mettre à jour la preview immédiatement via le contexte
     // @ts-ignore
-    updateWidgetConfig(updates)
+    updateWidgetConfig(dbUpdates)
   }
 
   const saveConfig = async () => {
@@ -116,7 +135,12 @@ export default function IntegrationPage() {
   }
 
   const getWidgetCode = () => {
+    // apiUrl reste l'URL directe du backend (Ngrok) pour les requêtes API (XHR)
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001'
+    // proxyUrl est l'URL du frontend (Vercel) qui servira le script via le proxy
+    const proxyUrl = typeof window !== 'undefined' ? window.location.origin : ''
+    const scriptSrc = `${proxyUrl}/api/proxy-widget`
+
     const config = {
       workspaceId: chatbot?.id || 'WORKSPACE_ID',
       position: widgetConfig.position,
@@ -151,7 +175,7 @@ import Script from 'next/script'
   \`}
 </Script>
 <Script 
-  src="${apiUrl}/widget/embed.js"
+  src="${scriptSrc}"
   strategy="afterInteractive"
 />`
 
@@ -170,12 +194,13 @@ function App() {
       placeholder: "${config.placeholder}",
       width: ${config.width},
       height: ${config.height},
-      brandingText: "${config.brandingText}"
+      brandingText: "${config.brandingText}",
+      apiUrl: "${apiUrl}"
     };
 
     // Charger le script
     const script = document.createElement('script');
-    script.src = "${apiUrl}/widget/embed.js";
+    script.src = "${scriptSrc}";
     script.async = true;
     document.body.appendChild(script);
 
@@ -203,12 +228,13 @@ export default {
       placeholder: "${config.placeholder}",
       width: ${config.width},
       height: ${config.height},
-      brandingText: "${config.brandingText}"
+      brandingText: "${config.brandingText}",
+      apiUrl: "${apiUrl}"
     };
 
     // Charger le script
     const script = document.createElement('script');
-    script.src = "${apiUrl}/widget/embed.js";
+    script.src = "${scriptSrc}";
     script.async = true;
     document.body.appendChild(script);
   }
@@ -228,10 +254,11 @@ export default {
         placeholder: "${config.placeholder}",
         width: ${config.width},
         height: ${config.height},
-        brandingText: "${config.brandingText}"
+        brandingText: "${config.brandingText}",
+        apiUrl: "${apiUrl}"
     };
 </script>
-<script src="${apiUrl}/widget/embed.js" async></script>
+<script src="${scriptSrc}" async></script>
 
 @* Ou via injection JavaScript dans Program.cs : *@
 @* builder.Services.AddScoped<IJSRuntime>(); *@`
@@ -249,10 +276,11 @@ export default {
         placeholder: "${config.placeholder}",
         width: ${config.width},
         height: ${config.height},
-        brandingText: "${config.brandingText}"
+        brandingText: "${config.brandingText}",
+        apiUrl: "${apiUrl}"
     };
 </script>
-<script src="${apiUrl}/widget/embed.js" async></script>`
+<script src="${scriptSrc}" async></script>`
 
       case 'html':
       default:
@@ -272,7 +300,7 @@ export default {
   };
 </script>
 <script 
-  src="${apiUrl}/widget/embed.js"
+  src="${scriptSrc}"
   async
 ></script>`
     }
