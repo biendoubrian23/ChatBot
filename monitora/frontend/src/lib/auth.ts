@@ -84,6 +84,7 @@ async function authFetch(endpoint: string, options?: RequestInit): Promise<any> 
     ...options,
     headers: {
       'Content-Type': 'application/json',
+      'ngrok-skip-browser-warning': 'true', // Important pour bypassing la page d'interstitial Ngrok
       ...options?.headers,
     },
   })
@@ -302,6 +303,7 @@ export async function authenticatedFetch(
   const makeRequest = async (authToken: string | null): Promise<Response> => {
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
+      'ngrok-skip-browser-warning': 'true', // Important pour bypassing la page d'interstitial Ngrok
       ...options?.headers,
     }
 

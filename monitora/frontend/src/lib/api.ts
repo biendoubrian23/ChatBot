@@ -22,6 +22,7 @@ async function fetchPublicAPI<T = any>(endpoint: string, options?: RequestInit):
     ...options,
     headers: {
       'Content-Type': 'application/json',
+      'ngrok-skip-browser-warning': 'true', // Important pour bypassing la page d'interstitial Ngrok
       ...options?.headers,
     },
   })
