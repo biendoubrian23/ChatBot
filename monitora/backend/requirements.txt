@@ -1,0 +1,37 @@
+# FastAPI & Server
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+pydantic>=2.0.0
+pydantic-settings>=2.0.0
+python-dotenv>=1.0.0
+python-multipart>=0.0.6
+aiofiles>=23.0.0
+
+# Supabase (legacy - peut être supprimé après migration complète)
+supabase>=2.0.0
+
+# Authentication
+PyJWT>=2.8.0
+
+# LLM Providers
+mistralai>=1.0.0
+groq>=0.4.0
+httpx>=0.25.0
+
+# RAG & Vectorstore
+faiss-cpu>=1.7.4
+sentence-transformers>=2.2.0
+langchain>=0.3.0
+langchain-core>=0.3.0
+langchain-community>=0.3.0
+langchain-huggingface>=0.1.0
+langchain-text-splitters>=0.3.0
+
+# Document processing
+pypdf>=3.0.0
+python-docx>=1.0.0
+unstructured>=0.10.0
+
+# Database connectors
+pyodbc>=5.0.0
+

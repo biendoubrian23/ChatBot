@@ -1,0 +1,61 @@
+🔄 Le flux complet
+
+┌─────────────────────────────────────────────────────────────────────┐
+│  1. SITE COOLLIBRI                                                  │
+│     → Utilisateur connecté (user_id = 456)                          │
+│     → Injecte: data-user-id="456" dans le widget                    │
+└─────────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│  2. WIDGET MONITORA                                                 │
+│     → Reçoit user_id = 456                                          │
+│     → L'envoie au backend à chaque message                          │
+└─────────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│  3. BACKEND MONITORA                                                │
+│                                                                     │
+│     User: "Où en est ma commande 78542 ?"                           │
+│                                                                     │
+│     → Requête BDD: SELECT * FROM Orders                             │
+│                    WHERE OrderNumber = '78542'                      │
+│                    AND UserId = 456                                 │
+│                                                                     │
+│     Si trouvé → Retourne les infos                                  │
+│     Si pas trouvé → Message d'erreur poli                           │
+└─────────────────────────────────────────────────────────────────────┘
+
+
+💬 Exemples de réponses du chatbot
+✅ Commande trouvée et appartient à l'utilisateur
+"Votre commande #78542 est actuellement en cours de préparation. Elle devrait être expédiée d'ici 2 jours ouvrés."
+
+❌ Commande inexistante ou pas associée
+"Je n'ai pas trouvé de commande #99999 associée à votre compte.
+
+📧 Vérifiez le numéro dans votre email de confirmation
+👤 Ou consultez vos commandes dans Mon compte → Mes commandes
+
+Si le problème persiste, contactez notre support au 05 31 61 60 42."
+
+🔍 L'utilisateur demande "mes commandes" sans numéro
+"Voici vos commandes récentes :
+
+#78542 - En préparation (12/01/2026)
+#78123 - Livrée (05/01/2026)
+#77890 - Livrée (20/12/2025)
+Sur laquelle souhaitez-vous des informations ?"
+
+🛡️ Sécurité garantie
+Scénario	Résultat
+User 456 demande sa commande #78542	✅ Accès OK
+User 456 demande la commande #11111 (appartient à User 789)	❌ "Commande non trouvée"
+User 456 tente de deviner des numéros	❌ Ne verra jamais les commandes des autres
+Quelqu'un sans user_id (non connecté)	❌ Pas d'accès aux commandes
+📝 Ce qu'il faut implémenter
+embed.js : Récupérer data-user-id et l'envoyer avec chaque requête
+Backend : Ajouter user_id dans la clause WHERE des requêtes
+Prompt LLM : Lui indiquer comment répondre quand la commande n'existe pas
+C'est une implémentation simple et sécurisée. On passe à l'implémentation ?
