@@ -3,6 +3,7 @@ Database Layer - Abstraction pour SQL Server
 Remplace complètement Supabase
 """
 import pyodbc
+import struct
 import json
 import uuid
 from typing import Optional, List, Dict, Any
@@ -12,6 +13,17 @@ from app.core.config import settings
 import logging
 
 logger = logging.getLogger(__name__)
+
+# Constante pour le type DATETIMEOFFSET de SQL Server (code ODBC -155)
+SQL_DATETIMEOFFSET = -155
+
+
+def _handle_datetimeoffset(dto_value):
+    """
+    Convertit une valeur DATETIMEOFFSET SQL Server en datetime Python.
+    """
+    tup = struct.unpack("<6hI2h", dto_value)
+    return datetime(tup[0], tup[1], tup[2], tup[3], tup[4], tup[5], tup[6] // 1000)
 
 # =====================================================
 # CONNECTION MANAGER
@@ -42,8 +54,10 @@ class DatabaseConnection:
         return self._connection_string
     
     def get_connection(self) -> pyodbc.Connection:
-        """Crée une nouvelle connexion"""
-        return pyodbc.connect(self.connection_string)
+        """Crée une nouvelle connexion avec le convertisseur DATETIMEOFFSET"""
+        conn = pyodbc.connect(self.connection_string)
+        conn.add_output_converter(SQL_DATETIMEOFFSET, _handle_datetimeoffset)
+        return conn
     
     @contextmanager
     def cursor(self):
@@ -125,6 +139,7 @@ class WorkspacesDB:
             row = cursor.fetchone()
             if row:
                 result = dict_from_row(cursor, row)
+                result['allowed_domains'] = parse_json(result.get('allowed_domains'))
                 result['rag_config'] = parse_json(result.get('rag_config'))
                 result['widget_config'] = parse_json(result.get('widget_config'))
                 return result
@@ -141,6 +156,7 @@ class WorkspacesDB:
             rows = cursor.fetchall()
             results = rows_to_list(cursor, rows)
             for r in results:
+                r['allowed_domains'] = parse_json(r.get('allowed_domains'))
                 r['rag_config'] = parse_json(r.get('rag_config'))
                 r['widget_config'] = parse_json(r.get('widget_config'))
             return results
@@ -156,6 +172,7 @@ class WorkspacesDB:
             row = cursor.fetchone()
             if row:
                 result = dict_from_row(cursor, row)
+                result['allowed_domains'] = parse_json(result.get('allowed_domains'))
                 result['rag_config'] = parse_json(result.get('rag_config'))
                 result['widget_config'] = parse_json(result.get('widget_config'))
                 return result
@@ -178,14 +195,14 @@ class WorkspacesDB:
     @staticmethod
     def update(workspace_id: str, **kwargs) -> Optional[dict]:
         """Met à jour un workspace"""
-        allowed_fields = ['name', 'description', 'rag_config', 'widget_config', 'is_active']
+        allowed_fields = ['name', 'description', 'rag_config', 'widget_config', 'is_active', 'allowed_domains']
         updates = []
         params = []
         
         for field in allowed_fields:
             if field in kwargs:
                 value = kwargs[field]
-                if field in ['rag_config', 'widget_config']:
+                if field in ['rag_config', 'widget_config', 'allowed_domains']:
                     value = to_json(value)
                 updates.append(f"{field} = ?")
                 params.append(value)
@@ -244,6 +261,11 @@ class DocumentsDB:
             return rows_to_list(cursor, cursor.fetchall())
     
     @staticmethod
+    def get_all_by_workspace(workspace_id: str) -> List[dict]:
+        """Alias pour get_by_workspace (utilisé dans vectorstore fallback)"""
+        return DocumentsDB.get_by_workspace(workspace_id)
+
+    @staticmethod
     def create(workspace_id: str, filename: str, file_path: str, 
                file_size: int, file_type: str, status: str = "pending") -> dict:
         """Crée un nouveau document"""
@@ -292,6 +314,104 @@ class DocumentsDB:
             """, (document_id,))
             row = cursor.fetchone()
             return dict_from_row(cursor, row) if row else None
+    
+    @staticmethod
+    def save_content(document_id: str, content: bytes) -> bool:
+        """Sauvegarde le contenu binaire d'un document"""
+        with _db.cursor() as cursor:
+            # Vérifier si existe déjà
+            cursor.execute("SELECT document_id FROM document_contents WHERE document_id = ?", (document_id,))
+            if cursor.fetchone():
+                cursor.execute(
+                    "UPDATE document_contents SET content = ? WHERE document_id = ?",
+                    (content, document_id)
+                )
+            else:
+                cursor.execute(
+                    "INSERT INTO document_contents (document_id, content) VALUES (?, ?)",
+                    (document_id, content)
+                )
+            return True
+
+    @staticmethod
+    def get_content(document_id: str) -> Optional[bytes]:
+        """Récupère le contenu binaire d'un document"""
+        with _db.cursor() as cursor:
+            cursor.execute("SELECT content FROM document_contents WHERE document_id = ?", (document_id,))
+            row = cursor.fetchone()
+            return row[0] if row else None
+
+
+# =====================================================
+# TABLE: VECTORSTORE_CONTENTS
+# =====================================================
+
+class VectorStoreDB:
+    """Opérations sur la table vectorstore_contents"""
+    
+    @staticmethod
+    def save_file(workspace_id: str, file_name: str, content: bytes) -> bool:
+        """Sauvegarde un fichier du vectorstore (index.faiss, index.pkl)"""
+        with _db.cursor() as cursor:
+            # Vérifier si existe déjà
+            cursor.execute("""
+                SELECT id FROM vectorstore_contents 
+                WHERE workspace_id = ? AND file_name = ?
+            """, (workspace_id, file_name))
+            
+            row = cursor.fetchone()
+            
+            if row:
+                cursor.execute("""
+                    UPDATE vectorstore_contents 
+                    SET content = ?, updated_at = SYSDATETIMEOFFSET() 
+                    WHERE id = ?
+                """, (content, row[0]))
+            else:
+                cursor.execute("""
+                    INSERT INTO vectorstore_contents (workspace_id, file_name, content, updated_at) 
+                    VALUES (?, ?, ?, SYSDATETIMEOFFSET())
+                """, (workspace_id, file_name, content))
+            return True
+
+    @staticmethod
+    def get_file(workspace_id: str, file_name: str) -> Optional[bytes]:
+        """Récupère un fichier du vectorstore"""
+        with _db.cursor() as cursor:
+            cursor.execute("""
+                SELECT content FROM vectorstore_contents 
+                WHERE workspace_id = ? AND file_name = ?
+            """, (workspace_id, file_name))
+            row = cursor.fetchone()
+            return row[0] if row else None
+            
+    @staticmethod
+    def delete_workspace_vectorstore(workspace_id: str) -> bool:
+        """Supprime tout le vectorstore d'un workspace"""
+        with _db.cursor() as cursor:
+            cursor.execute("DELETE FROM vectorstore_contents WHERE workspace_id = ?", (workspace_id,))
+            return cursor.rowcount > 0
+
+    @staticmethod
+    def exists(workspace_id: str) -> bool:
+        """Vérifie si un vectorstore existe pour ce workspace"""
+        with _db.cursor() as cursor:
+            cursor.execute("SELECT TOP 1 1 FROM vectorstore_contents WHERE workspace_id = ?", (workspace_id,))
+            return cursor.fetchone() is not None
+
+    @staticmethod
+    def get_last_updated(workspace_id: str) -> Optional[datetime]:
+        """Récupère la date de dernière mise à jour du vectorstore"""
+        with _db.cursor() as cursor:
+            cursor.execute("""
+                SELECT MAX(updated_at) as last_update 
+                FROM vectorstore_contents 
+                WHERE workspace_id = ?
+            """, (workspace_id,))
+            row = cursor.fetchone()
+            if row and row[0]:
+                return _handle_datetimeoffset(row[0]) if isinstance(row[0], bytes) else row[0]
+            return None
 
 
 # =====================================================
@@ -320,14 +440,14 @@ class ConversationsDB:
             return rows_to_list(cursor, cursor.fetchall())
     
     @staticmethod
-    def create(workspace_id: str, title: str = None, session_id: str = None) -> dict:
+    def create(workspace_id: str, title: str = None, session_id: str = None, visitor_id: str = None) -> dict:
         """Crée une nouvelle conversation"""
         conv_id = new_uuid()
         with _db.cursor() as cursor:
             cursor.execute("""
-                INSERT INTO conversations (id, workspace_id, title, session_id, created_at)
-                VALUES (?, ?, ?, ?, GETDATE())
-            """, (conv_id, workspace_id, title, session_id))
+                INSERT INTO conversations (id, workspace_id, title, session_id, visitor_id, created_at)
+                VALUES (?, ?, ?, ?, ?, GETDATE())
+            """, (conv_id, workspace_id, title, session_id, visitor_id))
             
             cursor.execute("SELECT * FROM conversations WHERE id = ?", (conv_id,))
             return dict_from_row(cursor, cursor.fetchone())
@@ -350,6 +470,17 @@ class ConversationsDB:
         """Supprime une conversation"""
         with _db.cursor() as cursor:
             cursor.execute("DELETE FROM conversations WHERE id = ?", (conversation_id,))
+            return cursor.rowcount > 0
+
+    @staticmethod
+    def increment_message_count(conversation_id: str) -> bool:
+        """Incrémente le compteur de messages"""
+        with _db.cursor() as cursor:
+            cursor.execute("""
+                UPDATE conversations 
+                SET messages_count = COALESCE(messages_count, 0) + 1 
+                WHERE id = ?
+            """, (conversation_id,))
             return cursor.rowcount > 0
 
 
@@ -382,14 +513,16 @@ class MessagesDB:
     
     @staticmethod
     def create(conversation_id: str, role: str, content: str, 
-               metadata: dict = None, rag_score: float = None) -> dict:
+               metadata: dict = None, rag_score: float = None, 
+               sources: list = None, response_time_ms: int = None,
+               ttfb_ms: int = None) -> dict:
         """Crée un nouveau message"""
         msg_id = new_uuid()
         with _db.cursor() as cursor:
             cursor.execute("""
-                INSERT INTO messages (id, conversation_id, role, content, metadata, rag_score, created_at)
-                VALUES (?, ?, ?, ?, ?, ?, GETDATE())
-            """, (msg_id, conversation_id, role, content, to_json(metadata), rag_score))
+                INSERT INTO messages (id, conversation_id, role, content, metadata, rag_score, sources, response_time_ms, ttfb_ms, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, GETDATE())
+            """, (msg_id, conversation_id, role, content, to_json(metadata), rag_score, to_json(sources), response_time_ms, ttfb_ms))
             
             cursor.execute("SELECT * FROM messages WHERE id = ?", (msg_id,))
             result = dict_from_row(cursor, cursor.fetchone())
@@ -437,8 +570,8 @@ class AnalyticsDB:
             return rows_to_list(cursor, cursor.fetchall())
     
     @staticmethod
-    def upsert(workspace_id: str, date: str, metrics: dict) -> dict:
-        """Crée ou met à jour les analytics d'un jour"""
+    def increment_stats(workspace_id: str, date: str, new_messages: int = 0, new_conversations: int = 0, new_visitors: int = 0):
+        """Incrémente les statistiques journalières (Upsert intelligent)"""
         with _db.cursor() as cursor:
             # Vérifier si existe
             cursor.execute(
@@ -450,28 +583,20 @@ class AnalyticsDB:
             if existing:
                 cursor.execute("""
                     UPDATE analytics_daily 
-                    SET conversations_count = ?, messages_count = ?, 
-                        avg_response_time = ?, satisfaction_rate = ?
-                    WHERE workspace_id = ? AND date = ?
-                """, (
-                    metrics.get('conversations_count', 0),
-                    metrics.get('messages_count', 0),
-                    metrics.get('avg_response_time'),
-                    metrics.get('satisfaction_rate'),
-                    workspace_id, date
-                ))
+                    SET messages_count = messages_count + ?,
+                        conversations_count = conversations_count + ?,
+                        unique_visitors = unique_visitors + ?
+                    WHERE id = ?
+                """, (new_messages, new_conversations, new_visitors, existing[0]))
             else:
                 analytics_id = new_uuid()
                 cursor.execute("""
                     INSERT INTO analytics_daily (id, workspace_id, date, conversations_count, 
-                        messages_count, avg_response_time, satisfaction_rate)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                        messages_count, unique_visitors)
+                    VALUES (?, ?, ?, ?, ?, ?)
                 """, (
                     analytics_id, workspace_id, date,
-                    metrics.get('conversations_count', 0),
-                    metrics.get('messages_count', 0),
-                    metrics.get('avg_response_time'),
-                    metrics.get('satisfaction_rate')
+                    new_conversations, new_messages, new_visitors
                 ))
             
             cursor.execute(
@@ -479,6 +604,25 @@ class AnalyticsDB:
                 (workspace_id, date)
             )
             return dict_from_row(cursor, cursor.fetchone())
+
+
+# =====================================================
+# TABLE: WORKSPACE_DATABASES
+# =====================================================
+
+class WorkspaceDatabasesDB:
+    """Opérations sur la table workspace_databases"""
+    
+    @staticmethod
+    def get_enabled_by_workspace(workspace_id: str) -> Optional[dict]:
+        """Récupère la configuration BDD active d'un workspace"""
+        with _db.cursor() as cursor:
+            cursor.execute("""
+                SELECT TOP 1 * FROM workspace_databases 
+                WHERE workspace_id = ? AND is_enabled = 1
+            """, (workspace_id,))
+            row = cursor.fetchone()
+            return dict_from_row(cursor, row) if row else None
 
 
 # =====================================================
@@ -609,6 +753,8 @@ __all__ = [
     'AnalyticsDB',
     'ProfilesDB',
     'InsightsDB',
+    'VectorStoreDB',
+    'WorkspaceDatabasesDB',
     'new_uuid',
     'parse_json',
     'to_json'

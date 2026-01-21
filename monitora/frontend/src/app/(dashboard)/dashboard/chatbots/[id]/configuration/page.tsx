@@ -6,7 +6,7 @@ import { Workspace } from '@/lib/supabase'
 import { api } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Slider } from '@/components/ui/slider'
-import { 
+import {
   Save,
   Brain,
   Thermometer,
@@ -62,7 +62,13 @@ export default function ConfigurationPage() {
         setChatbot(data)
         // Charger la config depuis rag_config directement
         if (data.rag_config) {
-          setConfig(prev => ({ ...prev, ...data.rag_config }))
+          setConfig(prev => ({
+            ...prev,
+            ...data.rag_config,
+            model: data.rag_config.llm_model || prev.model,
+            // @ts-ignore - streaming_enabled might be in JSON but not in interface
+            streaming_enabled: data.rag_config.streaming_enabled ?? prev.streaming_enabled
+          }))
         }
       }
     } catch (error) {
@@ -78,7 +84,14 @@ export default function ConfigurationPage() {
     try {
       await api.ragConfig.update(chatbot.id, config)
       // Mise à jour locale
-      setChatbot(prev => prev ? { ...prev, rag_config: config } : null)
+      const updatedRagConfig = {
+        ...chatbot.rag_config,
+        llm_model: config.model,
+        temperature: config.temperature,
+        max_tokens: config.max_tokens,
+        system_prompt: config.system_prompt
+      }
+      setChatbot(prev => prev ? { ...prev, rag_config: updatedRagConfig } : null)
     } catch (error) {
       console.error('Erreur sauvegarde config:', error)
     }
@@ -113,7 +126,7 @@ export default function ConfigurationPage() {
             <RotateCcw size={16} className="mr-2" />
             Réinitialiser
           </Button>
-          <Button 
+          <Button
             className="bg-black hover:bg-gray-800 text-white"
             onClick={saveConfig}
             disabled={saving}
@@ -151,12 +164,12 @@ export default function ConfigurationPage() {
                   <p className="font-medium text-gray-900">{selectedModel.label}</p>
                   <p className="text-xs text-gray-500 mt-1">{selectedModel.desc}</p>
                 </div>
-                <ChevronDown 
-                  size={20} 
-                  className={`text-gray-400 transition-transform ${modelDropdownOpen ? 'rotate-180' : ''}`} 
+                <ChevronDown
+                  size={20}
+                  className={`text-gray-400 transition-transform ${modelDropdownOpen ? 'rotate-180' : ''}`}
                 />
               </button>
-              
+
               {modelDropdownOpen && (
                 <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-10 overflow-hidden">
                   {MODELS.map((model) => (
@@ -166,9 +179,8 @@ export default function ConfigurationPage() {
                         setConfig(prev => ({ ...prev, model: model.value }))
                         setModelDropdownOpen(false)
                       }}
-                      className={`w-full p-4 text-left hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0 ${
-                        config.model === model.value ? 'bg-gray-50' : ''
-                      }`}
+                      className={`w-full p-4 text-left hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0 ${config.model === model.value ? 'bg-gray-50' : ''
+                        }`}
                     >
                       <div className="flex items-center justify-between">
                         <div>
@@ -196,23 +208,21 @@ export default function ConfigurationPage() {
                   <p className="text-sm text-gray-500">Affiche la réponse mot par mot</p>
                 </div>
               </div>
-              
+
               {/* Toggle Switch */}
               <button
                 onClick={() => setConfig(prev => ({ ...prev, streaming_enabled: !prev.streaming_enabled }))}
-                className={`relative w-14 h-8 rounded-full transition-colors ${
-                  config.streaming_enabled ? 'bg-black' : 'bg-gray-300'
-                }`}
+                className={`relative w-14 h-8 rounded-full transition-colors ${config.streaming_enabled ? 'bg-black' : 'bg-gray-300'
+                  }`}
               >
                 <div
-                  className={`absolute top-1 w-6 h-6 bg-white rounded-full shadow-sm transition-transform ${
-                    config.streaming_enabled ? 'translate-x-7' : 'translate-x-1'
-                  }`}
+                  className={`absolute top-1 w-6 h-6 bg-white rounded-full shadow-sm transition-transform ${config.streaming_enabled ? 'translate-x-7' : 'translate-x-1'
+                    }`}
                 />
               </button>
             </div>
             <p className="text-xs text-gray-400 mt-4">
-              {config.streaming_enabled 
+              {config.streaming_enabled
                 ? 'Les réponses s\'afficheront progressivement comme une vraie conversation'
                 : 'Les réponses s\'afficheront en une seule fois après génération complète'
               }

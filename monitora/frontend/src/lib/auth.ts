@@ -17,6 +17,7 @@ export interface User {
   email: string
   full_name?: string
   role: string
+  created_at?: string
 }
 
 export interface AuthResponse {
@@ -100,8 +101,8 @@ async function authFetch(endpoint: string, options?: RequestInit): Promise<any> 
  * Inscription d'un nouvel utilisateur
  */
 export async function register(
-  email: string, 
-  password: string, 
+  email: string,
+  password: string,
   fullName?: string
 ): Promise<AuthResponse> {
   const data = await authFetch('/register', {
@@ -137,7 +138,7 @@ export async function login(email: string, password: string): Promise<AuthRespon
  */
 export async function logout(): Promise<void> {
   const token = getAccessToken()
-  
+
   if (token) {
     try {
       await authFetch('/logout', {
@@ -157,25 +158,49 @@ export async function logout(): Promise<void> {
 /**
  * Rafraîchit les tokens
  */
+// Promise globale pour éviter les appels simultanés au refresh
+let isRefreshing = false
+let refreshPromise: Promise<AuthResponse | null> | null = null
+
+/**
+ * Rafraîchit les tokens
+ * Implémente un verrou pour éviter les conditions de course lors de multiples requêtes 401
+ */
 export async function refreshTokens(): Promise<AuthResponse | null> {
   const refreshToken = getRefreshToken()
-  
+
   if (!refreshToken) {
     return null
   }
 
-  try {
-    const data = await authFetch('/refresh', {
-      method: 'POST',
-      body: JSON.stringify({ refresh_token: refreshToken }),
-    })
-
-    setTokens(data.access_token, data.refresh_token)
-    return data
-  } catch {
-    clearTokens()
-    return null
+  // Si un refresh est déjà en cours, retourner la promesse existante
+  if (isRefreshing && refreshPromise) {
+    return refreshPromise
   }
+
+  isRefreshing = true
+
+  refreshPromise = (async () => {
+    try {
+      const data = await authFetch('/refresh', {
+        method: 'POST',
+        body: JSON.stringify({ refresh_token: refreshToken }),
+      })
+
+      setTokens(data.access_token, data.refresh_token)
+      return data
+    } catch {
+      // Ne supprimer les tokens que si c'est vraiment une erreur d'auth, pas de réseau
+      // Mais ici on assume que si le refresh échoue, c'est grave
+      clearTokens()
+      return null
+    } finally {
+      isRefreshing = false
+      refreshPromise = null
+    }
+  })()
+
+  return refreshPromise
 }
 
 /**
@@ -183,7 +208,7 @@ export async function refreshTokens(): Promise<AuthResponse | null> {
  */
 export async function getCurrentUser(): Promise<User | null> {
   const token = getAccessToken()
-  
+
   if (!token) {
     return getStoredUser()
   }
@@ -205,7 +230,7 @@ export async function getCurrentUser(): Promise<User | null> {
         return refreshed.user
       }
     }
-    
+
     clearTokens()
     return null
   }
@@ -216,7 +241,7 @@ export async function getCurrentUser(): Promise<User | null> {
  */
 export async function verifyToken(): Promise<{ valid: boolean; user?: User }> {
   const token = getAccessToken()
-  
+
   if (!token) {
     return { valid: false }
   }
@@ -242,11 +267,11 @@ export async function verifyToken(): Promise<{ valid: boolean; user?: User }> {
  * Change le mot de passe
  */
 export async function changePassword(
-  oldPassword: string, 
+  oldPassword: string,
   newPassword: string
 ): Promise<void> {
   const token = getAccessToken()
-  
+
   if (!token) {
     throw { message: 'Non authentifié', status: 401 } as AuthError
   }
@@ -269,7 +294,7 @@ export async function changePassword(
  * Gère automatiquement le rafraîchissement des tokens
  */
 export async function authenticatedFetch(
-  endpoint: string, 
+  endpoint: string,
   options?: RequestInit
 ): Promise<Response> {
   let token = getAccessToken()
@@ -295,7 +320,7 @@ export async function authenticatedFetch(
   // Si 401, essayer de rafraîchir le token
   if (response.status === 401 && token) {
     const refreshed = await refreshTokens()
-    
+
     if (refreshed) {
       response = await makeRequest(refreshed.access_token)
     }
@@ -308,7 +333,7 @@ export async function authenticatedFetch(
  * Version JSON de authenticatedFetch
  */
 export async function authenticatedFetchJSON<T = any>(
-  endpoint: string, 
+  endpoint: string,
   options?: RequestInit
 ): Promise<T> {
   const response = await authenticatedFetch(endpoint, options)

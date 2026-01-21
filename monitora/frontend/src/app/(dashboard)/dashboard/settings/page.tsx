@@ -62,32 +62,33 @@ export default function SettingsPage() {
           <div>
             <label className="text-sm font-medium text-gray-500">Membre depuis</label>
             <p className="mt-1">
-              {new Date(user?.created_at).toLocaleDateString('fr-FR', {
+              {user?.created_at ? new Date(user.created_at).toLocaleDateString('fr-FR', {
                 day: 'numeric',
                 month: 'long',
                 year: 'numeric'
-              })}
+              }) : '-'}
             </p>
           </div>
         </CardContent>
       </Card>
 
-      {/* Plan */}
+      {/* Rôle et accès */}
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle>Plan actuel</CardTitle>
+          <CardTitle>Accès</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-between p-4 border border-border">
             <div>
-              <div className="font-semibold">Plan Gratuit</div>
+              <div className="font-semibold">
+                {user?.role === 'admin' ? 'Administrateur' : 'Lecteur'}
+              </div>
               <div className="text-sm text-gray-600">
-                1 workspace, 100 conversations/mois
+                {user?.role === 'admin'
+                  ? 'Workspaces et conversations illimités'
+                  : 'Accès en lecture seule'}
               </div>
             </div>
-            <Button variant="outline" disabled>
-              Upgrader (bientôt)
-            </Button>
           </div>
         </CardContent>
       </Card>

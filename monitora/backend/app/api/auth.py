@@ -47,6 +47,7 @@ class UserResponse(BaseModel):
     email: str
     full_name: Optional[str]
     role: str
+    created_at: Optional[str] = None
 
 
 # =====================================================

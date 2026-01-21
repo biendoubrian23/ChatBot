@@ -8,18 +8,18 @@ import { cn } from '@/lib/utils'
 function formatMessageContent(content: string): JSX.Element {
   // Séparer par lignes pour gérer les listes
   const lines = content.split('\n')
-  
+
   const formattedLines = lines.map((line, idx) => {
     let formatted = line
       // Emails -> liens cliquables mailto
-      .replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g, 
+      .replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g,
         '<a href="mailto:$1" class="text-blue-600 underline hover:text-blue-800">$1</a>')
       // Numéros de téléphone français (05 31 61 60 42) -> liens tel:
       .replace(/(\d{2}\s\d{2}\s\d{2}\s\d{2}\s\d{2})/g,
         '<a href="tel:$1" class="text-blue-600 underline hover:text-blue-800">$1</a>')
       // Gras **texte**
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    
+
     // Détecter les listes à puces (-, •, *, ✓, ✔, →)
     const bulletMatch = formatted.match(/^(\s*)([-•*✓✔→])\s+(.*)$/)
     if (bulletMatch) {
@@ -31,7 +31,7 @@ function formatMessageContent(content: string): JSX.Element {
         <span>${text}</span>
       </div>`
     }
-    
+
     // Détecter les listes numérotées (1., 2., etc.)
     const numberedMatch = formatted.match(/^(\s*)(\d+)[.)]\s+(.*)$/)
     if (numberedMatch) {
@@ -43,16 +43,16 @@ function formatMessageContent(content: string): JSX.Element {
         <span>${text}</span>
       </div>`
     }
-    
+
     // Ligne vide
     if (!formatted.trim()) {
       return '<div style="height: 8px;"></div>'
     }
-    
+
     // Ligne normale
     return `<div style="margin-top: 2px;">${formatted}</div>`
   }).join('')
-  
+
   return <div dangerouslySetInnerHTML={{ __html: formattedLines }} />
 }
 
@@ -123,7 +123,7 @@ export function ChatWidgetPreview({
 
   const handleSend = async () => {
     if (!input.trim() || isLoading) return
-    
+
     const userMessage = input.trim()
     setInput('')
     setMessages(prev => [...prev, { role: 'user', content: userMessage, feedback: null }])
@@ -132,10 +132,10 @@ export function ChatWidgetPreview({
     // Si pas de workspaceId, mode prévisualisation simple
     if (!workspaceId) {
       setTimeout(() => {
-        setMessages(prev => [...prev, { 
-          role: 'assistant', 
-          content: 'Je suis en mode prévisualisation. Configurez un workspace pour tester les vraies réponses.', 
-          feedback: null 
+        setMessages(prev => [...prev, {
+          role: 'assistant',
+          content: 'Je suis en mode prévisualisation. Configurez un workspace pour tester les vraies réponses.',
+          feedback: null
         }])
         setIsLoading(false)
       }, 500)
@@ -185,9 +185,9 @@ export function ChatWidgetPreview({
                     // Mettre à jour le dernier message
                     setMessages(prev => {
                       const updated = [...prev]
-                      updated[updated.length - 1] = { 
-                        ...updated[updated.length - 1], 
-                        content: fullResponse 
+                      updated[updated.length - 1] = {
+                        ...updated[updated.length - 1],
+                        content: fullResponse
                       }
                       return updated
                     })
@@ -219,10 +219,10 @@ export function ChatWidgetPreview({
         if (response.ok) {
           const data = await response.json()
           setSessionId(data.session_id)
-          setMessages(prev => [...prev, { 
-            role: 'assistant', 
-            content: data.response, 
-            feedback: null 
+          setMessages(prev => [...prev, {
+            role: 'assistant',
+            content: data.response,
+            feedback: null
           }])
         } else {
           throw new Error('Erreur serveur')
@@ -230,10 +230,10 @@ export function ChatWidgetPreview({
       }
     } catch (error) {
       console.error('Erreur chat:', error)
-      setMessages(prev => [...prev, { 
-        role: 'assistant', 
-        content: 'Impossible de contacter le serveur. Vérifiez que le backend est en cours d\'exécution.', 
-        feedback: null 
+      setMessages(prev => [...prev, {
+        role: 'assistant',
+        content: 'Je suis momentanément indisponible. Veuillez réessayer dans quelques instants.',
+        feedback: null
       }])
     }
 
@@ -241,7 +241,7 @@ export function ChatWidgetPreview({
   }
 
   const handleFeedback = (index: number, value: 1 | -1) => {
-    setMessages(prev => prev.map((msg, i) => 
+    setMessages(prev => prev.map((msg, i) =>
       i === index ? { ...msg, feedback: msg.feedback === value ? null : value } : msg
     ))
   }
@@ -254,7 +254,7 @@ export function ChatWidgetPreview({
         <div className="relative bg-gray-900 rounded-[3rem] p-3 shadow-2xl">
           {/* Notch */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-7 bg-gray-900 rounded-b-2xl z-10" />
-          
+
           {/* Screen */}
           <div className="relative bg-white rounded-[2.5rem] overflow-hidden" style={{ height: '580px' }}>
             {/* Status Bar */}
@@ -272,14 +272,14 @@ export function ChatWidgetPreview({
                 </div>
               </div>
             </div>
-            
+
             {/* Chat Content */}
             <div className="flex flex-col h-[calc(100%-3rem)]">
               {/* Header */}
-              <div 
+              <div
                 className="px-4 py-3 flex items-center gap-3"
-                style={{ 
-                  background: `linear-gradient(135deg, ${accentColor} 0%, ${adjustColor(accentColor, -20)} 100%)` 
+                style={{
+                  background: `linear-gradient(135deg, ${accentColor} 0%, ${adjustColor(accentColor, -20)} 100%)`
                 }}
               >
                 <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
@@ -303,69 +303,70 @@ export function ChatWidgetPreview({
                   // Trouver l'index du dernier message utilisateur
                   const lastUserIndex = messages.map((m, idx) => m.role === 'user' ? idx : -1).filter(idx => idx !== -1).pop()
                   return (
-                  <div
-                    key={i}
-                    ref={i === lastUserIndex ? userMessageRef : null}
-                    className={cn(
-                      'flex w-full',
-                      msg.role === 'user' ? 'justify-end' : 'justify-start'
-                    )}
-                  >
-                    {msg.role === 'assistant' && (
-                      <div 
-                        className="w-7 h-7 rounded-full flex-shrink-0 mr-2 flex items-center justify-center"
-                        style={{ backgroundColor: accentColor }}
-                      >
-                        <MessageCircle className="w-3.5 h-3.5 text-white" />
-                      </div>
-                    )}
-                    <div className={cn(
-                      'flex flex-col',
-                      msg.role === 'user' ? 'items-end max-w-[85%]' : 'items-start max-w-[85%]'
-                    )}>
-                      <div
-                        className={cn(
-                          'px-3 py-2 text-sm break-words',
-                          msg.role === 'user' 
-                            ? 'bg-gray-900 text-white rounded-2xl rounded-br-md'
-                            : 'bg-white text-gray-700 rounded-2xl rounded-bl-md shadow-sm border border-gray-100'
-                        )}
-                      >
-                        {msg.role === 'assistant' ? formatMessageContent(msg.content) : msg.content}
-                      </div>
+                    <div
+                      key={i}
+                      ref={i === lastUserIndex ? userMessageRef : null}
+                      className={cn(
+                        'flex w-full',
+                        msg.role === 'user' ? 'justify-end' : 'justify-start'
+                      )}
+                    >
                       {msg.role === 'assistant' && (
-                        <div className="flex items-center gap-1 mt-1 ml-1">
-                          <button
-                            onClick={() => handleFeedback(i, 1)}
-                            className={cn(
-                              'p-1 rounded transition-colors',
-                              msg.feedback === 1 
-                                ? 'text-green-600 bg-green-50' 
-                                : 'text-gray-400 hover:text-green-600 hover:bg-green-50'
-                            )}
-                          >
-                            <ThumbsUp size={10} />
-                          </button>
-                          <button
-                            onClick={() => handleFeedback(i, -1)}
-                            className={cn(
-                              'p-1 rounded transition-colors',
-                              msg.feedback === -1 
-                                ? 'text-red-600 bg-red-50' 
-                                : 'text-gray-400 hover:text-red-600 hover:bg-red-50'
-                            )}
-                          >
-                            <ThumbsDown size={10} />
-                          </button>
+                        <div
+                          className="w-7 h-7 rounded-full flex-shrink-0 mr-2 flex items-center justify-center"
+                          style={{ backgroundColor: accentColor }}
+                        >
+                          <MessageCircle className="w-3.5 h-3.5 text-white" />
                         </div>
                       )}
+                      <div className={cn(
+                        'flex flex-col',
+                        msg.role === 'user' ? 'items-end max-w-[85%]' : 'items-start max-w-[85%]'
+                      )}>
+                        <div
+                          className={cn(
+                            'px-3 py-2 text-sm break-words',
+                            msg.role === 'user'
+                              ? 'bg-gray-900 text-white rounded-2xl rounded-br-md'
+                              : 'bg-white text-gray-700 rounded-2xl rounded-bl-md shadow-sm border border-gray-100'
+                          )}
+                        >
+                          {msg.role === 'assistant' ? formatMessageContent(msg.content) : msg.content}
+                        </div>
+                        {msg.role === 'assistant' && (
+                          <div className="flex items-center gap-1 mt-1 ml-1">
+                            <button
+                              onClick={() => handleFeedback(i, 1)}
+                              className={cn(
+                                'p-1 rounded transition-colors',
+                                msg.feedback === 1
+                                  ? 'text-green-600 bg-green-50'
+                                  : 'text-gray-400 hover:text-green-600 hover:bg-green-50'
+                              )}
+                            >
+                              <ThumbsUp size={10} />
+                            </button>
+                            <button
+                              onClick={() => handleFeedback(i, -1)}
+                              className={cn(
+                                'p-1 rounded transition-colors',
+                                msg.feedback === -1
+                                  ? 'text-red-600 bg-red-50'
+                                  : 'text-gray-400 hover:text-red-600 hover:bg-red-50'
+                              )}
+                            >
+                              <ThumbsDown size={10} />
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                )})}  
+                  )
+                })}
                 {/* Indicateur de chargement */}
                 {isLoading && (
                   <div className="flex justify-start">
-                    <div 
+                    <div
                       className="w-7 h-7 rounded-full flex-shrink-0 mr-2 flex items-center justify-center"
                       style={{ backgroundColor: accentColor }}
                     >
@@ -412,7 +413,7 @@ export function ChatWidgetPreview({
             </div>
           </div>
         </div>
-        
+
         {/* Reflet */}
         <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-[80%] h-8 bg-gray-900/10 rounded-full blur-xl" />
       </div>
@@ -423,7 +424,7 @@ export function ChatWidgetPreview({
   return (
     <div className="fixed bottom-6 right-6 z-50">
       {/* Chat Window */}
-      <div 
+      <div
         className={cn(
           'absolute bottom-20 right-0 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden transition-all duration-300 origin-bottom-right',
           isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0 pointer-events-none'
@@ -431,10 +432,10 @@ export function ChatWidgetPreview({
         style={{ width: `${widgetWidth}px` }}
       >
         {/* Header avec dégradé */}
-        <div 
+        <div
           className="px-5 py-4 flex items-center justify-between"
-          style={{ 
-            background: `linear-gradient(135deg, ${accentColor} 0%, ${adjustColor(accentColor, -20)} 100%)` 
+          style={{
+            background: `linear-gradient(135deg, ${accentColor} 0%, ${adjustColor(accentColor, -20)} 100%)`
           }}
         >
           <div className="flex items-center gap-3">
@@ -449,7 +450,7 @@ export function ChatWidgetPreview({
               </div>
             </div>
           </div>
-          <button 
+          <button
             onClick={() => setIsOpen(false)}
             className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
           >
@@ -458,7 +459,7 @@ export function ChatWidgetPreview({
         </div>
 
         {/* Messages */}
-        <div 
+        <div
           className="overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-gray-50 to-white"
           style={{ height: `${widgetHeight - 140}px` }}
         >
@@ -466,72 +467,73 @@ export function ChatWidgetPreview({
             // Trouver l'index du dernier message utilisateur
             const lastUserIndex = messages.map((m, idx) => m.role === 'user' ? idx : -1).filter(idx => idx !== -1).pop()
             return (
-            <div
-              key={i}
-              ref={i === lastUserIndex ? userMessageRef : null}
-              className={cn(
-                'flex w-full',
-                msg.role === 'user' ? 'justify-end' : 'justify-start'
-              )}
-            >
-              {msg.role === 'assistant' && (
-                <div 
-                  className="w-8 h-8 rounded-full flex-shrink-0 mr-2 flex items-center justify-center"
-                  style={{ backgroundColor: accentColor }}
-                >
-                  <MessageCircle className="w-4 h-4 text-white" />
-                </div>
-              )}
-              <div className={cn(
-                'flex flex-col',
-                msg.role === 'user' ? 'items-end max-w-[75%]' : 'items-start max-w-[75%]'
-              )}>
-                <div
-                  className={cn(
-                    'px-4 py-2.5 text-sm leading-relaxed break-words',
-                    msg.role === 'user' 
-                      ? 'bg-gray-900 text-white rounded-2xl rounded-br-md'
-                      : 'bg-white text-gray-700 rounded-2xl rounded-bl-md shadow-sm border border-gray-100'
-                  )}
-                >
-                  {msg.role === 'assistant' ? formatMessageContent(msg.content) : msg.content}
-                </div>
-                {/* Boutons feedback pour les messages assistant */}
+              <div
+                key={i}
+                ref={i === lastUserIndex ? userMessageRef : null}
+                className={cn(
+                  'flex w-full',
+                  msg.role === 'user' ? 'justify-end' : 'justify-start'
+                )}
+              >
                 {msg.role === 'assistant' && (
-                  <div className="flex items-center gap-1 mt-1 ml-1">
-                    <button
-                      onClick={() => handleFeedback(i, 1)}
-                      className={cn(
-                        'p-1 rounded transition-colors',
-                        msg.feedback === 1 
-                          ? 'text-green-600 bg-green-50' 
-                          : 'text-gray-400 hover:text-green-600 hover:bg-green-50'
-                      )}
-                      title="Réponse utile"
-                    >
-                      <ThumbsUp size={12} />
-                    </button>
-                    <button
-                      onClick={() => handleFeedback(i, -1)}
-                      className={cn(
-                        'p-1 rounded transition-colors',
-                        msg.feedback === -1 
-                          ? 'text-red-600 bg-red-50' 
-                          : 'text-gray-400 hover:text-red-600 hover:bg-red-50'
-                      )}
-                      title="Réponse non utile"
-                    >
-                      <ThumbsDown size={12} />
-                    </button>
+                  <div
+                    className="w-8 h-8 rounded-full flex-shrink-0 mr-2 flex items-center justify-center"
+                    style={{ backgroundColor: accentColor }}
+                  >
+                    <MessageCircle className="w-4 h-4 text-white" />
                   </div>
                 )}
+                <div className={cn(
+                  'flex flex-col',
+                  msg.role === 'user' ? 'items-end max-w-[75%]' : 'items-start max-w-[75%]'
+                )}>
+                  <div
+                    className={cn(
+                      'px-4 py-2.5 text-sm leading-relaxed break-words',
+                      msg.role === 'user'
+                        ? 'bg-gray-900 text-white rounded-2xl rounded-br-md'
+                        : 'bg-white text-gray-700 rounded-2xl rounded-bl-md shadow-sm border border-gray-100'
+                    )}
+                  >
+                    {msg.role === 'assistant' ? formatMessageContent(msg.content) : msg.content}
+                  </div>
+                  {/* Boutons feedback pour les messages assistant */}
+                  {msg.role === 'assistant' && (
+                    <div className="flex items-center gap-1 mt-1 ml-1">
+                      <button
+                        onClick={() => handleFeedback(i, 1)}
+                        className={cn(
+                          'p-1 rounded transition-colors',
+                          msg.feedback === 1
+                            ? 'text-green-600 bg-green-50'
+                            : 'text-gray-400 hover:text-green-600 hover:bg-green-50'
+                        )}
+                        title="Réponse utile"
+                      >
+                        <ThumbsUp size={12} />
+                      </button>
+                      <button
+                        onClick={() => handleFeedback(i, -1)}
+                        className={cn(
+                          'p-1 rounded transition-colors',
+                          msg.feedback === -1
+                            ? 'text-red-600 bg-red-50'
+                            : 'text-gray-400 hover:text-red-600 hover:bg-red-50'
+                        )}
+                        title="Réponse non utile"
+                      >
+                        <ThumbsDown size={12} />
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          )})}  
+            )
+          })}
           {/* Indicateur de chargement */}
           {isLoading && (
             <div className="flex justify-start">
-              <div 
+              <div
                 className="w-8 h-8 rounded-full flex-shrink-0 mr-2 flex items-center justify-center"
                 style={{ backgroundColor: accentColor }}
               >
@@ -564,7 +566,7 @@ export function ChatWidgetPreview({
               onClick={handleSend}
               disabled={!input.trim() || isLoading}
               className="w-10 h-10 rounded-full flex items-center justify-center transition-all disabled:opacity-50"
-              style={{ 
+              style={{
                 backgroundColor: input.trim() && !isLoading ? accentColor : '#e5e7eb'
               }}
             >
@@ -589,8 +591,8 @@ export function ChatWidgetPreview({
           'w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-105',
           isOpen ? 'rotate-0' : 'rotate-0'
         )}
-        style={{ 
-          background: `linear-gradient(135deg, ${accentColor} 0%, ${adjustColor(accentColor, -20)} 100%)` 
+        style={{
+          background: `linear-gradient(135deg, ${accentColor} 0%, ${adjustColor(accentColor, -20)} 100%)`
         }}
       >
         {isOpen ? (

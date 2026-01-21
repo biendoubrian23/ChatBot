@@ -36,10 +36,20 @@ async def list_documents(
 ):
     """Liste tous les documents d'un workspace"""
     user = await get_user_from_token(authorization)
-    await verify_workspace_access(workspace_id, user.id)
+    await verify_workspace_access(workspace_id, user["id"])
     
     documents = DocumentsDB.get_by_workspace(workspace_id)
     return documents
+
+
+# Alias route pour compatibilité frontend (GET /api/documents/{workspace_id})
+@router.get("/{workspace_id}")
+async def list_documents_alias(
+    workspace_id: str,
+    authorization: str = Header(None)
+):
+    """Alias pour list_documents - compatibilité frontend"""
+    return await list_documents(workspace_id, authorization)
 
 
 @router.post("/workspace/{workspace_id}/upload")
@@ -53,9 +63,9 @@ async def upload_document(
     
     try:
         user = await get_user_from_token(authorization)
-        logger.info(f"User authenticated: {user.id}")
+        logger.info(f"User authenticated: {user['id']}")
         
-        workspace = await verify_workspace_access(workspace_id, user.id)
+        workspace = await verify_workspace_access(workspace_id, user["id"])
         logger.info(f"Workspace verified: {workspace.get('name', 'unknown')}")
         
         # Vérifier l'extension
@@ -103,6 +113,15 @@ async def upload_document(
         )
         logger.info(f"Document inserted: {doc['id']}")
         
+        # Sauvegarder le contenu binaire en base
+        try:
+            DocumentsDB.save_content(doc['id'], content)
+            logger.info(f"Content saved to DB for document: {doc['id']}")
+        except Exception as e:
+            logger.error(f"Error saving content to DB: {e}")
+            # On ne fail pas l'upload si la sauvegarde binaire échoue pour l'instant
+            # Car on a encore le fichier disque
+        
         # NE PAS vectoriser automatiquement - l'utilisateur doit cliquer sur "Indexer"
         
         return doc
@@ -127,7 +146,7 @@ async def index_document(
     
     try:
         user = await get_user_from_token(authorization)
-        await verify_workspace_access(workspace_id, user.id)
+        await verify_workspace_access(workspace_id, user["id"])
         
         # Récupérer le document
         doc = DocumentsDB.get_by_id(document_id)
@@ -160,7 +179,7 @@ async def upload_multiple_documents(
 ):
     """Upload plusieurs documents vers un workspace"""
     user = await get_user_from_token(authorization)
-    await verify_workspace_access(workspace_id, user.id)
+    await verify_workspace_access(workspace_id, user["id"])
     
     results = []
     errors = []
@@ -229,7 +248,7 @@ async def get_document(
         raise HTTPException(status_code=404, detail="Document non trouvé")
     
     # Vérifier l'accès
-    if doc.get("workspace_user_id") != user.id:
+    if doc.get("workspace_user_id") != user["id"]:
         raise HTTPException(status_code=403, detail="Accès refusé")
     
     # Retourner sans les infos du workspace owner
@@ -251,7 +270,7 @@ async def delete_document(
     if not doc:
         raise HTTPException(status_code=404, detail="Document non trouvé")
     
-    if doc.get("workspace_user_id") != user.id:
+    if doc.get("workspace_user_id") != user["id"]:
         raise HTTPException(status_code=403, detail="Accès refusé")
     
     # Supprimer le fichier physique
@@ -262,7 +281,9 @@ async def delete_document(
     # Supprimer de la base
     DocumentsDB.delete(document_id)
     
-    # TODO: Supprimer du vectorstore
+    # Supprimer du vectorstore
+    from app.services.vectorstore import delete_document_from_vectorstore
+    delete_document_from_vectorstore(doc["workspace_id"], document_id)
     
     return {"message": "Document supprimé"}
 
@@ -281,7 +302,7 @@ async def reindex_document(
     if not doc:
         raise HTTPException(status_code=404, detail="Document non trouvé")
     
-    if doc.get("workspace_user_id") != user.id:
+    if doc.get("workspace_user_id") != user["id"]:
         raise HTTPException(status_code=403, detail="Accès refusé")
     
     # Mettre à jour le statut
@@ -314,7 +335,7 @@ async def reindex_all_documents(
     
     try:
         user = await get_user_from_token(authorization)
-        await verify_workspace_access(workspace_id, user.id)
+        await verify_workspace_access(workspace_id, user["id"])
         
         # Récupérer tous les documents du workspace
         documents = DocumentsDB.get_by_workspace(workspace_id)

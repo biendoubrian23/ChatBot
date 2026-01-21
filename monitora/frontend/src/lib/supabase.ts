@@ -42,6 +42,7 @@ export interface RAGConfig {
   llm_model: string
   llm_provider?: string
   system_prompt?: string
+  streaming_enabled?: boolean
 }
 
 export interface Document {

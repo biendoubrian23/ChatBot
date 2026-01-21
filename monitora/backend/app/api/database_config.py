@@ -2,12 +2,13 @@
 API pour la gestion des connexions aux bases de données externes.
 Permet de configurer, tester et utiliser les BDD des clients.
 """
-from fastapi import APIRouter, HTTPException, Header
+from fastapi import APIRouter, HTTPException, Header, Depends
 from pydantic import BaseModel
 from typing import Optional
 import json
 import base64
-from app.core.supabase import get_supabase
+from app.core.auth_sqlserver import get_current_user
+from app.core.database import get_db, WorkspacesDB
 
 router = APIRouter()
 
@@ -55,21 +56,6 @@ class TestConnectionResult(BaseModel):
 # HELPERS
 # =====================================================
 
-async def get_user_from_token(authorization: str) -> dict:
-    """Vérifie le token et retourne l'utilisateur."""
-    if not authorization or not authorization.startswith("Bearer "):
-        raise HTTPException(status_code=401, detail="Non autorisé")
-    
-    token = authorization.replace("Bearer ", "")
-    supabase = get_supabase()
-    
-    try:
-        user = supabase.auth.get_user(token)
-        return user.user
-    except Exception as e:
-        raise HTTPException(status_code=401, detail=f"Token invalide: {e}")
-
-
 def encrypt_password(password: str) -> str:
     """Encode le mot de passe en base64 (pour le moment, améliorer avec encryption réelle en prod)."""
     return base64.b64encode(password.encode()).decode()
@@ -87,32 +73,28 @@ def decrypt_password(encrypted: str) -> str:
 @router.get("/{workspace_id}/database")
 async def get_database_config(
     workspace_id: str,
-    authorization: str = Header(None)
+    user = Depends(get_current_user)
 ):
     """Récupère la configuration de base de données d'un workspace."""
-    user = await get_user_from_token(authorization)
-    supabase = get_supabase()
+    db = get_db()
     
     # Vérifier que l'utilisateur a accès au workspace
-    workspace = supabase.table("workspaces")\
-        .select("id, user_id")\
-        .eq("id", workspace_id)\
-        .eq("user_id", user.id)\
-        .execute()
-    
-    if not workspace.data or len(workspace.data) == 0:
+    workspace = WorkspacesDB.get_by_id_and_user(workspace_id, user["id"])
+    if not workspace:
         raise HTTPException(status_code=404, detail="Workspace non trouvé")
     
-    # Récupérer la config de BDD (sans .single() pour éviter l'erreur 0 rows)
-    result = supabase.table("workspace_databases")\
-        .select("*")\
-        .eq("workspace_id", workspace_id)\
-        .execute()
-    
-    if not result.data or len(result.data) == 0:
-        return {"configured": False}
-    
-    db_config = result.data[0]  # Prendre le premier résultat
+    # Récupérer la config de BDD depuis SQL Server
+    with db.cursor() as cursor:
+        cursor.execute("""
+            SELECT * FROM workspace_databases WHERE workspace_id = ?
+        """, (workspace_id,))
+        row = cursor.fetchone()
+        
+        if not row:
+            return {"configured": False}
+        
+        columns = [col[0] for col in cursor.description]
+        db_config = dict(zip(columns, row))
     
     # Décrypter le mot de passe pour l'afficher
     decrypted_password = ""
@@ -124,18 +106,18 @@ async def get_database_config(
     
     return {
         "configured": True,
-        "id": db_config["id"],
-        "db_type": db_config["db_type"],
-        "db_host": db_config["db_host"],
-        "db_name": db_config["db_name"],
-        "db_user": db_config["db_user"],
-        "db_port": db_config["db_port"],
+        "id": str(db_config["id"]),
+        "db_type": db_config.get("db_type", "sqlserver"),
+        "db_host": db_config.get("db_host", ""),
+        "db_name": db_config.get("db_name", ""),
+        "db_user": db_config.get("db_user", ""),
+        "db_port": db_config.get("db_port", 1433),
         "db_password": decrypted_password,
-        "schema_type": db_config["schema_type"],
-        "is_enabled": db_config["is_enabled"],
+        "schema_type": db_config.get("schema_type", "generic"),
+        "is_enabled": db_config.get("is_enabled", True),
         "has_password": bool(db_config.get("db_password_encrypted")),
         "last_test_status": db_config.get("last_test_status"),
-        "last_test_at": db_config.get("last_test_at")
+        "last_test_at": str(db_config.get("last_test_at")) if db_config.get("last_test_at") else None
     }
 
 
@@ -143,52 +125,52 @@ async def get_database_config(
 async def save_database_config(
     workspace_id: str,
     config: DatabaseConfig,
-    authorization: str = Header(None)
+    user = Depends(get_current_user)
 ):
     """Sauvegarde la configuration de base de données."""
-    user = await get_user_from_token(authorization)
-    supabase = get_supabase()
+    db = get_db()
     
     # Vérifier accès
-    workspace = supabase.table("workspaces")\
-        .select("id, user_id")\
-        .eq("id", workspace_id)\
-        .eq("user_id", user.id)\
-        .execute()
-    
-    if not workspace.data or len(workspace.data) == 0:
+    workspace = WorkspacesDB.get_by_id_and_user(workspace_id, user["id"])
+    if not workspace:
         raise HTTPException(status_code=404, detail="Workspace non trouvé")
     
-    # Préparer les données
-    db_data = {
-        "workspace_id": workspace_id,
-        "db_type": config.db_type,
-        "db_host": config.db_host,
-        "db_name": config.db_name,
-        "db_user": config.db_user,
-        "db_password_encrypted": encrypt_password(config.db_password),
-        "db_port": config.db_port,
-        "schema_type": config.schema_type,
-        "is_enabled": config.is_enabled
-    }
-    
-    # Vérifier si une config existe déjà
-    existing = supabase.table("workspace_databases")\
-        .select("id")\
-        .eq("workspace_id", workspace_id)\
-        .execute()
-    
-    if existing.data and len(existing.data) > 0:
-        # Update
-        result = supabase.table("workspace_databases")\
-            .update(db_data)\
-            .eq("id", existing.data[0]["id"])\
-            .execute()
-    else:
-        # Insert
-        result = supabase.table("workspace_databases")\
-            .insert(db_data)\
-            .execute()
+    with db.cursor() as cursor:
+        # Vérifier si une config existe déjà
+        cursor.execute("""
+            SELECT id FROM workspace_databases WHERE workspace_id = ?
+        """, (workspace_id,))
+        existing = cursor.fetchone()
+        
+        import uuid
+        
+        if existing:
+            # Update
+            cursor.execute("""
+                UPDATE workspace_databases SET
+                    db_type = ?, db_host = ?, db_name = ?, db_user = ?,
+                    db_password_encrypted = ?, db_port = ?, schema_type = ?,
+                    is_enabled = ?, updated_at = GETDATE()
+                WHERE workspace_id = ?
+            """, (
+                config.db_type, config.db_host, config.db_name, config.db_user,
+                encrypt_password(config.db_password), config.db_port,
+                config.schema_type, config.is_enabled, workspace_id
+            ))
+        else:
+            # Insert
+            new_id = str(uuid.uuid4()).upper()
+            cursor.execute("""
+                INSERT INTO workspace_databases (
+                    id, workspace_id, db_type, db_host, db_name, db_user,
+                    db_password_encrypted, db_port, schema_type, is_enabled,
+                    created_at, updated_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, GETDATE(), GETDATE())
+            """, (
+                new_id, workspace_id, config.db_type, config.db_host,
+                config.db_name, config.db_user, encrypt_password(config.db_password),
+                config.db_port, config.schema_type, config.is_enabled
+            ))
     
     return {"success": True, "message": "Configuration sauvegardée"}
 
@@ -197,29 +179,26 @@ async def save_database_config(
 async def test_database_connection(
     workspace_id: str,
     config: Optional[DatabaseConfig] = None,
-    authorization: str = Header(None)
+    user = Depends(get_current_user)
 ):
     """Teste la connexion à la base de données."""
-    user = await get_user_from_token(authorization)
-    supabase = get_supabase()
+    db = get_db()
     
     # Vérifier accès
-    workspace = supabase.table("workspaces")\
-        .select("id, user_id")\
-        .eq("id", workspace_id)\
-        .eq("user_id", user.id)\
-        .execute()
-    
-    if not workspace.data or len(workspace.data) == 0:
+    workspace = WorkspacesDB.get_by_id_and_user(workspace_id, user["id"])
+    if not workspace:
         raise HTTPException(status_code=404, detail="Workspace non trouvé")
     
     # Récupérer la config existante en base (pour le mot de passe si besoin)
-    db_result = supabase.table("workspace_databases")\
-        .select("*")\
-        .eq("workspace_id", workspace_id)\
-        .execute()
-    
-    db_data = db_result.data[0] if db_result.data and len(db_result.data) > 0 else None
+    db_data = None
+    with db.cursor() as cursor:
+        cursor.execute("""
+            SELECT * FROM workspace_databases WHERE workspace_id = ?
+        """, (workspace_id,))
+        row = cursor.fetchone()
+        if row:
+            columns = [col[0] for col in cursor.description]
+            db_data = dict(zip(columns, row))
     
     # Si pas de config fournie OU mot de passe vide, utiliser celle en base
     if not config:
@@ -233,7 +212,7 @@ async def test_database_connection(
             db_user=db_data["db_user"],
             db_password=decrypt_password(db_data["db_password_encrypted"]),
             db_port=db_data["db_port"],
-            schema_type=db_data["schema_type"]
+            schema_type=db_data.get("schema_type", "generic")
         )
     elif not config.db_password and db_data:
         # Config fournie mais sans mot de passe - utiliser celui en base
@@ -264,13 +243,16 @@ async def test_database_connection(
         
         # Mettre à jour le statut du test
         from datetime import datetime
-        supabase.table("workspace_databases")\
-            .update({
-                "last_test_status": "success" if result["success"] else "failed",
-                "last_test_at": datetime.utcnow().isoformat()
-            })\
-            .eq("workspace_id", workspace_id)\
-            .execute()
+        with db.cursor() as cursor:
+            cursor.execute("""
+                UPDATE workspace_databases SET
+                    last_test_status = ?,
+                    last_test_at = GETDATE()
+                WHERE workspace_id = ?
+            """, (
+                "success" if result["success"] else "failed",
+                workspace_id
+            ))
         
         if result["success"]:
             return {
@@ -295,25 +277,21 @@ async def test_database_connection(
 @router.delete("/{workspace_id}/database")
 async def delete_database_config(
     workspace_id: str,
-    authorization: str = Header(None)
+    user = Depends(get_current_user)
 ):
     """Supprime la configuration de base de données."""
-    user = await get_user_from_token(authorization)
-    supabase = get_supabase()
+    db = get_db()
     
     # Vérifier accès
-    workspace = supabase.table("workspaces")\
-        .select("id, user_id")\
-        .eq("id", workspace_id)\
-        .eq("user_id", user.id)\
-        .execute()
-    
-    if not workspace.data or len(workspace.data) == 0:
+    workspace = WorkspacesDB.get_by_id_and_user(workspace_id, user["id"])
+    if not workspace:
         raise HTTPException(status_code=404, detail="Workspace non trouvé")
     
-    supabase.table("workspace_databases")\
-        .delete()\
-        .eq("workspace_id", workspace_id)\
-        .execute()
+    with db.cursor() as cursor:
+        cursor.execute("""
+            DELETE FROM workspace_databases WHERE workspace_id = ?
+        """, (workspace_id,))
+    
+    return {"success": True, "message": "Configuration supprimée"}
     
     return {"success": True, "message": "Configuration supprimée"}

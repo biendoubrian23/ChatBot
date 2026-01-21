@@ -6,10 +6,23 @@ import pyodbc
 from typing import Optional, List, Dict, Any
 from contextlib import contextmanager
 import json
+import struct
+from datetime import datetime
 from app.core.config import settings
 import logging
 
 logger = logging.getLogger(__name__)
+
+# Constante pour le type DATETIMEOFFSET de SQL Server (code ODBC -155)
+SQL_DATETIMEOFFSET = -155
+
+
+def _handle_datetimeoffset(dto_value):
+    """
+    Convertit une valeur DATETIMEOFFSET SQL Server en datetime Python.
+    """
+    tup = struct.unpack("<6hI2h", dto_value)
+    return datetime(tup[0], tup[1], tup[2], tup[3], tup[4], tup[5], tup[6] // 1000)
 
 
 class SQLServerConnection:
@@ -50,6 +63,7 @@ class SQLServerConnection:
         if self._connection is None:
             try:
                 self._connection = pyodbc.connect(self.connection_string)
+                self._connection.add_output_converter(SQL_DATETIMEOFFSET, _handle_datetimeoffset)
                 logger.info(f"Connecté à SQL Server: {self.database}@{self.host}")
             except pyodbc.Error as e:
                 logger.error(f"Erreur de connexion SQL Server: {e}")
@@ -187,7 +201,12 @@ class SQLServerTable:
         limit: int = None
     ) -> List[Dict[str, Any]]:
         """SELECT avec conditions"""
-        query = f"SELECT {columns} FROM {self.table_name}"
+        # Utiliser TOP si limit est spécifié (plus compatible que OFFSET/FETCH)
+        if limit and not order_by:
+            query = f"SELECT TOP {limit} {columns} FROM {self.table_name}"
+        else:
+            query = f"SELECT {columns} FROM {self.table_name}"
+        
         params = []
         
         if where:
@@ -199,9 +218,8 @@ class SQLServerTable:
         
         if order_by:
             query += f" ORDER BY {order_by}"
-        
-        if limit:
-            query += f" OFFSET 0 ROWS FETCH NEXT {limit} ROWS ONLY"
+            if limit:
+                query += f" OFFSET 0 ROWS FETCH NEXT {limit} ROWS ONLY"
         
         return self.conn.fetch_all(query, tuple(params) if params else None)
     

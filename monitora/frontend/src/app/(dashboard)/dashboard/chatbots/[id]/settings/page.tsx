@@ -6,7 +6,7 @@ import { Workspace } from '@/lib/supabase'
 import { api } from '@/lib/api'
 import { getAccessToken } from '@/lib/auth'
 import { Button } from '@/components/ui/button'
-import { 
+import {
   Save,
   Trash2,
   AlertTriangle,
@@ -115,13 +115,11 @@ export default function SettingsPage() {
   const deleteChatbot = async () => {
     if (!chatbot || deleteConfirm !== chatbot.name) return
 
-    const { error } = await supabase
-      .from('workspaces')
-      .delete()
-      .eq('id', chatbot.id)
-
-    if (!error) {
+    try {
+      await api.workspaces.delete(chatbot.id)
       router.push('/dashboard')
+    } catch (error) {
+      console.error('Erreur suppression chatbot:', error)
     }
   }
 
@@ -224,8 +222,8 @@ export default function SettingsPage() {
           <div>
             <p className="font-medium text-gray-900">Chatbot actif</p>
             <p className="text-sm text-gray-500">
-              {formData.is_active 
-                ? 'Le chatbot répond aux utilisateurs' 
+              {formData.is_active
+                ? 'Le chatbot répond aux utilisateurs'
                 : 'Le chatbot est désactivé'
               }
             </p>
@@ -237,7 +235,7 @@ export default function SettingsPage() {
               ${formData.is_active ? 'bg-green-500' : 'bg-gray-300'}
             `}
           >
-            <span 
+            <span
               className={`
                 absolute top-1 w-4 h-4 bg-white rounded-full transition-transform
                 ${formData.is_active ? 'left-7' : 'left-1'}
@@ -249,7 +247,7 @@ export default function SettingsPage() {
 
       {/* Bouton sauvegarder */}
       <div className="flex justify-end">
-        <Button 
+        <Button
           className="bg-black hover:bg-gray-800 text-white"
           onClick={saveSettings}
           disabled={saving}
@@ -281,8 +279,8 @@ export default function SettingsPage() {
                 Cette action est irréversible. Toutes les données seront perdues.
               </p>
             </div>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="border-red-300 text-red-600 hover:bg-red-50"
               onClick={() => setShowDeleteModal(true)}
             >
@@ -305,11 +303,11 @@ export default function SettingsPage() {
                 Supprimer "{chatbot.name}" ?
               </h3>
               <p className="text-sm text-gray-500">
-                Cette action supprimera définitivement le chatbot, ses documents, 
+                Cette action supprimera définitivement le chatbot, ses documents,
                 conversations et toutes les données associées.
               </p>
             </div>
-            
+
             <div className="mb-6">
               <label className="block text-sm text-gray-700 mb-2">
                 Tapez <strong>{chatbot.name}</strong> pour confirmer
@@ -323,8 +321,8 @@ export default function SettingsPage() {
             </div>
 
             <div className="flex gap-3">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="flex-1"
                 onClick={() => {
                   setShowDeleteModal(false)
@@ -333,7 +331,7 @@ export default function SettingsPage() {
               >
                 Annuler
               </Button>
-              <Button 
+              <Button
                 className="flex-1 bg-red-600 hover:bg-red-700 text-white"
                 onClick={deleteChatbot}
                 disabled={deleteConfirm !== chatbot.name}

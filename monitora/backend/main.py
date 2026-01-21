@@ -71,7 +71,7 @@ async def serve_embed_js():
         media_type="application/javascript",
         headers={
             "Access-Control-Allow-Origin": "*",
-            "Cache-Control": "public, max-age=3600"
+            "Cache-Control": "no-cache, no-store, must-revalidate"
         }
     )
 

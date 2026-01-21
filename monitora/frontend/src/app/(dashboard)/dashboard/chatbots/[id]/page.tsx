@@ -4,12 +4,13 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { Workspace } from '@/lib/supabase'
 import { api } from '@/lib/api'
+import { ActivityChart } from '@/components/activity-chart'
 import { StatCard } from '@/components/ui/stat-card'
 import { DateRangePicker } from '@/components/ui/date-range-picker'
-import { 
-  MessageSquare, 
-  Users, 
-  Clock, 
+import {
+  MessageSquare,
+  Users,
+  Clock,
   TrendingUp,
   FileText,
   ArrowUpRight,
@@ -42,7 +43,9 @@ export default function ChatbotOverviewPage() {
     documentsCount: 0,
     conversationsToday: 0,
     satisfactionRate: 0,
-    messagesPerConversation: 0
+    messagesPerConversation: 0,
+    recentDocuments: [] as any[],
+    history: [] as any[]
   })
 
   useEffect(() => {
@@ -51,8 +54,10 @@ export default function ChatbotOverviewPage() {
     }
   }, [params.id])
 
-  const loadData = async (id: string) => {
+  const loadData = async (id: string, periodOverride?: string) => {
     try {
+      const currentPeriod = periodOverride || period
+
       // Charger le chatbot et les analytics via l'API
       const chatbotData = await api.workspaces.get(id)
       if (chatbotData) {
@@ -60,7 +65,7 @@ export default function ChatbotOverviewPage() {
       }
 
       // Charger les analytics globales via l'API
-      const analyticsData = await api.analytics.get(id)
+      const analyticsData = await api.analytics.get(id, currentPeriod)
       if (analyticsData) {
         setStats({
           messagesTotal: analyticsData.totalMessages || 0,
@@ -70,11 +75,22 @@ export default function ChatbotOverviewPage() {
           documentsCount: analyticsData.documentsCount || 0,
           conversationsToday: analyticsData.conversationsToday || 0,
           satisfactionRate: analyticsData.satisfactionRate || 0,
-          messagesPerConversation: analyticsData.messagesPerConversation || 0
+          messagesPerConversation: analyticsData.messagesPerConversation || 0,
+          recentDocuments: analyticsData.recentDocuments || [],
+          history: analyticsData.history || []
         })
       }
     } catch (error) {
       console.error('Erreur chargement données:', error)
+    }
+  }
+
+  const handlePeriodChange = (newPeriod: string) => {
+    setPeriod(newPeriod)
+    setCustomDates(null)
+    setShowDatePicker(false)
+    if (params.id) {
+      loadData(params.id as string, newPeriod)
     }
   }
 
@@ -128,15 +144,11 @@ export default function ChatbotOverviewPage() {
                 {periodOptions.map((option) => (
                   <button
                     key={option.value}
-                    onClick={() => {
-                      setPeriod(option.value)
-                      setCustomDates(null)
-                      setShowDatePicker(false)
-                    }}
+                    onClick={() => handlePeriodChange(option.value)}
                     className={`
                       px-3 py-1.5 text-xs font-medium rounded-md transition-colors
                       ${period === option.value && !customDates
-                        ? 'bg-white text-gray-900 shadow-sm' 
+                        ? 'bg-white text-gray-900 shadow-sm'
                         : 'text-gray-500 hover:text-gray-700'
                       }
                     `}
@@ -145,26 +157,26 @@ export default function ChatbotOverviewPage() {
                   </button>
                 ))}
               </div>
-              
+
               {/* Bouton calendrier */}
               <div className="relative">
                 <button
                   onClick={() => setShowDatePicker(!showDatePicker)}
                   className={`
                     flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border transition-colors
-                    ${customDates 
-                      ? 'bg-black text-white border-black' 
+                    ${customDates
+                      ? 'bg-black text-white border-black'
                       : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'
                     }
                   `}
                 >
                   <Calendar size={14} />
-                  {customDates 
+                  {customDates
                     ? `${customDates.start} - ${customDates.end}`
                     : 'Personnalisé'
                   }
                 </button>
-                
+
                 {/* Date picker avec calendrier visuel */}
                 <DateRangePicker
                   isOpen={showDatePicker}
@@ -173,6 +185,7 @@ export default function ChatbotOverviewPage() {
                     setCustomDates({ start, end })
                     setPeriod('custom')
                     setShowDatePicker(false)
+                    // TODO: handle custom date fetching
                   }}
                   initialStart={customDates?.start}
                   initialEnd={customDates?.end}
@@ -180,14 +193,14 @@ export default function ChatbotOverviewPage() {
               </div>
             </div>
           </div>
-          
-          {/* Placeholder pour le graphique */}
-          <div className="h-64 flex items-center justify-center bg-gray-50 rounded-lg">
-            <div className="text-center text-gray-400">
-              <TrendingUp size={48} className="mx-auto mb-2 opacity-50" />
-              <p className="text-sm">Graphique d'activité</p>
-              <p className="text-xs">Bientôt disponible</p>
-            </div>
+
+          <div className="-ml-4">
+            <ActivityChart
+              data={stats.history}
+              dataKey="users"
+              color="#8B5CF6"
+              title=""
+            />
           </div>
         </div>
 
@@ -195,7 +208,7 @@ export default function ChatbotOverviewPage() {
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-6">
             <h3 className="font-medium text-gray-900">Base de connaissances</h3>
-            <a 
+            <a
               href={`/dashboard/chatbots/${params.id}/documents`}
               className="text-sm text-gray-500 hover:text-black flex items-center gap-1"
             >
@@ -213,11 +226,13 @@ export default function ChatbotOverviewPage() {
               </div>
             </div>
 
+            {/* Barre de progression supprimée, remplacée par la liste des documents */}
+
             {stats.documentsCount === 0 ? (
               <div className="text-center py-6">
                 <FileText size={32} className="mx-auto mb-2 text-gray-300" />
                 <p className="text-sm text-gray-500">Aucun document</p>
-                <a 
+                <a
                   href={`/dashboard/chatbots/${params.id}/documents`}
                   className="text-sm text-black hover:underline mt-1 inline-block"
                 >
@@ -225,11 +240,27 @@ export default function ChatbotOverviewPage() {
                 </a>
               </div>
             ) : (
-              <div className="text-center py-4">
-                <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
-                  <div className="bg-green-500 h-2 rounded-full" style={{ width: '100%' }} />
-                </div>
-                <p className="text-xs text-gray-500">Indexation complète</p>
+              <div className="space-y-3 mt-4">
+                <p className="text-xs font-medium text-gray-500 uppercase">Récemment ajoutés</p>
+                {stats.recentDocuments && stats.recentDocuments.length > 0 ? (
+                  <div className="space-y-2">
+                    {stats.recentDocuments.map((doc: any) => (
+                      <div key={doc.id} className="flex items-center justify-between group">
+                        <div className="flex items-center gap-2 overflow-hidden">
+                          <FileText size={14} className="text-gray-400 flex-shrink-0" />
+                          <span className="text-sm text-gray-700 truncate group-hover:text-black transition-colors" title={doc.filename}>{doc.filename}</span>
+                        </div>
+                        <span className="text-xs text-gray-400 whitespace-nowrap">
+                          {new Date(doc.created_at).toLocaleDateString()}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-4">
+                    <p className="text-xs text-gray-400">Chargement...</p>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -240,7 +271,7 @@ export default function ChatbotOverviewPage() {
       <div className="bg-white rounded-xl border border-gray-200 p-6">
         <div className="flex items-center justify-between mb-6">
           <h3 className="font-medium text-gray-900">Conversations récentes</h3>
-          <a 
+          <a
             href={`/dashboard/chatbots/${params.id}/conversations`}
             className="text-sm text-gray-500 hover:text-black flex items-center gap-1"
           >

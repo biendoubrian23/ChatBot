@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { 
+import {
   LayoutDashboard,
   FileText,
   Lightbulb,
@@ -29,7 +29,7 @@ export function ChatbotSidebar({ chatbotId, chatbotName, isActive = true }: Chat
   const navItems = [
     { href: basePath, icon: LayoutDashboard, label: 'Vue d\'ensemble', exact: true },
     { href: `${basePath}/documents`, icon: FileText, label: 'Documents' },
-    { href: `${basePath}/insights`, icon: Lightbulb, label: 'Insights' },
+    // { href: `${basePath}/insights`, icon: Lightbulb, label: 'Insights' },
     { href: `${basePath}/analytics`, icon: BarChart3, label: 'Analytics' },
     { href: `${basePath}/configuration`, icon: Sparkles, label: 'Configuration IA' },
     { href: `${basePath}/integration`, icon: Code, label: 'Intégration' },
@@ -41,8 +41,8 @@ export function ChatbotSidebar({ chatbotId, chatbotName, isActive = true }: Chat
     <aside className="w-56 bg-white border-r border-gray-200 flex flex-col h-screen fixed left-0 top-0">
       {/* Header with back button */}
       <div className="h-14 flex items-center px-4 border-b border-gray-200">
-        <Link 
-          href="/dashboard" 
+        <Link
+          href="/dashboard"
           className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
@@ -69,18 +69,18 @@ export function ChatbotSidebar({ chatbotId, chatbotName, isActive = true }: Chat
       {/* Navigation */}
       <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
         {navItems.map((item) => {
-          const isActive = item.exact 
+          const isActive = item.exact
             ? pathname === item.href
             : pathname.startsWith(item.href)
-          
+
           return (
             <Link
               key={item.href}
               href={item.href}
               className={cn(
                 'flex items-center space-x-3 px-3 py-2 text-sm transition-colors',
-                isActive 
-                  ? 'bg-gray-100 text-gray-900 font-medium' 
+                isActive
+                  ? 'bg-gray-100 text-gray-900 font-medium'
                   : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
               )}
             >

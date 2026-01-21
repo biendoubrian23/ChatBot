@@ -5,11 +5,11 @@ import { useParams } from 'next/navigation'
 import { api } from '@/lib/api'
 import { getAccessToken } from '@/lib/auth'
 import { Button } from '@/components/ui/button'
-import { 
-  Upload, 
-  FileText, 
-  Trash2, 
-  CheckCircle, 
+import {
+  Upload,
+  FileText,
+  Trash2,
+  CheckCircle,
   Clock,
   AlertCircle,
   Search,
@@ -36,32 +36,32 @@ interface Document {
 }
 
 // Animation Matrix style pour la vectorisation
-function MatrixIndexingAnimation({ 
-  isActive, 
-  documentName 
-}: { 
+function MatrixIndexingAnimation({
+  isActive,
+  documentName
+}: {
   isActive: boolean
-  documentName: string 
+  documentName: string
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [progress, setProgress] = useState(0)
-  
+
   useEffect(() => {
     if (!isActive || !canvasRef.current) return
-    
+
     const canvas = canvasRef.current
     const ctx = canvas.getContext('2d')
     if (!ctx) return
-    
+
     // Caractères pour l'effet Matrix
     const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノ'
     const fontSize = 12
     const columns = Math.floor(canvas.width / fontSize)
     const drops: number[] = Array(columns).fill(1)
-    
+
     // Reset progress
     setProgress(0)
-    
+
     // Animation progress
     const progressInterval = setInterval(() => {
       setProgress(prev => {
@@ -69,38 +69,38 @@ function MatrixIndexingAnimation({
         return prev + 1
       })
     }, 150)
-    
+
     const draw = () => {
       ctx.fillStyle = 'rgba(0, 0, 0, 0.05)'
       ctx.fillRect(0, 0, canvas.width, canvas.height)
-      
+
       ctx.fillStyle = '#00ff00'
       ctx.font = `${fontSize}px monospace`
-      
+
       for (let i = 0; i < drops.length; i++) {
         const char = chars[Math.floor(Math.random() * chars.length)]
         const x = i * fontSize
         const y = drops[i] * fontSize
-        
+
         ctx.fillText(char, x, y)
-        
+
         if (y > canvas.height && Math.random() > 0.975) {
           drops[i] = 0
         }
         drops[i]++
       }
     }
-    
+
     const interval = setInterval(draw, 40)
-    
+
     return () => {
       clearInterval(interval)
       clearInterval(progressInterval)
     }
   }, [isActive])
-  
+
   if (!isActive) return null
-  
+
   return (
     <div className="my-6 bg-black rounded-xl overflow-hidden border border-green-500/30">
       <div className="p-4 border-b border-green-500/30 flex items-center justify-between">
@@ -112,15 +112,15 @@ function MatrixIndexingAnimation({
         </div>
         <span className="text-green-400 font-mono text-sm">{progress}%</span>
       </div>
-      
+
       <div className="relative h-40">
-        <canvas 
-          ref={canvasRef} 
-          width={800} 
+        <canvas
+          ref={canvasRef}
+          width={800}
           height={160}
           className="w-full h-full"
         />
-        
+
         {/* Base de données au centre */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <div className="bg-black/90 backdrop-blur-sm rounded-xl p-4 border border-green-500/50 flex flex-col items-center gap-2">
@@ -128,7 +128,7 @@ function MatrixIndexingAnimation({
             <div className="text-green-400 font-mono text-xs">VECTORSTORE</div>
             <div className="flex gap-1">
               {[...Array(5)].map((_, i) => (
-                <div 
+                <div
                   key={i}
                   className="w-1.5 h-4 bg-green-500/50 rounded-sm animate-pulse"
                   style={{ animationDelay: `${i * 0.15}s` }}
@@ -138,10 +138,10 @@ function MatrixIndexingAnimation({
           </div>
         </div>
       </div>
-      
+
       {/* Progress bar */}
       <div className="h-1 bg-green-900">
-        <div 
+        <div
           className="h-full bg-green-500 transition-all duration-300"
           style={{ width: `${progress}%` }}
         />
@@ -167,7 +167,7 @@ export default function DocumentsPage() {
   const [reindexingAll, setReindexingAll] = useState(false)
   const [dragOver, setDragOver] = useState(false)
   const pollingRef = useRef<NodeJS.Timeout | null>(null)
-  
+
   // Configuration RAG
   const [ragConfig, setRagConfig] = useState<RAGConfig>({
     chunk_size: 1500,
@@ -208,7 +208,7 @@ export default function DocumentsPage() {
     if (!params.id) return
     setRagSaving(true)
     setRagSaved(false)
-    
+
     try {
       const token = getAccessToken()
       if (!token) {
@@ -238,7 +238,7 @@ export default function DocumentsPage() {
     } catch (error) {
       console.error('Erreur:', error)
     }
-    
+
     setRagSaving(false)
   }
 
@@ -249,7 +249,7 @@ export default function DocumentsPage() {
       const data = await api.documents.list(params.id as string)
       if (data) {
         setDocuments(data)
-        
+
         // Vérifier si un document est en cours de traitement
         const processing = data.find((d: Document) => d.status === 'processing')
         if (processing) {
@@ -268,16 +268,35 @@ export default function DocumentsPage() {
 
   useEffect(() => {
     loadDocuments()
-    
-    // Polling pour les documents en cours de traitement
-    pollingRef.current = setInterval(() => {
-      loadDocuments()
-    }, 3000)
-    
+
+    // Ne pas faire de polling constant - seulement quand nécessaire
     return () => {
       if (pollingRef.current) clearInterval(pollingRef.current)
     }
   }, [loadDocuments])
+
+  // Polling séparé uniquement quand des documents sont en traitement
+  useEffect(() => {
+    const hasProcessing = documents.some(d => d.status === 'processing')
+
+    if (hasProcessing && !pollingRef.current) {
+      // Démarrer le polling uniquement si des docs sont en traitement
+      pollingRef.current = setInterval(() => {
+        loadDocuments()
+      }, 5000) // 5 secondes au lieu de 3
+    } else if (!hasProcessing && pollingRef.current) {
+      // Arrêter le polling quand plus rien n'est en traitement
+      clearInterval(pollingRef.current)
+      pollingRef.current = null
+    }
+
+    return () => {
+      if (pollingRef.current) {
+        clearInterval(pollingRef.current)
+        pollingRef.current = null
+      }
+    }
+  }, [documents, loadDocuments])
 
   const handleFileUpload = async (files: FileList | null) => {
     if (!files || files.length === 0 || !params.id) return
@@ -342,7 +361,7 @@ export default function DocumentsPage() {
       )
 
       if (response.ok) {
-        setDocuments(prev => prev.map(d => 
+        setDocuments(prev => prev.map(d =>
           d.id === doc.id ? { ...d, status: 'processing' as const } : d
         ))
       } else {
@@ -358,7 +377,7 @@ export default function DocumentsPage() {
   // Fonction pour réindexer TOUS les documents
   const reindexAll = async () => {
     if (reindexingAll || documents.length === 0) return
-    
+
     try {
       const token = getAccessToken()
       if (!token) return
@@ -407,13 +426,27 @@ export default function DocumentsPage() {
   }
 
   const deleteDocument = async (id: string) => {
-    const { error } = await supabase
-      .from('documents')
-      .delete()
-      .eq('id', id)
+    try {
+      const token = getAccessToken()
+      if (!token) return
 
-    if (!error) {
-      setDocuments(prev => prev.filter(d => d.id !== id))
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001'}/api/documents/${id}`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      )
+
+      if (response.ok) {
+        setDocuments(prev => prev.filter(d => d.id !== id))
+      } else {
+        console.error('Erreur suppression:', await response.text())
+      }
+    } catch (error) {
+      console.error('Erreur:', error)
     }
   }
 
@@ -466,9 +499,9 @@ export default function DocumentsPage() {
       </div>
 
       {/* Animation Matrix pendant l'indexation - pleine largeur */}
-      <MatrixIndexingAnimation 
-        isActive={!!indexingDoc} 
-        documentName={indexingDoc || ''} 
+      <MatrixIndexingAnimation
+        isActive={!!indexingDoc}
+        documentName={indexingDoc || ''}
       />
 
       {/* Layout 2 colonnes */}
@@ -479,7 +512,7 @@ export default function DocumentsPage() {
           <div className="flex items-center justify-end gap-3">
             {/* Bouton Tout réindexer */}
             {documents.some(d => d.status === 'indexed') && !indexingDoc && !reindexingAll && (
-              <Button 
+              <Button
                 onClick={reindexAll}
                 variant="outline"
                 className="border-orange-500 text-orange-600 hover:bg-orange-50"
@@ -489,7 +522,7 @@ export default function DocumentsPage() {
               </Button>
             )}
             {pendingDocs.length > 0 && !indexingDoc && (
-              <Button 
+              <Button
                 onClick={() => pendingDocs[0] && indexDocument(pendingDocs[0])}
                 className="bg-green-600 hover:bg-green-700 text-white"
               >
@@ -498,10 +531,10 @@ export default function DocumentsPage() {
               </Button>
             )}
             <label className="cursor-pointer">
-              <input 
-                type="file" 
-                multiple 
-                className="hidden" 
+              <input
+                type="file"
+                multiple
+                className="hidden"
                 accept=".pdf,.txt,.md,.doc,.docx"
                 onChange={(e) => handleFileUpload(e.target.files)}
               />
@@ -519,8 +552,8 @@ export default function DocumentsPage() {
             onDragLeave={handleDragLeave}
             className={`
               border-2 border-dashed rounded-xl p-8 text-center transition-colors
-              ${dragOver 
-                ? 'border-black bg-gray-50' 
+              ${dragOver
+                ? 'border-black bg-gray-50'
                 : 'border-gray-200 hover:border-gray-300'
               }
             `}
@@ -622,8 +655,8 @@ export default function DocumentsPage() {
                         <div className="flex items-center justify-end gap-1">
                           {/* Bouton Réindexer pour documents déjà indexés */}
                           {doc.status === 'indexed' && !indexingDoc && (
-                            <Button 
-                              variant="outline" 
+                            <Button
+                              variant="outline"
                               size="sm"
                               onClick={() => indexDocument(doc)}
                               className="text-blue-600 border-blue-200 hover:bg-blue-50 text-xs px-2"
@@ -636,9 +669,9 @@ export default function DocumentsPage() {
                           {doc.status === 'processing' && (
                             <RefreshCw size={14} className="animate-spin text-yellow-600" />
                           )}
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
+                          <Button
+                            variant="ghost"
+                            size="sm"
                             onClick={() => deleteDocument(doc.id)}
                             className="text-red-500 hover:text-red-700 hover:bg-red-50 px-2"
                           >
@@ -756,14 +789,12 @@ export default function DocumentsPage() {
                 </div>
                 <button
                   onClick={() => setRagConfig(prev => ({ ...prev, enable_cache: !prev.enable_cache }))}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    ragConfig.enable_cache ? 'bg-green-500' : 'bg-gray-300'
-                  }`}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${ragConfig.enable_cache ? 'bg-green-500' : 'bg-gray-300'
+                    }`}
                 >
                   <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      ragConfig.enable_cache ? 'translate-x-6' : 'translate-x-1'
-                    }`}
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${ragConfig.enable_cache ? 'translate-x-6' : 'translate-x-1'
+                      }`}
                   />
                 </button>
               </div>
@@ -782,10 +813,10 @@ export default function DocumentsPage() {
                       </div>
                     </div>
                     <span className="text-sm text-gray-500">
-                      {ragConfig.cache_ttl >= 86400 
-                        ? `${Math.round(ragConfig.cache_ttl / 86400)}j` 
-                        : ragConfig.cache_ttl >= 3600 
-                          ? `${Math.round(ragConfig.cache_ttl / 3600)}h` 
+                      {ragConfig.cache_ttl >= 86400
+                        ? `${Math.round(ragConfig.cache_ttl / 86400)}j`
+                        : ragConfig.cache_ttl >= 3600
+                          ? `${Math.round(ragConfig.cache_ttl / 3600)}h`
                           : `${Math.round(ragConfig.cache_ttl / 60)}min`}
                     </span>
                   </div>

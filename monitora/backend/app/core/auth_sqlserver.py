@@ -109,6 +109,19 @@ class AuthService:
         self.sessions_table = SQLServerTable("app_sessions", self.db)
         self.profiles_table = SQLServerTable("profiles", self.db)
     
+    def _get_user_created_at(self, user_id: Any) -> Optional[str]:
+        """Récupère la date de création de l'utilisateur"""
+        try:
+            profile = self.profiles_table.select_one(where={"id": user_id})
+            if profile and profile.get("created_at"):
+                created_at = profile["created_at"]
+                if isinstance(created_at, datetime):
+                    return created_at.isoformat()
+                return str(created_at)
+        except Exception as e:
+            logger.error(f"Erreur lors de la récupération de created_at: {e}")
+        return None
+    
     async def register(
         self, 
         email: str, 
@@ -232,10 +245,10 @@ class AuthService:
         
         return {
             "user": {
-                "id": str(user["id"]),
                 "email": user["email"],
                 "full_name": user.get("full_name"),
-                "role": user.get("role", "admin")
+                "role": user.get("role", "admin"),
+                "created_at": self._get_user_created_at(user["id"])
             },
             "access_token": access_token,
             "refresh_token": refresh_token,
@@ -308,7 +321,8 @@ class AuthService:
             "id": str(session["user_id"]),
             "email": session["email"],
             "full_name": session.get("full_name"),
-            "role": session.get("role", "admin")
+            "role": session.get("role", "admin"),
+            "created_at": self._get_user_created_at(session["user_id"])
         }
     
     async def change_password(
@@ -451,3 +465,12 @@ async def get_optional_user(authorization: str = Header(None)) -> Optional[Dict[
         return await get_current_user(authorization)
     except HTTPException:
         return None
+
+
+async def get_user_from_token_sqlserver(authorization: str) -> Dict[str, Any]:
+    """
+    Récupère l'utilisateur à partir du header Authorization.
+    Fonction utilitaire compatible avec l'ancien système Supabase.
+    Peut être appelée directement avec le header Authorization complet.
+    """
+    return await get_current_user(authorization)
