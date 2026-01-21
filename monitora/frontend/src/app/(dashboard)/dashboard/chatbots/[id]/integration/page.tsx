@@ -143,11 +143,7 @@ export default function IntegrationPage() {
   }
 
   const getWidgetCode = () => {
-    // apiUrl reste l'URL directe du backend (Ngrok) pour les requêtes API (XHR)
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001'
-    // proxyUrl est l'URL du frontend (Vercel) qui servira le script via le proxy
-    const proxyUrl = typeof window !== 'undefined' ? window.location.origin : ''
-    const scriptSrc = `${proxyUrl}/api/proxy-widget`
 
     const config = {
       workspaceId: chatbot?.id || 'WORKSPACE_ID',
@@ -176,15 +172,14 @@ import Script from 'next/script'
       placeholder: "${config.placeholder}",
       width: ${config.width},
       height: ${config.height},
-      height: ${config.height},
       brandingText: "${config.brandingText}",
       apiUrl: "${apiUrl}"
-    };
+    }
   \`}
 </Script>
 <Script 
-  src="${scriptSrc}"
-  strategy="afterInteractive"
+  src="${apiUrl}/widget/embed.js" 
+  strategy="afterInteractive" 
 />`
 
       case 'react':
@@ -194,7 +189,7 @@ import { useEffect } from 'react';
 function App() {
   useEffect(() => {
     // Configuration MONITORA
-    window.MONITORA_CONFIG = {
+    (window as any).MONITORA_CONFIG = {
       workspaceId: "${config.workspaceId}",
       position: "${config.position}",
       primaryColor: "${config.primaryColor}",
@@ -208,7 +203,7 @@ function App() {
 
     // Charger le script
     const script = document.createElement('script');
-    script.src = "${scriptSrc}";
+    script.src = "${apiUrl}/widget/embed.js";
     script.async = true;
     document.body.appendChild(script);
 
@@ -242,7 +237,7 @@ export default {
 
     // Charger le script
     const script = document.createElement('script');
-    script.src = "${scriptSrc}";
+    script.src = "${apiUrl}/widget/embed.js";
     script.async = true;
     document.body.appendChild(script);
   }
@@ -266,7 +261,7 @@ export default {
         apiUrl: "${apiUrl}"
     };
 </script>
-<script src="${scriptSrc}" async></script>
+<script src="${apiUrl}/widget/embed.js" async></script>
 
 @* Ou via injection JavaScript dans Program.cs : *@
 @* builder.Services.AddScoped<IJSRuntime>(); *@`
@@ -288,7 +283,7 @@ export default {
         apiUrl: "${apiUrl}"
     };
 </script>
-<script src="${scriptSrc}" async></script>`
+<script src="${apiUrl}/widget/embed.js" async></script>`
 
       case 'html':
       default:
@@ -302,13 +297,12 @@ export default {
     placeholder: "${config.placeholder}",
     width: ${config.width},
     height: ${config.height},
-    height: ${config.height},
     brandingText: "${config.brandingText}",
     apiUrl: "${apiUrl}"
   };
 </script>
 <script 
-  src="${scriptSrc}"
+  src="${apiUrl}/widget/embed.js"
   async
 ></script>`
     }
