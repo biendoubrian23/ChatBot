@@ -497,18 +497,25 @@
         color: white !important;
       }
 
-      /* Mobile Responsive Styles - Proportional with margins */
+      /* Mobile Fullscreen Mode */
       @media (max-width: 480px) {
         .monitora-chat-window {
-          /* Garde le ratio de la config mais adapte à l'écran */
-          width: calc(100vw - 24px) !important;
-          max-width: ${config.width || 380}px !important;
-          height: calc(100vh - 100px) !important;
-          max-height: ${config.height || 550}px !important;
-          bottom: 70px !important;
-          right: 12px !important;
-          left: auto !important;
-          border-radius: 16px !important;
+          position: fixed !important;
+          width: 100% !important;
+          height: 100% !important;
+          max-width: 100% !important;
+          max-height: 100% !important;
+          top: 0 !important;
+          left: 0 !important;
+          right: 0 !important;
+          bottom: 0 !important;
+          border-radius: 0 !important;
+          z-index: 2147483647 !important;
+        }
+
+        /* Cacher le bouton toggle quand le chat est ouvert sur mobile */
+        .monitora-chat-window.open ~ .monitora-toggle-btn {
+          display: none !important;
         }
 
         .monitora-toggle-btn {
