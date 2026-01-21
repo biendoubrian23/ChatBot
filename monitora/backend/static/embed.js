@@ -735,7 +735,10 @@
       try {
         const response = await fetch(`${API_URL}/api/widget/${workspaceId}/chat`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'ngrok-skip-browser-warning': 'true'
+          },
           body: JSON.stringify({
             message,
             session_id: sessionId,
@@ -818,7 +821,9 @@
     // ========================================
     // CHARGER LA CONFIG DEPUIS L'API
     // ========================================
-    fetch(`${API_URL}/api/widget/${workspaceId}/config`)
+    fetch(`${API_URL}/api/widget/${workspaceId}/config`, {
+      headers: { 'ngrok-skip-browser-warning': 'true' }
+    })
       .then(res => {
         if (!res.ok) {
           return res.json().then(errData => {
