@@ -5,6 +5,8 @@ export async function GET() {
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8001'
     const scriptUrl = `${backendUrl}/static/embed.js`
 
+    console.log('[Proxy] Attempting to fetch script from:', scriptUrl) // <-- DEBUG LOG
+
     try {
         const response = await fetch(scriptUrl, {
             headers: {
@@ -13,23 +15,21 @@ export async function GET() {
         })
 
         if (!response.ok) {
-            return new NextResponse(`Error fetching script: ${response.statusText}`, { status: response.status })
+            console.error(`[Proxy] Failed to fetch script. Status: ${response.status} ${response.statusText}`) // <-- DEBUG LOG
+            return new NextResponse(`Error fetching script: ${response.statusText} at ${scriptUrl}`, { status: response.status })
         }
 
         const scriptContent = await response.text()
-
-        // Remplacer dynamiquement l'URL de base si nécessaire (optionnel, mais sûr)
-        // Ici on s'assure que le embed.js pointe bien vers le backend pour les appels API
-        // Mais on a déjà sécurisé embed.js pour utiliser l'apiUrl passée en config.
+        console.log('[Proxy] Successfully fetched script. Length:', scriptContent.length) // <-- DEBUG LOG
 
         return new NextResponse(scriptContent, {
             headers: {
                 'Content-Type': 'application/javascript',
-                'Cache-Control': 'no-cache, no-store, must-revalidate' // Éviter le cache pendant le dev
+                'Cache-Control': 'no-cache, no-store, must-revalidate'
             }
         })
     } catch (error) {
-        console.error('Proxy Error:', error)
-        return new NextResponse('Internal Server Error', { status: 500 })
+        console.error('[Proxy] Internal Error:', error) // <-- DEBUG LOG
+        return new NextResponse(`Internal Server Error: ${error instanceof Error ? error.message : String(error)}`, { status: 500 })
     }
 }
