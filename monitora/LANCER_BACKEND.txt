@@ -13,3 +13,7 @@ cd D:\MesApplis\BiendouCorp\ChatBot\monitora\backend
 
 Le serveur démarrera sur http://localhost:8001
 Documentation API : http://localhost:8001/docs
+
+
+
+npx ngrok http 8001
