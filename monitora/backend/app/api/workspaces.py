@@ -58,6 +58,7 @@ class RAGConfigUpdate(BaseModel):
     enable_cache: Optional[bool] = None
     cache_ttl: Optional[int] = None
     similarity_threshold: Optional[float] = None
+    streaming_enabled: Optional[bool] = None
     system_prompt: Optional[str] = None
 
 

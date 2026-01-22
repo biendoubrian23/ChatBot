@@ -83,13 +83,14 @@ export default function ConfigurationPage() {
 
     try {
       await api.ragConfig.update(chatbot.id, config)
-      // Mise à jour locale
+      // Mise à jour locale - inclure TOUS les paramètres modifiés
       const updatedRagConfig = {
         ...chatbot.rag_config,
         llm_model: config.model,
         temperature: config.temperature,
         max_tokens: config.max_tokens,
-        system_prompt: config.system_prompt
+        system_prompt: config.system_prompt,
+        streaming_enabled: config.streaming_enabled
       }
       setChatbot(prev => prev ? { ...prev, rag_config: updatedRagConfig } : null)
     } catch (error) {
