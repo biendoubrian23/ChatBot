@@ -172,6 +172,7 @@ async def save_database_config(
                 config.db_port, config.schema_type, config.is_enabled
             ))
     
+    # Le commit est fait automatiquement par le context manager cursor()
     return {"success": True, "message": "Configuration sauvegardée"}
 
 
@@ -253,6 +254,7 @@ async def test_database_connection(
                 "success" if result["success"] else "failed",
                 workspace_id
             ))
+        # Le commit est fait automatiquement par le context manager
         
         if result["success"]:
             return {
@@ -292,6 +294,5 @@ async def delete_database_config(
             DELETE FROM workspace_databases WHERE workspace_id = ?
         """, (workspace_id,))
     
-    return {"success": True, "message": "Configuration supprimée"}
-    
+    # Le commit est fait automatiquement par le context manager
     return {"success": True, "message": "Configuration supprimée"}

@@ -150,10 +150,19 @@ export default function ApiKeysPage() {
       
       if (response.ok) {
         setDbSaveSuccess(true)
-        setDbConfig(prev => ({ ...prev, configured: true, last_test_status: undefined, last_test_at: undefined }))
-        // Recharger la config après sauvegarde
+        // Mettre à jour l'état local immédiatement pour garantir la persistance visuelle
+        setDbConfig(prev => ({ 
+          ...prev, 
+          configured: true, 
+          has_password: true,
+          last_test_status: undefined, 
+          last_test_at: undefined 
+        }))
+        // Recharger la config complète après sauvegarde
         await loadDatabaseConfig()
         setTimeout(() => setDbSaveSuccess(false), 3000)
+      } else {
+        console.error('Erreur lors de la sauvegarde:', await response.text())
       }
     } catch (error) {
       console.error('Erreur sauvegarde config DB:', error)

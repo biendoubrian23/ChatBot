@@ -508,6 +508,9 @@ async def _get_or_create_conversation(workspace_id: str, session_id: str, visito
 async def _check_order_intent(workspace_id: str, message: str) -> Optional[str]:
     """
     Vérifie si le message est une question de suivi de commande.
+    - Détecte toujours l'intention de suivi de commande
+    - Si BDD désactivée : répond avec un message informatif
+    - Si BDD activée : interroge la base de données
     """
     # 1. Détecter l'intention avec le LLM
     intent_detector = IntentDetector()
@@ -520,25 +523,66 @@ async def _check_order_intent(workspace_id: str, message: str) -> Optional[str]:
     
     order_number = intent.get("order_number")
     
+    # 2. Vérifier si la BDD externe est configurée ET activée
+    db_config = WorkspaceDatabasesDB.get_enabled_by_workspace(workspace_id)
+    
+    # Si pas de config OU désactivée, informer que le suivi n'est pas disponible
+    if not db_config:
+        logger.info(f"⚠️ BDD externe désactivée - Message d'information pour suivi de commande")
+        
+        if order_number:
+            return (
+                f"Je vois que vous souhaitez consulter votre commande **{order_number}**. 📦\n\n"
+                f"Le suivi automatique des commandes n'est pas encore disponible pour le moment.\n\n"
+                f"**Pour suivre votre commande, veuillez :**\n"
+                f"• Vous connecter à votre espace client en ligne\n"
+                f"• Contacter notre service client :\n"
+                f"  📧 Email : contact@coollibri.com\n"
+                f"  📞 Téléphone : 05 31 61 60 42"
+            )
+        else:
+            return (
+                "Le suivi automatique des commandes n'est pas encore disponible pour le moment. 📦\n\n"
+                "**Pour suivre votre commande, vous pouvez :**\n"
+                "• Vous connecter à votre espace client en ligne\n"
+                "• Contacter notre service client :\n"
+                "  📧 Email : contact@coollibri.com\n"
+                "  📞 Téléphone : 05 31 61 60 42"
+            )
+    
+    # Si le type est "generic" (données indexées uniquement, pas de connexion directe)
+    if db_config.get("schema_type") == "generic":
+        logger.info(f"⚠️ Schema type 'generic' - Suivi non disponible")
+        
+        if order_number:
+            return (
+                f"Je vois que vous souhaitez consulter votre commande **{order_number}**. 📦\n\n"
+                f"Le suivi automatique des commandes n'est pas encore disponible pour le moment.\n\n"
+                f"**Pour suivre votre commande, veuillez :**\n"
+                f"• Vous connecter à votre espace client en ligne\n"
+                f"• Contacter notre service client :\n"
+                f"  📧 Email : contact@coollibri.com\n"
+                f"  📞 Téléphone : 05 31 61 60 42"
+            )
+        else:
+            return (
+                "Le suivi automatique des commandes n'est pas encore disponible pour le moment. 📦\n\n"
+                "**Pour suivre votre commande, vous pouvez :**\n"
+                "• Vous connecter à votre espace client en ligne\n"
+                "• Contacter notre service client :\n"
+                "  📧 Email : contact@coollibri.com\n"
+                "  📞 Téléphone : 05 31 61 60 42"
+            )
+    
+    # 3. BDD activée : continuer avec le traitement normal
+    order_number = intent.get("order_number")
+    
     # Si pas de numéro, demander poliment
     if not order_number:
         return (
             "Pour suivre votre commande, j'ai besoin de votre **numéro de commande**. 📦\n\n"
             "Vous pouvez le retrouver dans l'email de confirmation de commande.\n\n"
             "Exemple : `13456` ou `commande 13456`"
-        )
-    
-    # 2. Vérifier si la BDD externe est configurée et activée
-    db_config = WorkspaceDatabasesDB.get_enabled_by_workspace(workspace_id)
-    
-    # Si pas de config OU si le type est "generic" (données indexées uniquement)
-    if not db_config or db_config.get("schema_type") == "generic":
-        return (
-            f"Je vois que vous cherchez des informations sur la commande **{order_number}**.\n\n"
-            f"Malheureusement, le système de suivi automatique n'est pas encore configuré pour ce chatbot.\n\n"
-            f"Veuillez contacter le service client directement :\n"
-            f"📧 **Email** : contact@coollibri.com\n"
-            f"📞 **Téléphone** : 05 31 61 60 42"
         )
     
     # 3. Se connecter à la BDD externe et récupérer la commande
