@@ -2,13 +2,14 @@
 
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
+import { api } from '@/lib/api'
 import { getAccessToken } from '@/lib/auth'
 import { Button } from '@/components/ui/button'
-import { 
-  Key, 
-  Plus, 
-  Copy, 
-  Check, 
+import {
+  Key,
+  Plus,
+  Copy,
+  Check,
   Trash2,
   Eye,
   EyeOff,
@@ -72,7 +73,7 @@ export default function ApiKeysPage() {
   const [showDbPassword, setShowDbPassword] = useState(false)
   const [dbLoading, setDbLoading] = useState(false)
   const [dbTestLoading, setDbTestLoading] = useState(false)
-  const [dbTestResult, setDbTestResult] = useState<{success: boolean; message: string; database?: string} | null>(null)
+  const [dbTestResult, setDbTestResult] = useState<{ success: boolean; message: string; database?: string } | null>(null)
   const [dbSaveSuccess, setDbSaveSuccess] = useState(false)
 
   useEffect(() => {
@@ -84,18 +85,9 @@ export default function ApiKeysPage() {
 
   const loadDatabaseConfig = async () => {
     try {
-      const token = getAccessToken()
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/workspaces/${params.id}/database`,
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        }
-      )
-      
-      if (response.ok) {
-        const data = await response.json()
+      const data = await api.database.get(params.id as string)
+
+      if (data) {
         // Fusionner avec les valeurs par défaut pour éviter les undefined
         setDbConfig(prev => ({
           configured: data.configured || false,
@@ -124,7 +116,7 @@ export default function ApiKeysPage() {
     setDbLoading(true)
     setDbSaveSuccess(false)
     setDbTestResult(null)  // Effacer l'ancien résultat de test
-    
+
     try {
       const token = getAccessToken()
       const response = await fetch(
@@ -147,16 +139,16 @@ export default function ApiKeysPage() {
           })
         }
       )
-      
+
       if (response.ok) {
         setDbSaveSuccess(true)
         // Mettre à jour l'état local immédiatement pour garantir la persistance visuelle
-        setDbConfig(prev => ({ 
-          ...prev, 
-          configured: true, 
+        setDbConfig(prev => ({
+          ...prev,
+          configured: true,
           has_password: true,
-          last_test_status: undefined, 
-          last_test_at: undefined 
+          last_test_status: undefined,
+          last_test_at: undefined
         }))
         // Recharger la config complète après sauvegarde
         await loadDatabaseConfig()
@@ -174,7 +166,7 @@ export default function ApiKeysPage() {
   const testDatabaseConnection = async () => {
     setDbTestLoading(true)
     setDbTestResult(null)
-    
+
     try {
       const token = getAccessToken()
       const response = await fetch(
@@ -196,7 +188,7 @@ export default function ApiKeysPage() {
           })
         }
       )
-      
+
       const result = await response.json()
       setDbTestResult(result)
     } catch (error) {
@@ -210,7 +202,7 @@ export default function ApiKeysPage() {
     // Simuler la création d'une clé
     const key = `mk_${generateRandomKey(32)}`
     setNewKey(key)
-    
+
     const newApiKey: ApiKey = {
       id: crypto.randomUUID(),
       workspace_id: params.id as string,
@@ -221,7 +213,7 @@ export default function ApiKeysPage() {
       created_at: new Date().toISOString(),
       expires_at: null
     }
-    
+
     setApiKeys(prev => [newApiKey, ...prev])
     setNewKeyName('')
   }
@@ -255,7 +247,7 @@ export default function ApiKeysPage() {
 
       {/* Layout 2 colonnes */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        
+
         {/* ============================================= */}
         {/* COLONNE GAUCHE : BASE DE DONNÉES */}
         {/* ============================================= */}
@@ -281,14 +273,12 @@ export default function ApiKeysPage() {
               </div>
               <button
                 onClick={() => setDbConfig(prev => ({ ...prev, is_enabled: !prev.is_enabled }))}
-                className={`relative w-11 h-6 rounded-full transition-colors ${
-                  dbConfig.is_enabled ? 'bg-blue-600' : 'bg-gray-200'
-                }`}
+                className={`relative w-11 h-6 rounded-full transition-colors ${dbConfig.is_enabled ? 'bg-blue-600' : 'bg-gray-200'
+                  }`}
               >
                 <div
-                  className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${
-                    dbConfig.is_enabled ? 'translate-x-5' : 'translate-x-0'
-                  }`}
+                  className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${dbConfig.is_enabled ? 'translate-x-5' : 'translate-x-0'
+                    }`}
                 />
               </button>
             </div>
@@ -330,8 +320,8 @@ export default function ApiKeysPage() {
               </label>
               <select
                 value={dbConfig.db_type}
-                onChange={(e) => setDbConfig(prev => ({ 
-                  ...prev, 
+                onChange={(e) => setDbConfig(prev => ({
+                  ...prev,
                   db_type: e.target.value,
                   db_port: e.target.value === 'sqlserver' ? 1433 : e.target.value === 'mysql' ? 3306 : 5432
                 }))}
@@ -416,11 +406,10 @@ export default function ApiKeysPage() {
 
             {/* Résultat du test */}
             {dbTestResult && (
-              <div className={`flex items-start gap-2 p-3 rounded-lg text-sm ${
-                dbTestResult.success 
-                  ? 'bg-green-50 border border-green-200' 
-                  : 'bg-red-50 border border-red-200'
-              }`}>
+              <div className={`flex items-start gap-2 p-3 rounded-lg text-sm ${dbTestResult.success
+                ? 'bg-green-50 border border-green-200'
+                : 'bg-red-50 border border-red-200'
+                }`}>
                 {dbTestResult.success ? (
                   <CheckCircle2 size={16} className="text-green-600 flex-shrink-0 mt-0.5" />
                 ) : (
@@ -462,7 +451,7 @@ export default function ApiKeysPage() {
                 )}
                 Tester
               </Button>
-              
+
               <Button
                 size="sm"
                 className="flex-1 bg-black hover:bg-gray-800 text-white"
@@ -494,7 +483,7 @@ export default function ApiKeysPage() {
                 </p>
               </div>
             </div>
-            <Button 
+            <Button
               size="sm"
               className="bg-black hover:bg-gray-800 text-white"
               onClick={() => setShowCreateModal(true)}
@@ -522,7 +511,7 @@ export default function ApiKeysPage() {
               <p className="text-gray-500 text-sm mb-4">
                 Créez une clé pour l'API REST
               </p>
-              <Button 
+              <Button
                 size="sm"
                 className="bg-black hover:bg-gray-800 text-white"
                 onClick={() => setShowCreateModal(true)}
@@ -545,9 +534,9 @@ export default function ApiKeysPage() {
                         <code className="text-xs text-gray-500">{apiKey.key_prefix}...</code>
                       </div>
                     </div>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
+                    <Button
+                      variant="ghost"
+                      size="sm"
                       onClick={() => deleteApiKey(apiKey.id)}
                       className="text-red-500 hover:text-red-700 hover:bg-red-50"
                     >
@@ -586,7 +575,7 @@ export default function ApiKeysPage() {
                   <Button variant="outline" onClick={() => setShowCreateModal(false)}>
                     Annuler
                   </Button>
-                  <Button 
+                  <Button
                     className="bg-black hover:bg-gray-800 text-white"
                     onClick={createApiKey}
                   >
@@ -607,13 +596,13 @@ export default function ApiKeysPage() {
                     Copiez cette clé maintenant. Elle ne sera plus affichée.
                   </p>
                 </div>
-                
+
                 <div className="bg-gray-100 p-4 rounded-lg mb-6">
                   <div className="flex items-center justify-between gap-2">
                     <code className="text-sm text-gray-800 break-all">{newKey}</code>
-                    <Button 
-                      size="sm" 
-                      variant="ghost" 
+                    <Button
+                      size="sm"
+                      variant="ghost"
                       onClick={copyKey}
                       className="flex-shrink-0"
                     >
@@ -622,7 +611,7 @@ export default function ApiKeysPage() {
                   </div>
                 </div>
 
-                <Button 
+                <Button
                   className="w-full bg-black hover:bg-gray-800 text-white"
                   onClick={closeNewKeyModal}
                 >
