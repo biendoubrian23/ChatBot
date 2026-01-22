@@ -1,0 +1,49 @@
+# =====================================================
+# MONITORA Backend - Docker Compose pour dev local
+# =====================================================
+
+version: '3.8'
+
+services:
+  monitora-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: monitora-backend
+    ports:
+      - "8001:8001"
+    environment:
+      # Base de données SQL Server
+      - DATABASE_MODE=sqlserver
+      - SQLSERVER_HOST=${SQLSERVER_HOST}
+      - SQLSERVER_PORT=${SQLSERVER_PORT:-1433}
+      - SQLSERVER_DATABASE=${SQLSERVER_DATABASE}
+      - SQLSERVER_USER=${SQLSERVER_USER}
+      - SQLSERVER_PASSWORD=${SQLSERVER_PASSWORD}
+      
+      # LLM
+      - MISTRAL_API_KEY=${MISTRAL_API_KEY}
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      - DEFAULT_LLM_PROVIDER=${DEFAULT_LLM_PROVIDER:-mistral}
+      
+      # JWT
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_ALGORITHM=${JWT_ALGORITHM:-HS256}
+      - JWT_EXPIRY_HOURS=${JWT_EXPIRY_HOURS:-24}
+      
+      # Storage
+      - STORAGE_MODE=local
+      - VECTORSTORE_BASE_PATH=/app/data/vectorstores
+      - DOCUMENTS_BASE_PATH=/app/data/documents
+    volumes:
+      # Persistance des données
+      - monitora-data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  monitora-data:

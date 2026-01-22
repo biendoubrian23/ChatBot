@@ -131,6 +131,7 @@ class WidgetChatRequest(BaseModel):
     session_id: Optional[str] = None
     visitor_id: Optional[str] = None  # Fingerprint du navigateur
     stream: bool = True
+    user_context: Optional[dict] = None # { isLoggedIn: bool, id: str, email: str }
 
 
 class FeedbackRequest(BaseModel):
@@ -323,7 +324,7 @@ async def widget_chat(
     # ========================================================
     # DÉTECTION D'INTENTION DE COMMANDE
     # ========================================================
-    order_response = await _check_order_intent(workspace_id, data.message)
+    order_response = await _check_order_intent(workspace_id, data.message, data.user_context)
     
     if order_response:
         # Sauvegarder la réponse de commande
@@ -505,10 +506,11 @@ async def _get_or_create_conversation(workspace_id: str, session_id: str, visito
     )
 
 
-async def _check_order_intent(workspace_id: str, message: str) -> Optional[str]:
+async def _check_order_intent(workspace_id: str, message: str, user_context: Optional[dict] = None) -> Optional[str]:
     """
     Vérifie si le message est une question de suivi de commande.
-    - Détecte toujours l'intention de suivi de commande
+    - Détecte l'intention de suivi de commande
+    - Vérifie que l'utilisateur est connecté et propriétaire de la commande
     - Si BDD désactivée : répond avec un message informatif
     - Si BDD activée : interroge la base de données
     """
@@ -522,6 +524,27 @@ async def _check_order_intent(workspace_id: str, message: str) -> Optional[str]:
         return None
     
     order_number = intent.get("order_number")
+
+    # ---------------------------------------------------------
+    # SÉCURITÉ : Vérification du contexte utilisateur
+    # ---------------------------------------------------------
+    # Pour toute demande de suivi, on vérifie d'abord si l'utilisateur est connecté
+    if not user_context or not user_context.get("isLoggedIn"):
+        logger.warning(f"🔒 Accès refusé : Utilisateur non connecté demande suivi commande {order_number}")
+        return (
+            "Pour consulter le suivi de votre commande, **veuillez vous connecter à votre compte client** sur le site. 🔒\n\n"
+            "Une fois connecté, je pourrai vous donner toutes les informations sur votre commande !"
+        )
+    
+    user_id = user_context.get("id")
+    # user_email = user_context.get("email") # Optionnel pour double vérif
+
+    if not user_id:
+        logger.error("❌ Erreur sécurité : isLoggedIn=True mais aucun ID utilisateur fourni")
+        return "Impossible de vérifier votre identité. Veuillez rafraîchir la page et réessayer."
+
+    # ---------------------------------------------------------
+
     
     # 2. Vérifier si la BDD externe est configurée ET activée
     db_config = WorkspaceDatabasesDB.get_enabled_by_workspace(workspace_id)
@@ -575,7 +598,6 @@ async def _check_order_intent(workspace_id: str, message: str) -> Optional[str]:
             )
     
     # 3. BDD activée : continuer avec le traitement normal
-    order_number = intent.get("order_number")
     
     # Si pas de numéro, demander poliment
     if not order_number:
@@ -585,7 +607,7 @@ async def _check_order_intent(workspace_id: str, message: str) -> Optional[str]:
             "Exemple : `13456` ou `commande 13456`"
         )
     
-    # 3. Se connecter à la BDD externe et récupérer la commande
+    # 4. Se connecter à la BDD externe et récupérer la commande
     try:
         from app.services.external_database import get_order_service
         
@@ -614,6 +636,26 @@ async def _check_order_intent(workspace_id: str, message: str) -> Optional[str]:
                 f"📞 **Téléphone** : 05 31 61 60 42"
             )
         
+        # ---------------------------------------------------------
+        # SÉCURITÉ : Vérification de propriété
+        # ---------------------------------------------------------
+        # On vérifie si l'ID client de la commande correspond à l'ID utilisateur connecté
+        order_customer_id = str(order_details.get("customer_id", "")).lower()
+        current_user_id = str(user_id).lower()
+        
+        if order_customer_id != current_user_id:
+            logger.warning(f"⛔ SÉCURITÉ : Tentative accès commande {order_number} (Clt: {order_customer_id}) par User {current_user_id}")
+            # On retourne un message générique "Non trouvé" pour ne pas fuiter l'existence de la commande
+            return (
+                f"Je n'ai pas trouvé de commande **{order_number}** associée à votre compte. 🔍\n\n"
+                f"Vérifiez que vous êtes bien connecté avec le compte ayant passé la commande."
+            )
+        
+        if order_customer_id == current_user_id:
+             logger.info(f"✅ SÉCURITÉ : Accès autorisé commande {order_number} par User {current_user_id}")
+
+        # ---------------------------------------------------------
+
         # Formater la réponse
         return order_service.format_order_response(order_details)
         

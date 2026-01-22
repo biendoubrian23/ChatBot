@@ -270,9 +270,18 @@ export default {
 
       case 'mvc4':
         return `@* MONITORA Widget - ASP.NET MVC 4 *@
-@* Ajoutez ce code dans votre fichier _Layout.cshtml ou votre vue, juste avant la fermeture </body> : *@
+@* 1. Téléchargez le fichier embed.js depuis ${apiUrl}/widget/embed.js *@
+@* 2. Placez-le dans votre dossier /Scripts (ou /Start/Scripts) *@
+@* 3. Ajoutez ce code dans votre fichier _Layout.cshtml ou votre vue, juste avant la fermeture </body> : *@
 
 <script>
+    // Récupération sécurisée du contexte utilisateur (si connecté)
+    var userContext = {
+        isLoggedIn: @(User.Identity.IsAuthenticated.ToString().ToLower()),
+        id: "@(User.Identity.IsAuthenticated ? ViewBag.UserId : "")", // ID unique (GUID)
+        email: "@(User.Identity.Name)" // Email utilisateur
+    };
+
     window.MONITORA_CONFIG = {
         workspaceId: "${config.workspaceId}",
         position: "${config.position}",
@@ -282,10 +291,12 @@ export default {
         width: ${config.width},
         height: ${config.height},
         brandingText: "${config.brandingText}",
-        apiUrl: "${apiUrl}"
+        apiUrl: "${apiUrl}", // URL du backend Monitora
+        userContext: userContext
     };
 </script>
-<script src="${apiUrl}/widget/embed.js" async></script>`
+@* Référence vers votre copie locale du script *@
+<script src="/Scripts/embed.js" async></script>`
 
       case 'html':
       default:
@@ -552,6 +563,32 @@ export default {
                 )}
               </Button>
             </div>
+
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={async () => {
+                  try {
+                    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001'
+                    const response = await fetch(`${apiUrl}/widget/embed.js`)
+                    const blob = await response.blob()
+                    const url = window.URL.createObjectURL(blob)
+                    const a = document.createElement('a')
+                    a.href = url
+                    a.download = 'embed.js'
+                    document.body.appendChild(a)
+                    a.click()
+                    window.URL.revokeObjectURL(url)
+                    document.body.removeChild(a)
+                  } catch (e) {
+                    console.error('Download failed', e)
+                  }
+                }}
+                className="inline-flex items-center text-xs text-gray-500 hover:text-gray-900 underline bg-transparent border-0 cursor-pointer"
+              >
+                <ExternalLink size={12} className="mr-1" />
+                Télécharger embed.js
+              </button>
+            </div>
           </div>
         </div>
 
@@ -611,13 +648,31 @@ export default {
 
                     {/* Widget button */}
                     {!mobilePreviewOpen && (
-                      <button
-                        onClick={() => setMobilePreviewOpen(true)}
-                        className="absolute bottom-6 right-4 w-12 h-12 rounded-full shadow-lg flex items-center justify-center transition-transform hover:scale-110 cursor-pointer z-10"
-                        style={{ backgroundColor: widgetConfig.primaryColor }}
-                      >
-                        <MessageSquare size={20} className="text-white" />
-                      </button>
+                      <div className="absolute bottom-6 right-4 flex flex-col items-end gap-2 z-10">
+                        {/* Tooltip Preview Style Simple (Production) */}
+                        <div
+                          className="bg-white px-3 py-2 rounded-lg shadow-sm border border-gray-100 flex items-center mb-1 animate-pulse cursor-pointer relative"
+                          onClick={() => setMobilePreviewOpen(true)}
+                          style={{
+                            marginRight: '12px',
+                            marginBottom: '4px',
+                            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                          }}
+                        >
+                          <span className="text-[13px] font-medium text-gray-800 whitespace-nowrap">Besoin d'aide ? Je suis là 👋</span>
+                          {/* Triangle à droite */}
+                          <div className="absolute -right-[5px] top-1/2 -translate-y-1/2 w-0 h-0 border-t-[5px] border-t-transparent border-l-[6px] border-l-white border-b-[5px] border-b-transparent"></div>
+                        </div>
+
+                        {/* Button */}
+                        <button
+                          onClick={() => setMobilePreviewOpen(true)}
+                          className="w-12 h-12 rounded-full shadow-lg flex items-center justify-center transition-transform hover:scale-110 cursor-pointer"
+                          style={{ backgroundColor: widgetConfig.primaryColor }}
+                        >
+                          <MessageSquare size={20} className="text-white" />
+                        </button>
+                      </div>
                     )}
 
                     {/* Widget ouvert */}

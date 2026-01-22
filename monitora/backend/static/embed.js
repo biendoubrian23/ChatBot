@@ -733,7 +733,7 @@
       isOpen = !isOpen;
       if (isOpen) {
         chatWindow.classList.add('open');
-        container.classList.add('chat-open'); // Toggle class on container to hide tooltip
+        container.classList.add('chat-open');
         if (messagesEl.children.length === 0) {
           addMessage('assistant', welcomeMessage, false);
         }
@@ -867,18 +867,22 @@
       showTyping();
 
       try {
+        const payload = {
+          message,
+          session_id: sessionId,
+          visitor_id: visitorId,
+          stream: streamingEnabled,
+          // NOUVEAU : Transmettre le contexte utilisateur (si configuré)
+          user_context: config.userContext || null
+        };
+
         const response = await fetch(`${API_URL}/api/widget/${workspaceId}/chat`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'ngrok-skip-browser-warning': 'true'
           },
-          body: JSON.stringify({
-            message,
-            session_id: sessionId,
-            visitor_id: visitorId,
-            stream: streamingEnabled
-          })
+          body: JSON.stringify(payload)
         });
 
         hideTyping();

@@ -1,0 +1,48 @@
+# Fichiers Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+
+# Environnement
+.env
+.env.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# Données locales
+data/vectorstores/
+data/documents/
+data/uploads/
+
+# Logs
+*.log
+
+# Tests
+.pytest_cache/
+.coverage
+htmlcov/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Docker
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# Scripts de test locaux
+check_*.py
+test_*.py
