@@ -1,12 +1,6 @@
 -- =====================================================
 -- MONITORA - Migration Complète vers SQL Server
--- =====================================================
--- Ce script complète le schéma initial avec toutes les
--- tables, triggers, stored procedures et authentification
--- =====================================================
--- À exécuter dans Microsoft SQL Server Management Studio
--- Base de données: Monitora_dev
--- =====================================================
+
 
 USE Monitora_dev;
 GO

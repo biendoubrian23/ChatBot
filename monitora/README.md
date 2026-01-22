@@ -1,115 +1,97 @@
-# MONITORA - Plateforme de Gestion de Chatbots
-
-## Description
-Plateforme SaaS permettant de déployer, gérer et monitorer des chatbots IA sur plusieurs sites web depuis une interface centralisée unique.
+<p align="center">
+  <h1 align="center">🔍 Monitora</h1>
+  <p align="center">
+    <strong>Plateforme interne de gestion et monitoring de chatbots IA</strong>
+  </p>
+  <p align="center">
+    Solution développée par Messages SAS pour déployer et gérer des assistants virtuels intelligents
+  </p>
+</p>
 
 ---
 
-## 🚀 Quick Start
+## ✨ Fonctionnalités
+
+| Fonctionnalité | Description |
+|----------------|-------------|
+| **Multi-sites** | Gérez plusieurs chatbots pour différents sites depuis un seul dashboard |
+| **Widget injectable** | Script simple à intégrer sur n'importe quel site web interne |
+| **RAG personnalisable** | Upload de documents pour enrichir les réponses de l'IA |
+| **Analytics** | Statistiques détaillées et historique des conversations |
+| **Personnalisation** | Couleurs, messages d'accueil, position du widget |
+
+---
+
+## 🛠️ Stack Technique
+
+| Composant | Technologie |
+|-----------|-------------|
+| **Frontend** | Next.js 15, TypeScript, Tailwind CSS |
+| **Backend** | FastAPI, Python 3.9+ |
+| **Base de données** | Microsoft SQL Server |
+| **Authentification** | JWT (JSON Web Tokens) |
+| **LLM** | Mistral AI |
+| **Embeddings** | E5 Multilingual |
+| **Vectorstore** | ChromaDB |
+
+---
+
+## 🚀 Installation
+
+### Prérequis
+- Node.js 18+
+- Python 3.9+
+- SQL Server
 
 ### 1. Backend
 ```bash
-cd monitora/backend
+cd backend
 python -m venv venv
 venv\Scripts\activate  # Windows
 pip install -r requirements.txt
 python main.py
-# Serveur sur http://localhost:8001
+# API disponible sur http://localhost:8001
 ```
 
 ### 2. Frontend
 ```bash
-cd monitora/frontend
+cd frontend
 npm install
 npm run dev
 # Interface sur http://localhost:3001
 ```
 
 ### 3. Base de données
-- Créer un projet Supabase
-- Exécuter le SQL dans `supabase/schema.sql`
-- Configurer les variables d'environnement
+1. Créer une base de données SQL Server
+2. Exécuter le script `database/migration_complete_sqlserver.sql`
+3. Configurer les variables d'environnement
 
 ---
 
-## 📁 Structure du projet
+## 📁 Architecture
 
 ```
 monitora/
-├── backend/                # API FastAPI (Python)
-│   ├── main.py
-│   ├── requirements.txt
-│   └── app/
-│       ├── api/            # Endpoints REST
-│       ├── core/           # Configuration
-│       ├── models/         # Schémas Pydantic
-│       └── services/       # Logique métier (RAG, LLM)
+├── backend/                # API FastAPI
+│   ├── app/
+│   │   ├── api/            # Endpoints REST
+│   │   ├── core/           # Configuration & Auth JWT
+│   │   ├── models/         # Schémas Pydantic
+│   │   └── services/       # Logique métier (RAG, LLM)
+│   └── requirements.txt
 │
 ├── frontend/               # Interface Next.js
 │   ├── src/
 │   │   ├── app/            # Pages (App Router)
 │   │   ├── components/     # Composants React
-│   │   └── lib/            # Utilitaires
-│   └── public/
-│       └── widget/         # Script injectable
+│   │   └── lib/            # Utilitaires & Auth
+│   └── public/widget/      # Script injectable
 │
-├── supabase/               # Schéma SQL
-│
-├── CAHIER_DES_CHARGES.md   # Spécifications complètes
-└── RAG_INTEGRATION.md      # Documentation technique RAG
+└── database/               # Scripts SQL Server
 ```
 
 ---
 
-## 🎯 Fonctionnalités principales
+## 📄 Licence
 
-- **Multi-tenant** : Gérer plusieurs chatbots depuis une interface
-- **Widget injectable** : Script à copier-coller sur n'importe quel site
-- **RAG personnalisable** : Upload de documents, configuration fine
-- **Analytics** : Statistiques et historique des conversations
-- **Personnalisation** : Couleurs, messages, position du widget
-
----
-
-## 🛠️ Stack technique
-
-| Composant | Technologie |
-|-----------|-------------|
-| Frontend | Next.js 15, TypeScript, Tailwind CSS |
-| Backend | FastAPI, Python 3.9+ |
-| Database | Supabase (PostgreSQL) |
-| Auth | Supabase Auth |
-| LLM | Mistral AI |
-| Embeddings | E5 Multilingual |
-| Vectorstore | ChromaDB |
-
----
-
-## 📋 Roadmap
-
-### Phase 1 - MVP ✅
-- [ ] Authentification (login/register)
-- [ ] CRUD Workspaces
-- [ ] Upload documents
-- [ ] Widget injectable basique
-- [ ] Chat fonctionnel
-
-### Phase 2 - Analytics
-- [ ] Dashboard statistiques
-- [ ] Historique conversations
-- [ ] Questions fréquentes
-
-### Phase 3 - Personnalisation
-- [ ] Éditeur visuel du widget
-- [ ] Configuration RAG avancée
-- [ ] Prompt système personnalisable
-
-### Phase 4 - Scale
-- [ ] Multi-LLM (Groq, OpenAI)
-- [ ] Rate limiting
-- [ ] Pricing/Plans
-
----
-
-## 📝 Licence
-Propriétaire - BiendouCorp
+Usage interne - © 2026 Messages SAS
