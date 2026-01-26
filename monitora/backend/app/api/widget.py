@@ -318,6 +318,10 @@ async def widget_chat(
         content=data.message
     )
     
+    # Mieux : Mettre à jour les stats tout de suite pour capturer le 'nouveau visiteur'
+    # avant que d'autres messages ne soient ajoutés (réponse bot)
+    _increment_analytics(workspace_id, data.visitor_id)
+    
     # Mettre à jour le compteur de messages
     ConversationsDB.increment_message_count(conversation["id"])
     
@@ -364,8 +368,8 @@ async def widget_chat(
     history_msgs = MessagesDB.get_by_conversation(conversation["id"], limit=6)
     history = [{"role": m["role"], "content": m["content"]} for m in history_msgs]
     
-    # Incrémenter les analytics
-    _increment_analytics(workspace_id, data.visitor_id)
+    # Analytics déplacé plus haut pour gérer tous les cas (Order + RAG)
+    # _increment_analytics(workspace_id, data.visitor_id)
     
     # Pipeline RAG
     rag_config = workspace.get("rag_config", {})
