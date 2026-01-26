@@ -33,7 +33,23 @@
       for (let i = 0; i < scripts.length; i++) {
         const src = scripts[i].src;
         if (src && src.includes('embed.js')) {
-          // Gérer les différents chemins possibles
+          // Gérer les différents chemins possibles de manière robuste
+          // On prend tout ce qu'il y a avant "embed.js"
+          if (src.indexOf('/embed.js') !== -1) {
+            const parts = src.split('/embed.js');
+            // Si le script est dans un sous-dossier "/widget", on remonte d'un cran si nécessaire
+            // Mais le plus sûr est de supposer que l'API est à la racine de ce chemin si apiUrl n'est pas fourni
+            // Dans le doute, on garde le comportement "devinette" amélioré :
+            let baseUrl = parts[0];
+            // Si ça finit par /widget ou /static, on l'enlève pour trouver la racine API
+            if (baseUrl.endsWith('/widget')) baseUrl = baseUrl.slice(0, -7);
+            else if (baseUrl.endsWith('/static')) baseUrl = baseUrl.slice(0, -7);
+            else if (baseUrl.endsWith('/scripts/widget')) baseUrl = baseUrl.slice(0, -15); // Cas spécifique utilisateur
+
+            // Nettoyage final du slash de fin
+            if (baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
+            return baseUrl;
+          }
           return src.replace('/widget/embed.js', '').replace('/static/embed.js', '');
         }
       }

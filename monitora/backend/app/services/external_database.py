@@ -158,7 +158,7 @@ class CoolLibriOrderService:
             query = """
                 SELECT 
                     o.OrderId, o.OrderDate, o.PaymentDate, o.PriceTTC,
-                    o.ShippingAmount, o.OrderStatusId, o.Paid, o.CustomerId,
+                    o.ShippingAmount, o.OrderStatusId, o.Paid, o.UserId,
                     os.Name as StatusName, os.Stage as StatusStage,
                     ol.OrderLineId, ol.Quantity, ol.PriceHT, ol.PriceTTC as LineTTC,
                     ol.ChronoNumber, ol.DateProduction, ol.DateShippingEstimatedFinal,
@@ -185,7 +185,7 @@ class CoolLibriOrderService:
             first_row = rows[0]
             order_data = {
                 "order_id": first_row.OrderId,
-                "customer_id": str(first_row.CustomerId) if hasattr(first_row, "CustomerId") and first_row.CustomerId else None,
+                "customer_id": str(first_row.UserId) if hasattr(first_row, "UserId") and first_row.UserId else None,
                 "order_date": first_row.OrderDate,
                 "payment_date": first_row.PaymentDate,
                 "total": float(first_row.PriceTTC) if first_row.PriceTTC else 0,

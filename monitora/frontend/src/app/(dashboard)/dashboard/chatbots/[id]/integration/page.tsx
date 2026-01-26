@@ -291,7 +291,7 @@ export default {
         width: ${config.width},
         height: ${config.height},
         brandingText: "${config.brandingText}",
-        apiUrl: "${apiUrl}", // URL du backend Monitora
+        apiUrl: "${apiUrl}", // ⚠️ IMPORTANT : Remplacez par votre URL publique (ex: https://votre-site.com)
         userContext: userContext
     };
 </script>
@@ -569,7 +569,11 @@ export default {
                 onClick={async () => {
                   try {
                     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001'
-                    const response = await fetch(`${apiUrl}/widget/embed.js`)
+                    const response = await fetch(`${apiUrl}/widget/embed.js`, {
+                      headers: {
+                        'ngrok-skip-browser-warning': 'true' // Bypass page d'avertissement Ngrok
+                      }
+                    })
                     const blob = await response.blob()
                     const url = window.URL.createObjectURL(blob)
                     const a = document.createElement('a')
